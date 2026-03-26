@@ -144,6 +144,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   floor.position.y = -1.25;
   scene.add(floor);
 
+  // Main lattice origin (slightly off-center to avoid center seam)
   const origin = new THREE.Vector3(2.4, 2.2, -72);
   const yaw = 0.08;
 
@@ -157,6 +158,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   latticeB.rotation.y = yaw;
   scene.add(latticeB);
 
+  // Far volumes
   const farVolumes = [];
   for (let k = 0; k < 6; k++) {
     const la = buildLattice({ size: 320 + k * 70, step: 6,  color: 0x22D3EE, opacity: 0.060 - k * 0.006 });
@@ -173,6 +175,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     farVolumes.push({ la, lb });
   }
 
+  // Frames
   const frames = [];
   const frameGroup = new THREE.Group();
   frameGroup.position.set(0, 1.5, -70);
@@ -180,9 +183,9 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
   const baseBorder = makeBorderMaterial({ opacity: 0.22, thickness: 0.028, glow: 0.65 });
   const hoverBorder = makeBorderMaterial({ opacity: 0.38, thickness: 0.032, glow: 0.95 });
-
   const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.24 });
 
+  // Dense small records
   const smallCount = 320;
   for (let i = 0; i < smallCount; i++) {
     const rec = makeRecord(i);
@@ -203,20 +206,20 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     frames.push(border);
   }
 
+  // Micro frames (density)
   const microCount = 900;
   for (let i = 0; i < microCount; i++) {
     const w = rand(0.12, 0.32);
     const h = w * rand(0.55, 0.90);
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
-
     border.position.set(rand(-18, 18), rand(-4, 10), rand(-90, 30));
     border.rotation.y = rand(-1.2, 1.2);
     border.rotation.x = rand(-0.25, 0.25);
-
-    border.userData.rec = null;
+    border.userData.rec = null; // not selectable
     frameGroup.add(border);
   }
 
+  // Exhibits (6)
   const exhibits = [
     { src: "assets/replay.jpg", title: "Replay Engine" },
     { src: "assets/settings.jpg", title: "Assumptions + Presets" },
@@ -263,19 +266,22 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     } catch {}
   })();
 
+  // Beacons (side-distributed so they don’t cluster in the center)
   const beacons = [
-    { id: "b1", pos: new THREE.Vector3(1.4, 1.7,  4),   title: "[THRESHOLD]", body: "Enter the archive.\nSilence before structure." },
-    { id: "b2", pos: new THREE.Vector3(-1.8, 1.3, -22), title: "[MEMORY]", body: "Every decision leaves structure behind.\nRecords don’t judge. They preserve." },
-    { id: "b3", pos: new THREE.Vector3(2.6, 1.1, -48),  title: "[REPLAY]", body: "Reconstruct the moment.\nTrain inside preserved volatility." },
-    { id: "b4", pos: new THREE.Vector3(-2.2, 1.6, -76), title: "[STRUCTURE]", body: "Turn repetition into architecture.\nRules make edge repeatable." },
-    { id: "b5", pos: new THREE.Vector3(1.6, 1.3, -104), title: "[EDGE]", body: "Precision is memory organized.\nAccess is earned, not sold." },
+    { id: "b1", pos: new THREE.Vector3(-6.8, 2.2,  6),   title: "[THRESHOLD]", body: "Enter the archive.\nSilence before structure." },
+    { id: "b2", pos: new THREE.Vector3( 7.2, 1.4, -22),  title: "[MEMORY]", body: "Every decision leaves structure behind.\nRecords don’t judge. They preserve." },
+    { id: "b3", pos: new THREE.Vector3(-7.4, 1.2, -48),  title: "[REPLAY]", body: "Reconstruct the moment.\nTrain inside preserved volatility." },
+    { id: "b4", pos: new THREE.Vector3( 7.8, 1.7, -76),  title: "[STRUCTURE]", body: "Turn repetition into architecture.\nRules make edge repeatable." },
+    { id: "b5", pos: new THREE.Vector3(-6.4, 1.3, -110), title: "[EDGE]", body: "Precision is memory organized.\nAccess is earned, not sold." },
   ];
 
+  // Selection leash
   const leashMat = new THREE.LineBasicMaterial({ color: 0x22D3EE, transparent: true, opacity: 0.0 });
   const leashGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
   const leash = new THREE.Line(leashGeom, leashMat);
   scene.add(leash);
 
+  // Raycast
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2(0, 0);
 
@@ -352,6 +358,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     if (hits.length) {
       const obj = hits[0].object;
 
+      // ignore micro frames
       if (!obj.userData.rec) {
         if (hovered && hovered !== selected) hovered.material = hovered.userData._matBase || hovered.material;
         hovered = null;
@@ -393,13 +400,13 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     camera.updateProjectionMatrix();
   }
 
+  // Animate
   let t0 = performance.now();
   function tick(now) {
-    const dt = (now - t0) / 1000;
     t0 = now;
 
-    state.rail = lerp(state.rail, state.railTarget, 0.035);
-    state.focus = lerp(state.focus, state.focusTarget, 0.035);
+    state.rail = lerp(state.rail, state.railTarget, 0.06);
+    state.focus = lerp(state.focus, state.focusTarget, 0.075);
 
     const px = clamp(state.mouseX, -1, 1);
     const py = clamp(state.mouseY, -1, 1);
@@ -433,6 +440,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       leash.material.opacity = lerp(leash.material.opacity, 0.0, 0.10);
     }
 
+    // breathing
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00025);
     latticeA.material.opacity = 0.10 + pulse * 0.03;
     latticeB.material.opacity = 0.05 + pulse * 0.02;
