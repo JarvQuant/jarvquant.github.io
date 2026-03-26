@@ -21,21 +21,45 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
   const hudTitle = document.getElementById("hudTitle");
   const hudSub = document.getElementById("hudSub");
 
+  // Panel
+  const panel = document.getElementById("panel");
+  const panelTitle = document.getElementById("panelTitle");
+  const panelBody = document.getElementById("panelBody");
+  const panelClose = document.getElementById("panelClose");
+
+  function setPanel(data) {
+    if (!panel || !panelTitle || !panelBody) return;
+    if (!data) {
+      panel.classList.remove("is-on");
+      panel.setAttribute("aria-hidden", "true");
+      return;
+    }
+    panelTitle.textContent = data.title || "—";
+    panelBody.textContent = data.body || "—";
+    panel.classList.add("is-on");
+    panel.setAttribute("aria-hidden", "false");
+  }
+
+  if (panelClose) {
+    panelClose.addEventListener("click", () => setPanel(null));
+  }
+
   // World
   const world = createWorld(document.getElementById("world"), {
     onHoverFragment(fragment) {
       if (!hud || !hudTitle || !hudSub) return;
-
       if (!fragment) {
         hud.classList.remove("is-on");
         hud.setAttribute("aria-hidden", "true");
         return;
       }
-
       hudTitle.textContent = fragment.title;
       hudSub.textContent = fragment.sub;
       hud.classList.add("is-on");
       hud.setAttribute("aria-hidden", "false");
+    },
+    onSelectRecord(data) {
+      setPanel(data);
     }
   });
 
@@ -51,7 +75,6 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
   async function setActiveChapter(name, { ritual = false } = {}) {
     active = name;
     chapters.forEach((c) => c.classList.toggle("is-active", c.getAttribute("data-chapter") === name));
-
     world.setChapter(name);
 
     const el = getChapterEl(name);
@@ -91,8 +114,7 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
     });
   }
 
-  // --- Locked scroll rail ---
-  // rail 0..1 drives camera through the lattice
+  // Locked scroll rail
   let rail = 0;
   let railTarget = 0;
 
@@ -114,12 +136,6 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
     return best;
   }
 
-  function syncChapterToRail(t) {
-    const s = nearestStop(t);
-    if (s.name !== active) setActiveChapter(s.name);
-  }
-
-  // Smoothly update rail towards target
   function tick() {
     rail += (railTarget - rail) * 0.08;
     world.setRail(rail);
@@ -127,49 +143,55 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
   }
   requestAnimationFrame(tick);
 
-  // Wheel handler (cinematic)
+  // Wheel steps
   let entered = false;
   let wheelAcc = 0;
   let wheelLock = false;
 
   function bump(dir) {
-    // dir: +1 forward, -1 backward
     const cur = nearestStop(railTarget);
     const idx = stops.findIndex(s => s.name === cur.name);
     const next = stops[Math.max(0, Math.min(stops.length - 1, idx + dir))];
     railTarget = next.t;
-    syncChapterToRail(railTarget);
+    setActiveChapter(next.name);
   }
 
   function onWheel(e) {
-    // Prevent page scrolling – we’re “moving through space”
     e.preventDefault();
 
     if (!entered) {
-      // allow a “peek” movement without audio
+      // “Peek” mode enables interaction but doesn’t start audio
       world.setEntered(true);
       entered = true;
     }
 
     wheelAcc += e.deltaY;
-
     if (wheelLock) return;
 
-    // threshold so trackpads don’t spam
-    if (Math.abs(wheelAcc) > 120) {
+    if (Math.abs(wheelAcc) > 140) {
       wheelLock = true;
       bump(wheelAcc > 0 ? +1 : -1);
       wheelAcc = 0;
-
-      // lock briefly to preserve cinematic steps
-      setTimeout(() => { wheelLock = false; }, 550);
+      setTimeout(() => { wheelLock = false; }, 520);
     }
   }
 
   window.addEventListener("wheel", onWheel, { passive: false });
 
-  // Enter ritual
+  // Buttons
   const enterBtn = document.getElementById("enterBtn");
+  const peekBtn = document.getElementById("peekBtn");
+
+  if (peekBtn) {
+    peekBtn.addEventListener("click", async () => {
+      entered = true;
+      world.setEntered(true);
+      railTarget = 0.32;
+      await setActiveChapter("memory", { ritual: true });
+      // DO NOT start audio here (peek should be silent by default)
+    });
+  }
+
   if (enterBtn) {
     enterBtn.addEventListener("click", async () => {
       entered = true;
@@ -179,13 +201,12 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
       audio.setMuted(false);
       setMutedUI(false);
 
-      // Jump to memory stop with ritual
       railTarget = 0.32;
       await setActiveChapter("memory", { ritual: true });
     });
   }
 
-  // Nav buttons jump stops
+  // Nav jumps
   document.querySelectorAll("[data-action='goto']").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const target = btn.getAttribute("data-target");
@@ -210,11 +231,10 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
     });
   });
 
-  // Prime audio context (muted) on first interaction
+  // Prime audio context (muted) once
   window.addEventListener("pointerdown", async () => {
     try { await audio.ensureRunning(); } catch {}
   }, { once: true, passive: true });
 
-  // Init
   setActiveChapter("threshold");
 })();
