@@ -65,7 +65,7 @@
 
       <div class="chapter-actions">
         <button class="btn primary" id="enterBtn" type="button" data-i18n="threshold.cta">Enter</button>
-        <button class="btn ghost" data-action="goto" data-target="memory" data-i18n="threshold.peek">Peek inside</button>
+        <button class="btn ghost" id="peekBtn" type="button" data-i18n="threshold.peek">Peek inside</button>
       </div>
 
       <div class="micro" data-i18n="threshold.micro">
@@ -129,15 +129,15 @@
       </div>
     </section>
     
-  <!-- Selected record panel -->
-  <div class="panel" id="panel" aria-hidden="true">
-    <div class="panel-kicker" id="panelKicker">RECORD</div>
-    <div class="panel-title" id="panelTitle">—</div>
-    <div class="panel-body" id="panelBody">—</div>
-    <div class="panel-actions">
-      <button class="btn ghost" id="panelClose">Close</button>
-    </div>
-  </div>
+    <!-- Selected record panel -->
+   <div class="panel" id="panel" aria-hidden="true">
+     <div class="panel-kicker" id="panelKicker">RECORD</div>
+     <div class="panel-title" id="panelTitle">—</div>
+     <div class="panel-body" id="panelBody">—</div>
+     <div class="panel-actions">
+      <button class="btn ghost" id="panelClose" type="button">Close</button>
+   </div>
+ </div>
 
     <!-- Hover HUD -->
     <div class="hud" id="hud" aria-hidden="true">
