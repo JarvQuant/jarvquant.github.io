@@ -7,7 +7,7 @@
   <title>JarvQuant</title>
   <meta name="description" content="JarvQuant — a replay-first archive of market memory." />
 
-  <link rel="icon" href="assets/favicon.png?v=4" type="image/png" />
+  <link rel="icon" href="assets/favicon.png?v=6" type="image/png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
   <link rel="shortcut icon" href="/favicon.ico" />
 
@@ -19,13 +19,9 @@
 </head>
 
 <body>
-  <!-- WebGL canvas -->
   <canvas id="world" aria-hidden="true"></canvas>
-
-  <!-- Subtle vignette/grain overlay -->
   <div class="overlay" aria-hidden="true"></div>
 
-  <!-- Top embedded control surface -->
   <header class="topbar">
     <a class="brand" href="#" aria-label="JarvQuant home" data-action="home">
       <img class="brand-logo" src="assets/logo.png" alt="" aria-hidden="true" />
@@ -45,7 +41,6 @@
         <span class="pill-text" data-i18n="ui.mute">Muted</span>
       </button>
 
-      <!-- Optional language indicator (no dropdown yet, but supports ?lang=xx) -->
       <div class="lang" title="Set language via ?lang=de">
         <span class="lang-label">Lang</span>
         <span class="lang-value" id="langValue">EN</span>
@@ -53,9 +48,7 @@
     </div>
   </header>
 
-  <!-- Chapter overlay (embedded UI) -->
   <main class="ui">
-    <!-- Threshold -->
     <section class="chapter is-active" id="chapter-threshold" data-chapter="threshold">
       <div class="chapter-kicker" data-i18n="threshold.kicker">THRESHOLD</div>
       <h1 class="chapter-title" data-i18n="threshold.title">Enter the archive.</h1>
@@ -69,11 +62,10 @@
       </div>
 
       <div class="micro" data-i18n="threshold.micro">
-        Tip: move your mouse gently. Hover the nodes.
+        Tip: move your mouse gently. Click a record to focus.
       </div>
     </section>
 
-    <!-- Memory -->
     <section class="chapter" id="chapter-memory" data-chapter="memory">
       <div class="chapter-kicker" data-i18n="memory.kicker">MEMORY FIELD</div>
       <h2 class="chapter-title" data-i18n="memory.title">Market decisions don’t disappear.</h2>
@@ -81,11 +73,10 @@
         Stored imprints. Retrieved patterns. Quiet, repeatable learning.
       </p>
       <div class="micro" data-i18n="memory.micro">
-        Hover a capsule to reveal a fragment.
+        Scroll to move. Click a record to zoom.
       </div>
     </section>
 
-    <!-- Replay -->
     <section class="chapter" id="chapter-replay" data-chapter="replay">
       <div class="chapter-kicker" data-i18n="replay.kicker">REPLAY CHAMBER</div>
       <h2 class="chapter-title" data-i18n="replay.title">Revisit the moment before hindsight.</h2>
@@ -93,11 +84,10 @@
         Time as a surface you can move through — not a chart you scroll past.
       </p>
       <div class="micro" data-i18n="replay.micro">
-        (Chapter stub — we’ll build the chamber next.)
+        (Next: timeline sweep + candle traces.)
       </div>
     </section>
 
-    <!-- Structure -->
     <section class="chapter" id="chapter-structure" data-chapter="structure">
       <div class="chapter-kicker" data-i18n="structure.kicker">STRATEGY STRUCTURE</div>
       <h2 class="chapter-title" data-i18n="structure.title">Turn repetition into architecture.</h2>
@@ -105,11 +95,10 @@
         Rules. Constraints. Risk. Execution — wired into a system you can trust.
       </p>
       <div class="micro" data-i18n="structure.micro">
-        (Chapter stub — we’ll animate logic paths here.)
+        (Next: module graph + path tracing.)
       </div>
     </section>
 
-    <!-- Edge / CTA -->
     <section class="chapter" id="chapter-edge" data-chapter="edge">
       <div class="chapter-kicker" data-i18n="edge.kicker">ACCESS POINT</div>
       <h2 class="chapter-title" data-i18n="edge.title">Request access.</h2>
@@ -128,25 +117,36 @@
         © <span id="year"></span> JarvQuant
       </div>
     </section>
-    
-    <!-- Selected record panel -->
-   <div class="panel" id="panel" aria-hidden="true">
-     <div class="panel-kicker" id="panelKicker">RECORD</div>
-     <div class="panel-title" id="panelTitle">—</div>
-     <div class="panel-body" id="panelBody">—</div>
-     <div class="panel-actions">
-      <button class="btn ghost" id="panelClose" type="button">Close</button>
-   </div>
- </div>
 
-    <!-- Hover HUD -->
     <div class="hud" id="hud" aria-hidden="true">
       <div class="hud-title" id="hudTitle">Fragment</div>
       <div class="hud-sub" id="hudSub">—</div>
     </div>
+
+    <div class="panel" id="panel" aria-hidden="true">
+      <div class="panel-kicker" id="panelKicker">RECORD</div>
+      <div class="panel-title" id="panelTitle">—</div>
+      <div class="panel-body" id="panelBody">—</div>
+      <div class="panel-actions">
+        <button class="btn ghost" id="panelClose" type="button">Close</button>
+      </div>
+    </div>
+
+    <div class="beacons" id="beacons" aria-hidden="true"></div>
   </main>
 
-  <!-- Modules -->
+  <div class="lightbox" id="imgBox" aria-hidden="true">
+    <div class="lightbox-backdrop" id="imgBoxClose"></div>
+    <div class="lightbox-inner" role="dialog" aria-modal="true" aria-label="Exhibit">
+      <div class="lightbox-top">
+        <div class="lightbox-title" id="imgBoxTitle">—</div>
+        <button class="lightbox-x" id="imgBoxX" type="button" aria-label="Close">×</button>
+      </div>
+      <img class="lightbox-img" id="imgBoxImg" alt="Exhibit preview" />
+      <div class="lightbox-cap" id="imgBoxCap">—</div>
+    </div>
+  </div>
+
   <script type="module" src="main.js"></script>
 </body>
 </html>
