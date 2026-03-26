@@ -457,3 +457,31 @@ body{
     bottom: 12px;
   }
 }
+.lang-select{
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: rgba(245,247,255,0.86);
+  font: 650 12px/1 var(--sans);
+  letter-spacing: .3px;
+  cursor: pointer;
+  padding-right: 14px;
+}
+
+.lang{
+  position: relative;
+}
+.lang::after{
+  content: "▾";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-52%);
+  color: rgba(245,247,255,0.42);
+  pointer-events: none;
+  font: 700 12px/1 var(--sans);
+}
