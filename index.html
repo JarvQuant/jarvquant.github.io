@@ -6,7 +6,6 @@
   <meta name="description" content="JarvQuant — Trade with structure. Not guesswork. Replay-first research, strategy building, and journaling in one desktop tool." />
   <title>JarvQuant</title>
 
-  <link rel="preload" href="styles.css" as="style" />
   <link rel="stylesheet" href="styles.css" />
 
   <meta property="og:title" content="JarvQuant" />
@@ -15,7 +14,7 @@
 </head>
 
 <body>
-  <div class="bg">
+  <div class="bg" aria-hidden="true">
     <div class="orb orb-a"></div>
     <div class="orb orb-b"></div>
     <div class="orb orb-c"></div>
@@ -28,7 +27,8 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-text">JarvQuant</span>
       </a>
-      <nav class="nav">
+
+      <nav class="nav" aria-label="Primary">
         <a href="#product">Product</a>
         <a href="#proof">Shipped</a>
         <a class="btn btn-ghost" href="#waitlist">Get updates</a>
@@ -40,7 +40,8 @@
     <section class="hero">
       <div class="hero-left">
         <div class="kicker">Replay-first research desk</div>
-        <h1 class="headline">Trade with structure.<br/>Not guesswork.</h1>
+        <h1 class="headline">Trade with structure.<br />Not guesswork.</h1>
+
         <p class="subline">
           Replay-first research, strategy building, and journaling in one desktop tool.
         </p>
@@ -59,23 +60,36 @@
         </div>
 
         <div class="micro">
-          Built in public. Screens below are from the actual app.
+          Built from a real app — screenshots below are from the product.
         </div>
       </div>
 
       <div class="hero-right">
         <div class="tilt-card" data-tilt>
           <div class="tilt-glow" aria-hidden="true"></div>
+
           <div class="tilt-inner">
             <div class="tilt-title">JarvQuant Desktop</div>
             <div class="tilt-sub">Replay • Build • Journal</div>
+
             <div class="tilt-metrics">
-              <div class="metric"><span class="m-label">Status</span><span class="m-val">Shipped</span></div>
-              <div class="metric"><span class="m-label">Focus</span><span class="m-val">Evidence</span></div>
-              <div class="metric"><span class="m-label">Mode</span><span class="m-val">Offline-first</span></div>
+              <div class="metric">
+                <span class="m-label">Status</span>
+                <span class="m-val">Shipped</span>
+              </div>
+              <div class="metric">
+                <span class="m-label">Focus</span>
+                <span class="m-val">Evidence</span>
+              </div>
+              <div class="metric">
+                <span class="m-label">Mode</span>
+                <span class="m-val">Offline-first</span>
+              </div>
             </div>
+
             <div class="tilt-footer">
-              <span class="dot"></span> Live development updates via waitlist
+              <span class="dot" aria-hidden="true"></span>
+              Live development updates via waitlist
             </div>
           </div>
         </div>
@@ -113,6 +127,7 @@
           <p>
             Shipping fast. If you want early access and changelog drops, join the waitlist.
           </p>
+
           <ul class="bullets">
             <li>Early builds + release notes</li>
             <li>Short surveys that actually shape the product</li>
@@ -121,17 +136,14 @@
         </div>
 
         <div class="panel-right">
-          <!-- OPTION A (simple): mailto -->
-          <!-- Replace with a real form later (Formspree / Buttondown / ConvertKit). -->
           <a class="btn btn-primary btn-wide"
-             href="mailto:hello@jarvquant.com?subject=JarvQuant%20Waitlist&body=Hi%20—%20please%20add%20me%20to%20the%20JarvQuant%20waitlist.%0A%0AName:%0AUse-case:%0A"
-          >
+             href="mailto:hello@jarvquant.com?subject=JarvQuant%20Waitlist&body=Hi%20—%20please%20add%20me%20to%20the%20JarvQuant%20waitlist.%0A%0AName:%0AUse-case:%0A">
             Email to join waitlist
           </a>
 
           <div class="small">
             Early access + release notes. No spam.
-         </div>
+          </div>
         </div>
       </div>
     </section>
@@ -145,6 +157,7 @@
           </div>
           <div class="small">© <span id="year"></span> JarvQuant. All rights reserved.</div>
         </div>
+
         <div class="footer-right small">
           <a href="#" onclick="return false;">Imprint</a>
           <span class="sep">•</span>
