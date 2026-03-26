@@ -375,3 +375,42 @@ body{
 #chapter-edge.is-active a.btn{
   pointer-events: auto;
 }
+/* --- Hard block mailto until Access chapter is active --- */
+.chapter a[href^="mailto:"]{ pointer-events:none; }
+#chapter-edge.is-active a[href^="mailto:"]{ pointer-events:auto; }
+
+/* Threshold should be the only clickable surface initially */
+.ui{ pointer-events:none; }
+.chapter.is-active{ pointer-events:auto; }
+.chapter-actions{ pointer-events:auto; }
+
+/* Frames/plates: make borders more readable at rest */
+:root{
+  --frame-base: rgba(34,211,238,0.16);
+  --frame-hover: rgba(34,211,238,0.36);
+}
+
+/* Panel (if you added it earlier, keep it) */
+.panel{
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: min(460px, calc(100vw - 36px));
+  padding: 14px 14px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(34,211,238,0.16);
+  background: rgba(6, 7, 12, 0.22);
+  backdrop-filter: blur(var(--blur));
+  box-shadow: 0 22px 90px rgba(0,0,0,.6);
+  z-index: 80;
+
+  opacity: 0;
+  transform: translate3d(0,10px,0);
+  transition: opacity .18s ease, transform .18s ease;
+  pointer-events: none;
+}
+.panel.is-on{ opacity:1; transform:translate3d(0,0,0); pointer-events:auto; }
+.panel-kicker{ font: 800 11px/1 var(--mono); letter-spacing:1.2px; color: rgba(34,211,238,0.78); margin-bottom: 10px; }
+.panel-title{ font: 750 14px/1.25 var(--mono); letter-spacing:.4px; color: rgba(245,247,255,0.86); margin-bottom: 10px; }
+.panel-body{ white-space: pre-line; font: 600 12px/1.5 var(--mono); color: rgba(245,247,255,0.66); margin-bottom: 12px; }
+.panel-actions{ display:flex; justify-content:flex-end; }
