@@ -1,90 +1,125 @@
+import { resolveLang, applyI18n, I18N } from "./i18n.js";
+import { createAmbientEngine } from "./audio.js";
+import { createWorld } from "./world.js";
+
 (function () {
   // Year
   const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 
-  // Intro (premium quick reveal)
-  const intro = document.querySelector(".intro");
-  if (intro && intro.getAttribute("data-intro") === "on") {
-    const hide = () => intro.classList.add("is-hidden");
-    // Show briefly, then hide
-    window.addEventListener("load", () => {
-      setTimeout(hide, 650);
+  // i18n
+  const lang = resolveLang();
+  applyI18n(lang);
+
+  // World
+  const hud = document.getElementById("hud");
+  const hudTitle = document.getElementById("hudTitle");
+  const hudSub = document.getElementById("hudSub");
+
+  const world = createWorld(document.getElementById("world"), {
+    onHoverFragment(fragment) {
+      if (!hud || !hudTitle || !hudSub) return;
+
+      if (!fragment) {
+        hud.classList.remove("is-on");
+        hud.setAttribute("aria-hidden", "true");
+        return;
+      }
+
+      hudTitle.textContent = fragment.title;
+      hudSub.textContent = fragment.sub;
+      hud.classList.add("is-on");
+      hud.setAttribute("aria-hidden", "false");
+    }
+  });
+
+  // Chapters
+  const chapters = Array.from(document.querySelectorAll(".chapter"));
+  function setActiveChapter(name) {
+    chapters.forEach((c) => c.classList.toggle("is-active", c.getAttribute("data-chapter") === name));
+    world.setChapter(name);
+  }
+
+  // Audio engine (created immediately, but starts after user interaction)
+  const audio = createAmbientEngine();
+  const muteToggle = document.getElementById("muteToggle");
+  const muteText = muteToggle?.querySelector("[data-i18n='ui.mute'], [data-i18n='ui.unmute'], .pill-text") || muteToggle?.querySelector(".pill-text");
+
+  function setMutedUI(muted) {
+    if (!muteToggle) return;
+    muteToggle.setAttribute("aria-pressed", muted ? "true" : "false");
+
+    // Update label using i18n keys if present
+    const dict = I18N[resolveLang()] || I18N.en;
+    const label = muted ? (dict["ui.mute"] || "Muted") : (dict["ui.unmute"] || "Audio");
+    const t = muteToggle.querySelector(".pill-text");
+    if (t) t.textContent = label;
+  }
+
+  setMutedUI(true);
+
+  async function unmuteAndStart() {
+    await audio.ensureRunning();
+    audio.setMuted(false);
+    setMutedUI(false);
+  }
+
+  async function mute() {
+    await audio.ensureRunning();
+    audio.setMuted(true);
+    setMutedUI(true);
+  }
+
+  if (muteToggle) {
+    muteToggle.addEventListener("click", async () => {
+      await audio.ensureRunning();
+      const isMuted = audio.toggleMute();
+      setMutedUI(isMuted);
     });
-    // Also allow click to dismiss
-    intro.addEventListener("click", hide);
-  } else if (intro) {
-    intro.classList.add("is-hidden");
   }
 
-  // Tilt (scoped to the card)
-  const tiltEl = document.querySelector("[data-tilt]");
-  if (tiltEl) {
-    const maxTilt = 9;
-    const maxMove = 6;
-    let raf = 0;
-
-    function applyTilt(clientX, clientY) {
-      const r = tiltEl.getBoundingClientRect();
-      const px = (clientX - (r.left + r.width / 2)) / (r.width / 2);
-      const py = (clientY - (r.top + r.height / 2)) / (r.height / 2);
-
-      const cx = Math.max(-1, Math.min(1, px));
-      const cy = Math.max(-1, Math.min(1, py));
-
-      const rx = (-cy * maxTilt).toFixed(2);
-      const ry = (cx * maxTilt).toFixed(2);
-      const tx = (cx * maxMove).toFixed(2);
-      const ty = (cy * maxMove).toFixed(2);
-
-      tiltEl.style.transform =
-        `rotateX(${rx}deg) rotateY(${ry}deg) translate3d(${tx}px, ${ty}px, 0)`;
-    }
-
-    function onMove(e) {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        applyTilt(e.clientX, e.clientY);
-      });
-    }
-
-    function reset() {
-      tiltEl.style.transform = "rotateX(0deg) rotateY(0deg) translate3d(0,0,0)";
-    }
-
-    tiltEl.addEventListener("pointermove", onMove, { passive: true });
-    tiltEl.addEventListener("pointerleave", reset, { passive: true });
-    tiltEl.addEventListener("pointerdown", reset, { passive: true });
+  // Enter flow
+  let entered = false;
+  const enterBtn = document.getElementById("enterBtn");
+  if (enterBtn) {
+    enterBtn.addEventListener("click", async () => {
+      entered = true;
+      world.setEntered(true);
+      // Start audio but keep user control: unmute on enter
+      await unmuteAndStart();
+      setActiveChapter("memory");
+    });
   }
 
-  // Lightbox
-  const box = document.getElementById("lightbox");
-  const img = document.getElementById("lightbox-img");
+  // Nav actions
+  document.querySelectorAll("[data-action='goto']").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const target = btn.getAttribute("data-target");
+      if (!target) return;
 
-  function open(src) {
-    if (!box || !img) return;
-    img.src = src;
-    box.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-  }
+      // If user hasn't entered yet, entering should feel earned:
+      // allow "Peek inside" without audio unless they unmute manually
+      if (!entered && target !== "threshold") {
+        world.setEntered(true);
+      }
 
-  function close() {
-    if (!box || !img) return;
-    box.setAttribute("aria-hidden", "true");
-    img.src = "";
-    document.body.style.overflow = "";
-  }
-
-  document.querySelectorAll("[data-lightbox]").forEach((el) => {
-    el.addEventListener("click", () => open(el.getAttribute("data-lightbox")));
+      setActiveChapter(target);
+    });
   });
 
-  document.querySelectorAll("[data-close]").forEach((el) => {
-    el.addEventListener("click", close);
+  document.querySelectorAll("[data-action='home']").forEach((a) => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      setActiveChapter("threshold");
+    });
   });
 
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") close();
-  });
+  // Allow first click anywhere to resume audio context (but keep it muted unless Enter pressed)
+  // (prevents some browsers from refusing later)
+  window.addEventListener("pointerdown", async () => {
+    try { await audio.ensureRunning(); } catch {}
+  }, { once: true, passive: true });
+
+  // Start on threshold
+  setActiveChapter("threshold");
 })();
