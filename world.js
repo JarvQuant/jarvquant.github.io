@@ -31,7 +31,7 @@ function makeRecord(i) {
   };
 }
 
-function buildLattice({ size = 220, step = 6, color = 0x22D3EE, opacity = 0.06 } = {}) {
+function buildLattice({ size = 240, step = 6, color = 0x22D3EE, opacity = 0.08 } = {}) {
   const verts = [];
   const half = size / 2;
 
@@ -54,7 +54,14 @@ function buildLattice({ size = 220, step = 6, color = 0x22D3EE, opacity = 0.06 }
 
   const geom = new THREE.BufferGeometry();
   geom.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-  const mat = new THREE.LineBasicMaterial({   color,   transparent: true,   opacity,   blending: THREE.AdditiveBlending });
+
+  const mat = new THREE.LineBasicMaterial({
+    color,
+    transparent: true,
+    opacity,
+    blending: THREE.AdditiveBlending
+  });
+
   return new THREE.LineSegments(geom, mat);
 }
 
@@ -62,7 +69,7 @@ function makeFrameGeometry(w, h) {
   return new THREE.PlaneGeometry(w, h, 1, 1);
 }
 
-function makeBorderMaterial({ color = 0x22D3EE, opacity = 0.18, thickness = 0.028, glow = 0.55 } = {}) {
+function makeBorderMaterial({ color = 0x22D3EE, opacity = 0.20, thickness = 0.028, glow = 0.60 } = {}) {
   return new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -97,8 +104,8 @@ function makeBorderMaterial({ color = 0x22D3EE, opacity = 0.18, thickness = 0.02
 
       void main(){
         float e = edge(vUv, uThickness);
-        float g = pow(e, 1.6) * uGlow;
-        float a = (e * uOpacity) + g * 0.25;
+        float g = pow(e, 1.55) * uGlow;
+        float a = (e * uOpacity) + g * 0.26;
         gl_FragColor = vec4(uColor, a);
       }
     `
@@ -123,45 +130,64 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x05060a, 0.028);
 
-  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 620);
+  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 820);
   camera.position.set(0, 0.9, 10.5);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.78));
-  const dir = new THREE.DirectionalLight(0x88ddff, 0.30);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.80));
+  const dir = new THREE.DirectionalLight(0x88ddff, 0.32);
   dir.position.set(6, 10, 6);
   scene.add(dir);
 
-  const latticeA = buildLattice({ size: 240, step: 6,  color: 0x22D3EE, opacity: 0.10 });
-  latticeA.position.set(2.4, 2.2, -72); latticeA.rotation.y = 0.08;
-  scene.add(latticeA);
-
-  const latticeB = buildLattice({ size: 240, step: 12, color: 0x6D28D9, opacity: 0.05 });
-  latticeB.position.copy(latticeA.position); latticeB.rotation.y = latticeA.rotation.y;
-  scene.add(latticeB);
-
-  const floor = new THREE.GridHelper(460, 230, 0xffffff, 0xffffff);
-  floor.material.opacity = 0.032;
+  const floor = new THREE.GridHelper(520, 260, 0xffffff, 0xffffff);
+  floor.material.opacity = 0.035;
   floor.material.transparent = true;
   floor.position.y = -1.25;
   scene.add(floor);
 
-  // Frames (static)
+  const origin = new THREE.Vector3(2.4, 2.2, -72);
+  const yaw = 0.08;
+
+  const latticeA = buildLattice({ size: 260, step: 6,  color: 0x22D3EE, opacity: 0.12 });
+  latticeA.position.copy(origin);
+  latticeA.rotation.y = yaw;
+  scene.add(latticeA);
+
+  const latticeB = buildLattice({ size: 260, step: 12, color: 0x6D28D9, opacity: 0.06 });
+  latticeB.position.copy(origin);
+  latticeB.rotation.y = yaw;
+  scene.add(latticeB);
+
+  const farVolumes = [];
+  for (let k = 0; k < 6; k++) {
+    const la = buildLattice({ size: 320 + k * 70, step: 6,  color: 0x22D3EE, opacity: 0.060 - k * 0.006 });
+    const lb = buildLattice({ size: 320 + k * 70, step: 12, color: 0x6D28D9, opacity: 0.032 - k * 0.004 });
+
+    la.position.set(origin.x, origin.y, origin.z - (k + 1) * 110);
+    lb.position.copy(la.position);
+
+    la.rotation.y = yaw + k * 0.01;
+    lb.rotation.y = la.rotation.y;
+
+    scene.add(la);
+    scene.add(lb);
+    farVolumes.push({ la, lb });
+  }
+
   const frames = [];
   const frameGroup = new THREE.Group();
   frameGroup.position.set(0, 1.5, -70);
   scene.add(frameGroup);
 
-  const baseBorder = makeBorderMaterial({ opacity: 0.18, thickness: 0.028, glow: 0.55 });
-  const hoverBorder = makeBorderMaterial({ opacity: 0.34, thickness: 0.032, glow: 0.85 });
+  const baseBorder = makeBorderMaterial({ opacity: 0.22, thickness: 0.028, glow: 0.65 });
+  const hoverBorder = makeBorderMaterial({ opacity: 0.38, thickness: 0.032, glow: 0.95 });
 
-  // faint “plate” behind border so it’s readable at rest
-  const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.22 });
+  const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.24 });
 
-  const smallCount = 92;
+  const smallCount = 320;
   for (let i = 0; i < smallCount; i++) {
     const rec = makeRecord(i);
-    const w = rand(0.75, 1.45);
-    const h = w * rand(0.58, 0.78);
+    const w = rand(0.55, 1.35);
+    const h = w * rand(0.55, 0.80);
 
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
     border.userData.rec = rec;
@@ -170,40 +196,58 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     plate.position.z = -0.001;
     border.add(plate);
 
-    border.position.set(rand(-9.0, 9.0), rand(-2.0, 4.8), rand(-20, 20));
-    border.rotation.y = rand(-0.55, 0.55);
+    border.position.set(rand(-10.5, 10.5), rand(-2.2, 5.4), rand(-34, 34));
+    border.rotation.y = rand(-0.75, 0.75);
 
     frameGroup.add(border);
     frames.push(border);
   }
 
-  // Exhibits (images)
+  const microCount = 900;
+  for (let i = 0; i < microCount; i++) {
+    const w = rand(0.12, 0.32);
+    const h = w * rand(0.55, 0.90);
+    const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
+
+    border.position.set(rand(-18, 18), rand(-4, 10), rand(-90, 30));
+    border.rotation.y = rand(-1.2, 1.2);
+    border.rotation.x = rand(-0.25, 0.25);
+
+    border.userData.rec = null;
+    frameGroup.add(border);
+  }
+
   const exhibits = [
     { src: "assets/replay.jpg", title: "Replay Engine" },
-    { src: "assets/builder.jpg", title: "Strategy Builder" },
+    { src: "assets/settings.jpg", title: "Assumptions + Presets" },
     { src: "assets/journal.jpg", title: "Journal + Export" },
+    { src: "assets/replay-trader.jpg", title: "Replay Trader" },
+    { src: "assets/strategy-trades.jpg", title: "Strategy → Trades" },
+    { src: "assets/place-holder-strat.jpg", title: "Strategy Capsule (WIP)" },
   ];
 
-  const exhibitGeo = makeFrameGeometry(5.2, 3.1);
+  const exhibitGeo = makeFrameGeometry(5.4, 3.2);
   const exhibitMeshes = [];
 
   for (let i = 0; i < exhibits.length; i++) {
-    const rec = { id: `EX-${i + 1}`, ts: "exhibit", instrument: "JarvQuant", setup: exhibits[i].title, r: "—", note: "A preserved surface of the tool." };
+    const rec = { id: `EX-${i + 1}`, ts: "exhibit", instrument: "JarvQuant", setup: exhibits[i].title, r: "—", note: "Exhibit plate." };
 
     const border = new THREE.Mesh(exhibitGeo, baseBorder.clone());
     border.userData.rec = rec;
 
-    const plate = new THREE.Mesh(makeFrameGeometry(5.05, 2.95), plateMat.clone());
+    const plate = new THREE.Mesh(makeFrameGeometry(5.22, 3.05), plateMat.clone());
     plate.position.z = -0.001;
 
-    const inner = new THREE.Mesh(makeFrameGeometry(4.9, 2.8), new THREE.MeshBasicMaterial({ color: 0x0a0f18, transparent: true, opacity: 0.80 }));
+    const inner = new THREE.Mesh(makeFrameGeometry(5.05, 2.92), new THREE.MeshBasicMaterial({ color: 0x0a0f18, transparent: true, opacity: 0.84 }));
     inner.position.z = 0.001;
 
     border.add(plate);
     border.add(inner);
 
-    border.position.set(-6.8 + i * 6.8, 0.6, -8.5);
-    border.rotation.y = rand(-0.16, 0.16);
+    const row = Math.floor(i / 3);
+    const col = i % 3;
+    border.position.set(-7.4 + col * 7.4, 1.15 - row * 4.1, -10.5);
+    border.rotation.y = rand(-0.14, 0.14);
 
     frameGroup.add(border);
     frames.push(border);
@@ -214,18 +258,24 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     try {
       for (const ex of exhibitMeshes) {
         const tex = await loadTexture(ex.src);
-        ex.inner.material = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.92 });
+        ex.inner.material = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.94 });
       }
     } catch {}
   })();
 
-  // Selection leash (line from selected frame to a point in front of camera)
+  const beacons = [
+    { id: "b1", pos: new THREE.Vector3(1.4, 1.7,  4),   title: "[THRESHOLD]", body: "Enter the archive.\nSilence before structure." },
+    { id: "b2", pos: new THREE.Vector3(-1.8, 1.3, -22), title: "[MEMORY]", body: "Every decision leaves structure behind.\nRecords don’t judge. They preserve." },
+    { id: "b3", pos: new THREE.Vector3(2.6, 1.1, -48),  title: "[REPLAY]", body: "Reconstruct the moment.\nTrain inside preserved volatility." },
+    { id: "b4", pos: new THREE.Vector3(-2.2, 1.6, -76), title: "[STRUCTURE]", body: "Turn repetition into architecture.\nRules make edge repeatable." },
+    { id: "b5", pos: new THREE.Vector3(1.6, 1.3, -104), title: "[EDGE]", body: "Precision is memory organized.\nAccess is earned, not sold." },
+  ];
+
   const leashMat = new THREE.LineBasicMaterial({ color: 0x22D3EE, transparent: true, opacity: 0.0 });
   const leashGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
   const leash = new THREE.Line(leashGeom, leashMat);
   scene.add(leash);
 
-  // Raycast
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2(0, 0);
 
@@ -247,12 +297,13 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     mouseY: 0,
     rail: 0,
     railTarget: 0,
-    focus: 0,         // 0 normal, 1 selected zoom
+    focus: 0,
     focusTarget: 0,
     focusPos: new THREE.Vector3(0, 1.6, -30),
   };
 
   const chapterStops = { threshold: 0.00, memory: 0.32, replay: 0.55, structure: 0.77, edge: 1.00 };
+  const biasX = 1.2;
 
   function setEntered(v) { state.entered = !!v; }
   function setChapter(name) { state.chapter = name; state.railTarget = chapterStops[name] ?? 0; }
@@ -268,19 +319,23 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
   function selectObject(obj) {
     if (!obj) return;
-
     selected = obj;
     state.focusTarget = 1;
 
     const rec = obj.userData.rec;
-    if (onSelectRecord && rec) {
-      onSelectRecord({
-        title: `${rec.id} · ${rec.instrument} · ${rec.setup}`,
-        body: `${rec.ts} · ${rec.r}\n\n${rec.note}`
-      });
+    if (onSelectRecord) {
+      if (rec?.id?.startsWith("EX-")) {
+        onSelectRecord({ title: `${rec.id} · ${rec.setup}`, body: `Exhibit plate.\nClick again or press ESC to close.` });
+      } else if (rec) {
+        onSelectRecord({
+          title: `${rec.id} · ${rec.instrument} · ${rec.setup}`,
+          body: `${rec.ts} · ${rec.r}\n\n${rec.note}`
+        });
+      } else {
+        onSelectRecord(null);
+      }
     }
 
-    // focus point in world space
     obj.getWorldPosition(state.focusPos);
   }
 
@@ -296,20 +351,31 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     if (hits.length) {
       const obj = hits[0].object;
+
+      if (!obj.userData.rec) {
+        if (hovered && hovered !== selected) hovered.material = hovered.userData._matBase || hovered.material;
+        hovered = null;
+        if (onHoverFragment) onHoverFragment(null);
+        return;
+      }
+
       if (hovered !== obj) {
         if (hovered && hovered !== selected) hovered.material = hovered.userData._matBase || hovered.material;
-
         hovered = obj;
-        if (!obj.userData._matBase) obj.userData._matBase = obj.material;
 
+        if (!obj.userData._matBase) obj.userData._matBase = obj.material;
         if (obj !== selected) obj.material = hoverBorder.clone();
 
         const rec = obj.userData.rec;
         if (onHoverFragment && rec) {
-          onHoverFragment({
-            title: `${rec.id} · ${rec.setup}`,
-            sub: `${rec.ts} · ${rec.instrument} · ${rec.r}\n${rec.note}`
-          });
+          if (rec.id.startsWith("EX-")) {
+            onHoverFragment({ title: `${rec.id} · EXHIBIT`, sub: `${rec.setup}\nClick to open.` });
+          } else {
+            onHoverFragment({
+              title: `${rec.id} · ${rec.setup}`,
+              sub: `${rec.ts} · ${rec.instrument} · ${rec.r}\n${rec.note}`
+            });
+          }
         }
       }
     } else {
@@ -327,9 +393,9 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     camera.updateProjectionMatrix();
   }
 
-  // --- animate ---
   let t0 = performance.now();
   function tick(now) {
+    const dt = (now - t0) / 1000;
     t0 = now;
 
     state.rail = lerp(state.rail, state.railTarget, 0.06);
@@ -338,13 +404,11 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const px = clamp(state.mouseX, -1, 1);
     const py = clamp(state.mouseY, -1, 1);
 
-    // Base path through lattice
-    const baseZ = lerp(12.0, -110.0, state.rail);
-    const baseX = px * 0.75 + Math.sin(state.rail * Math.PI * 2) * 0.25;
-    const baseY = 0.8 + py * 0.28 + Math.cos(state.rail * Math.PI * 1.3) * 0.10;
+    const baseZ = lerp(12.0, -160.0, state.rail);
+    const baseX = px * 0.85 + Math.sin(state.rail * Math.PI * 2) * 0.25;
+    const baseY = 0.8 + py * 0.30 + Math.cos(state.rail * Math.PI * 1.3) * 0.10;
 
-    // Focus zoom: move camera towards selected object
-    const focusZ = state.focusPos.z + 4.2;
+    const focusZ = state.focusPos.z + 4.4;
     const focusX = state.focusPos.x * 0.55;
     const focusY = state.focusPos.y + 0.2;
 
@@ -352,31 +416,33 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     camera.position.y = lerp(baseY, focusY, state.focus);
     camera.position.z = lerp(baseZ, focusZ, state.focus);
 
-    // Look target
     const lookZ = lerp(camera.position.z - 18, state.focusPos.z, state.focus);
-    const biasX = 1.2; // breaks the central seam
     camera.lookAt(
       lerp(biasX, state.focusPos.x, state.focus * 0.65),
       lerp(1.6, state.focusPos.y, state.focus),
       lookZ
     );
 
-    // Leash line
     if (selected) {
       const a = new THREE.Vector3();
       selected.getWorldPosition(a);
       const b = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z - 6.5);
-
       leash.geometry.setFromPoints([a, b]);
       leash.material.opacity = lerp(leash.material.opacity, 0.35, 0.12);
     } else {
       leash.material.opacity = lerp(leash.material.opacity, 0.0, 0.10);
     }
 
-    // very restrained breathing
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00025);
-    latticeA.material.opacity = 0.052 + pulse * 0.012;
-    latticeB.material.opacity = 0.022 + pulse * 0.007;
+    latticeA.material.opacity = 0.10 + pulse * 0.03;
+    latticeB.material.opacity = 0.05 + pulse * 0.02;
+    for (let i = 0; i < farVolumes.length; i++) {
+      const v = farVolumes[i];
+      const a = Math.max(0.010, 0.045 - i * 0.006);
+      const b = Math.max(0.006, 0.022 - i * 0.004);
+      v.la.material.opacity = a + pulse * 0.008;
+      v.lb.material.opacity = b + pulse * 0.006;
+    }
 
     updateHover();
     renderer.render(scene, camera);
@@ -394,18 +460,18 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     setPointerFromEvent(e);
     raycaster.setFromCamera(pointer, camera);
-    const hits = raycaster.intersectObjects(frames, false);
 
+    const hits = raycaster.intersectObjects(frames, false);
     if (!hits.length) {
       clearSelection();
       return;
     }
-    const obj = hits[0].object;
 
-    // toggle selection
-    if (selected === obj) {
-      clearSelection();
-    } else {
+    const obj = hits[0].object;
+    if (!obj.userData.rec) return;
+
+    if (selected === obj) clearSelection();
+    else {
       if (selected) clearSelection();
       selectObject(obj);
     }
@@ -413,6 +479,20 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
   function onKeyDown(e) {
     if (e.key === "Escape") clearSelection();
+  }
+
+  function getBeaconScreenspace() {
+    return beacons.map(b => {
+      const v = b.pos.clone().project(camera);
+      return {
+        id: b.id,
+        title: b.title,
+        body: b.body,
+        x: (v.x * 0.5 + 0.5) * window.innerWidth,
+        y: (-v.y * 0.5 + 0.5) * window.innerHeight,
+        z: v.z
+      };
+    });
   }
 
   window.addEventListener("resize", resize);
@@ -428,6 +508,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     setEntered,
     setRail,
     clearSelection,
+    getBeaconScreenspace,
     dispose() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onPointerMove);
