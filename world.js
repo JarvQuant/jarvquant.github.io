@@ -398,8 +398,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const dt = (now - t0) / 1000;
     t0 = now;
 
-    state.rail = lerp(state.rail, state.railTarget, 0.06);
-    state.focus = lerp(state.focus, state.focusTarget, 0.075);
+    state.rail = lerp(state.rail, state.railTarget, 0.035);
+    state.focus = lerp(state.focus, state.focusTarget, 0.035);
 
     const px = clamp(state.mouseX, -1, 1);
     const py = clamp(state.mouseY, -1, 1);
