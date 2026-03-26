@@ -221,7 +221,7 @@ a{color:inherit; text-decoration:none}
   transition: transform .18s ease, border-color .18s ease, background .18s ease;
 }
 .shot:hover{transform: translateY(-3px); border-color: rgba(34,211,238,.20); background: rgba(255,255,255,.06);}
-.shot img{display:block; width:100%; height: 260px; object-fit: cover;}
+.shot img{display:block; width:100%; height: 340px; object-fit: cover;}
 .shot-label{
   position:absolute; left:12px; top:12px;
   font-size: 13px;
