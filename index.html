@@ -3,270 +3,140 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="JarvQuant — Trade with structure. Not guesswork. Replay-first research, strategy building, and journaling in one desktop tool." />
-  <title>JarvQuant</title>
 
-  <link rel="icon" href="assets/favicon.png?v=3" type="image/png" />
+  <title>JarvQuant</title>
+  <meta name="description" content="JarvQuant — a replay-first archive of market memory." />
+
+  <link rel="icon" href="assets/favicon.png?v=4" type="image/png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
   <link rel="shortcut icon" href="/favicon.ico" />
 
-  <link rel="stylesheet" href="styles.css" />
-
   <meta property="og:title" content="JarvQuant" />
-  <meta property="og:description" content="Trade with structure. Not guesswork." />
+  <meta property="og:description" content="Memory is where edge begins." />
   <meta property="og:type" content="website" />
+
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <!-- Intro (auto-hides). Disable by setting data-intro="off" -->
-  <div class="intro" data-intro="on" aria-hidden="true">
-    <div class="intro-inner">
-      <img class="intro-logo" src="assets/logo.png" alt="" aria-hidden="true" />
-      <div class="intro-title">JarvQuant</div>
-      <div class="intro-sub">Trade with structure. Not guesswork.</div>
-      <div class="intro-line" aria-hidden="true"></div>
-    </div>
-  </div>
+  <!-- WebGL canvas -->
+  <canvas id="world" aria-hidden="true"></canvas>
 
-  <!-- Premium quant background -->
-  <div class="bg" aria-hidden="true">
-    <div class="aurora"></div>
-    <div class="vignette"></div>
-    <div class="grain"></div>
+  <!-- Subtle vignette/grain overlay -->
+  <div class="overlay" aria-hidden="true"></div>
 
-    <svg class="quant-overlay" viewBox="0 0 1200 700" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#6D28D9" stop-opacity="0.40"/>
-          <stop offset="1" stop-color="#22D3EE" stop-opacity="0.35"/>
-        </linearGradient>
+  <!-- Top embedded control surface -->
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="JarvQuant home" data-action="home">
+      <img class="brand-logo" src="assets/logo.png" alt="" aria-hidden="true" />
+      <span class="brand-text">JarvQuant</span>
+    </a>
 
-        <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="2.5" result="b"/>
-          <feColorMatrix in="b" type="matrix"
-            values="1 0 0 0 0
-                    0 1 0 0 0
-                    0 0 1 0 0
-                    0 0 0 .55 0" result="g"/>
-          <feMerge>
-            <feMergeNode in="g"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
+    <nav class="nav" aria-label="Primary">
+      <button class="nav-item" data-action="goto" data-target="memory" data-i18n="nav.memory">Memory</button>
+      <button class="nav-item" data-action="goto" data-target="replay" data-i18n="nav.replay">Replay</button>
+      <button class="nav-item" data-action="goto" data-target="structure" data-i18n="nav.structure">Structure</button>
+      <button class="nav-item" data-action="goto" data-target="edge" data-i18n="nav.edge">Access</button>
+    </nav>
 
-        <!-- subtle grid pattern -->
-        <pattern id="pGrid" width="60" height="60" patternUnits="userSpaceOnUse">
-          <path d="M60 0H0V60" fill="none" stroke="white" stroke-opacity=".07" stroke-width="1"/>
-        </pattern>
+    <div class="controls">
+      <button class="pill" id="muteToggle" data-action="mute" aria-pressed="true" title="Mute">
+        <span class="pill-dot" aria-hidden="true"></span>
+        <span class="pill-text" data-i18n="ui.mute">Muted</span>
+      </button>
 
-        <pattern id="pGridFine" width="12" height="12" patternUnits="userSpaceOnUse">
-          <path d="M12 0H0V12" fill="none" stroke="white" stroke-opacity=".035" stroke-width="1"/>
-        </pattern>
-      </defs>
-
-      <!-- grids -->
-      <rect x="0" y="0" width="1200" height="700" fill="url(#pGridFine)" opacity="0.85"/>
-      <rect x="0" y="0" width="1200" height="700" fill="url(#pGrid)" opacity="0.55"/>
-
-      <!-- faint axes / ticks -->
-      <g opacity="0.28">
-        <path d="M80 80V620" stroke="white" stroke-opacity=".18" stroke-width="1"/>
-        <path d="M80 620H1120" stroke="white" stroke-opacity=".18" stroke-width="1"/>
-        <g stroke="white" stroke-opacity=".14" stroke-width="1">
-          <path d="M80 140H88"/><path d="M80 200H88"/><path d="M80 260H88"/><path d="M80 320H88"/><path d="M80 380H88"/><path d="M80 440H88"/><path d="M80 500H88"/><path d="M80 560H88"/>
-          <path d="M180 620V612"/><path d="M280 620V612"/><path d="M380 620V612"/><path d="M480 620V612"/><path d="M580 620V612"/><path d="M680 620V612"/><path d="M780 620V612"/><path d="M880 620V612"/><path d="M980 620V612"/><path d="M1080 620V612"/>
-        </g>
-      </g>
-
-      <!-- ghost candlesticks (very subtle) -->
-      <g opacity="0.22" stroke="url(#g1)" stroke-width="2" fill="none">
-        <path d="M240 460v-44" opacity=".35"/>
-        <rect x="232" y="430" width="16" height="22" rx="4" opacity=".55"/>
-        <path d="M280 430v-58" opacity=".35"/>
-        <rect x="272" y="388" width="16" height="32" rx="4" opacity=".55"/>
-        <path d="M320 410v-70" opacity=".35"/>
-        <rect x="312" y="362" width="16" height="40" rx="4" opacity=".55"/>
-        <path d="M360 392v-40" opacity=".35"/>
-        <rect x="352" y="360" width="16" height="22" rx="4" opacity=".55"/>
-        <path d="M400 372v-64" opacity=".35"/>
-        <rect x="392" y="320" width="16" height="44" rx="4" opacity=".55"/>
-        <path d="M440 336v-48" opacity=".35"/>
-        <rect x="432" y="300" width="16" height="26" rx="4" opacity=".55"/>
-      </g>
-
-      <!-- signal curve -->
-      <path d="M120 520 C 250 470, 340 500, 430 420
-               S 620 330, 720 360
-               S 930 260, 1080 210"
-            fill="none" stroke="#22D3EE" stroke-opacity=".35" stroke-width="3"
-            filter="url(#softGlow)"/>
-
-      <!-- tiny math-ish labels -->
-      <g fill="white" fill-opacity=".42" font-family="ui-sans-serif, system-ui" font-size="12">
-        <text x="94" y="104">ΔP/L</text>
-        <text x="1040" y="646">tickSize</text>
-        <text x="1040" y="666">tickValue</text>
-        <text x="96" y="646">replay</text>
-        <text x="160" y="646">execution</text>
-        <text x="266" y="646">journal</text>
-      </g>
-    </svg>
-  </div>
-
-  <header class="top">
-    <div class="container topbar">
-      <a class="brand" href="#" aria-label="JarvQuant home">
-        <img class="brand-logo" src="assets/logo.png" alt="" aria-hidden="true" />
-        <span class="brand-text">JarvQuant</span>
-      </a>
-
-      <nav class="nav" aria-label="Primary">
-        <a href="#product">Product</a>
-        <a href="#proof">Shipped</a>
-        <a class="btn btn-ghost" href="#waitlist">Get updates</a>
-      </nav>
+      <!-- Optional language indicator (no dropdown yet, but supports ?lang=xx) -->
+      <div class="lang" title="Set language via ?lang=de">
+        <span class="lang-label">Lang</span>
+        <span class="lang-value" id="langValue">EN</span>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <section class="hero">
-      <div class="hero-left">
-        <div class="kicker">Replay-first research desk</div>
-        <h1 class="headline">Trade with structure.<br />Not guesswork.</h1>
+  <!-- Chapter overlay (embedded UI) -->
+  <main class="ui">
+    <!-- Threshold -->
+    <section class="chapter is-active" id="chapter-threshold" data-chapter="threshold">
+      <div class="chapter-kicker" data-i18n="threshold.kicker">THRESHOLD</div>
+      <h1 class="chapter-title" data-i18n="threshold.title">Enter the archive.</h1>
+      <p class="chapter-sub" data-i18n="threshold.sub">
+        Every market leaves a trace. Precision begins where memory is organized.
+      </p>
 
-        <p class="subline">
-          Replay-first research, strategy building, and journaling in one desktop tool.
-        </p>
-
-        <div id="proof" class="proof-strip" role="note" aria-label="Product status">
-          <span class="chip chip-live">Shipped v0.3.0</span>
-          <span class="chip">Replay Engine</span>
-          <span class="chip">Strategy Builder</span>
-          <span class="chip">Journal + PDF Export</span>
-          <span class="chip">Offline-first</span>
-        </div>
-
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="#waitlist">Join the waitlist</a>
-          <a class="btn btn-ghost" href="#product">See the product</a>
-        </div>
-
-        <div class="micro">
-          Built from a real app — screenshots below are from the product.
-        </div>
+      <div class="chapter-actions">
+        <button class="btn primary" id="enterBtn" data-i18n="threshold.cta">Enter</button>
+        <button class="btn ghost" data-action="goto" data-target="memory" data-i18n="threshold.peek">Peek inside</button>
       </div>
 
-      <div class="hero-right">
-        <div class="tilt-card" data-tilt>
-          <div class="tilt-glow" aria-hidden="true"></div>
-
-          <div class="tilt-inner">
-            <div class="tilt-title">JarvQuant Desktop</div>
-            <div class="tilt-sub">Replay • Build • Journal</div>
-
-            <div class="tilt-metrics">
-              <div class="metric">
-                <span class="m-label">Status</span>
-                <span class="m-val">Shipped</span>
-              </div>
-              <div class="metric">
-                <span class="m-label">Focus</span>
-                <span class="m-val">Evidence</span>
-              </div>
-              <div class="metric">
-                <span class="m-label">Mode</span>
-                <span class="m-val">Offline-first</span>
-              </div>
-            </div>
-
-            <div class="tilt-footer">
-              <span class="dot" aria-hidden="true"></span>
-              Live development updates via waitlist
-            </div>
-          </div>
-        </div>
+      <div class="micro" data-i18n="threshold.micro">
+        Tip: move your mouse gently. Hover the nodes.
       </div>
     </section>
 
-    <section id="product" class="section">
-      <div class="section-head">
-        <h2>Screens over words</h2>
-        <p>Your biggest flex. Make it obvious.</p>
-      </div>
-
-      <div class="shots">
-        <button class="shot" data-lightbox="assets/replay.jpg" aria-label="Open Replay screenshot">
-          <div class="shot-label">Replay Engine</div>
-          <img src="assets/replay.jpg" alt="JarvQuant Replay Engine screenshot" loading="lazy" />
-        </button>
-
-        <button class="shot" data-lightbox="assets/builder.jpg" aria-label="Open Strategy Builder screenshot">
-          <div class="shot-label">Strategy Builder</div>
-          <img src="assets/builder.jpg" alt="JarvQuant Strategy Builder screenshot" loading="lazy" />
-        </button>
-
-        <button class="shot" data-lightbox="assets/journal.jpg" aria-label="Open Journal screenshot">
-          <div class="shot-label">Journal + Export</div>
-          <img src="assets/journal.jpg" alt="JarvQuant Journal screenshot" loading="lazy" />
-        </button>
+    <!-- Memory -->
+    <section class="chapter" id="chapter-memory" data-chapter="memory">
+      <div class="chapter-kicker" data-i18n="memory.kicker">MEMORY FIELD</div>
+      <h2 class="chapter-title" data-i18n="memory.title">Market decisions don’t disappear.</h2>
+      <p class="chapter-sub" data-i18n="memory.sub">
+        Stored imprints. Retrieved patterns. Quiet, repeatable learning.
+      </p>
+      <div class="micro" data-i18n="memory.micro">
+        Hover a capsule to reveal a fragment.
       </div>
     </section>
 
-    <section id="waitlist" class="section">
-      <div class="panel">
-        <div class="panel-left">
-          <h2>Get updates</h2>
-          <p>
-            Shipping fast. If you want early access and changelog drops, join the waitlist.
-          </p>
-
-          <ul class="bullets">
-            <li>Early builds + release notes</li>
-            <li>Short surveys that actually shape the product</li>
-            <li>No spam</li>
-          </ul>
-        </div>
-
-        <div class="panel-right">
-          <a class="btn btn-primary btn-wide"
-             href="mailto:hello@jarvquant.com?subject=JarvQuant%20Waitlist&body=Hi%20—%20please%20add%20me%20to%20the%20JarvQuant%20waitlist.%0A%0AName:%0AUse-case:%0A">
-            Email to join waitlist
-          </a>
-
-          <div class="small">
-            Early access + release notes. No spam.
-          </div>
-        </div>
+    <!-- Replay -->
+    <section class="chapter" id="chapter-replay" data-chapter="replay">
+      <div class="chapter-kicker" data-i18n="replay.kicker">REPLAY CHAMBER</div>
+      <h2 class="chapter-title" data-i18n="replay.title">Revisit the moment before hindsight.</h2>
+      <p class="chapter-sub" data-i18n="replay.sub">
+        Time as a surface you can move through — not a chart you scroll past.
+      </p>
+      <div class="micro" data-i18n="replay.micro">
+        (Chapter stub — we’ll build the chamber next.)
       </div>
     </section>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        <div class="footer-left">
-          <div class="brand-mini">
-            <img class="brand-logo" src="assets/logo.png" alt="" aria-hidden="true" />
-            <span>JarvQuant</span>
-          </div>
-          <div class="small">© <span id="year"></span> JarvQuant. All rights reserved.</div>
-        </div>
-
-        <div class="footer-right small">
-          <a href="#" onclick="return false;">Imprint</a>
-          <span class="sep">•</span>
-          <a href="#" onclick="return false;">Privacy</a>
-        </div>
+    <!-- Structure -->
+    <section class="chapter" id="chapter-structure" data-chapter="structure">
+      <div class="chapter-kicker" data-i18n="structure.kicker">STRATEGY STRUCTURE</div>
+      <h2 class="chapter-title" data-i18n="structure.title">Turn repetition into architecture.</h2>
+      <p class="chapter-sub" data-i18n="structure.sub">
+        Rules. Constraints. Risk. Execution — wired into a system you can trust.
+      </p>
+      <div class="micro" data-i18n="structure.micro">
+        (Chapter stub — we’ll animate logic paths here.)
       </div>
-    </footer>
+    </section>
+
+    <!-- Edge / CTA -->
+    <section class="chapter" id="chapter-edge" data-chapter="edge">
+      <div class="chapter-kicker" data-i18n="edge.kicker">ACCESS POINT</div>
+      <h2 class="chapter-title" data-i18n="edge.title">Request access.</h2>
+      <p class="chapter-sub" data-i18n="edge.sub">
+        Early builds + release notes. No noise.
+      </p>
+
+      <div class="chapter-actions">
+        <a class="btn primary"
+           href="mailto:hello@jarvquant.com?subject=JarvQuant%20Access%20Request&body=Hi%20—%20please%20add%20me%20to%20the%20JarvQuant%20waitlist.%0A%0AName:%0AUse-case:%0A">
+          <span data-i18n="edge.cta">Email to request access</span>
+        </a>
+      </div>
+
+      <div class="micro">
+        © <span id="year"></span> JarvQuant
+      </div>
+    </section>
+
+    <!-- Hover HUD -->
+    <div class="hud" id="hud" aria-hidden="true">
+      <div class="hud-title" id="hudTitle">Fragment</div>
+      <div class="hud-sub" id="hudSub">—</div>
+    </div>
   </main>
 
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <div class="lightbox-backdrop" data-close></div>
-    <div class="lightbox-content" role="dialog" aria-modal="true" aria-label="Screenshot preview">
-      <button class="lightbox-close" data-close aria-label="Close">×</button>
-      <img id="lightbox-img" alt="Screenshot preview" />
-    </div>
-  </div>
-
-  <script src="main.js" defer></script>
+  <!-- Modules -->
+  <script type="module" src="main.js"></script>
 </body>
 </html>
