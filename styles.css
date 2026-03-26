@@ -368,3 +368,10 @@ body{
 .topbar{
   mix-blend-mode: screen;
 }
+/* Prevent accidental mailto clicks before the Access chapter */
+.chapter a.btn{
+  pointer-events: none;
+}
+#chapter-edge.is-active a.btn{
+  pointer-events: auto;
+}
