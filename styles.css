@@ -352,3 +352,19 @@ body{
 .hud{
   border-color: rgba(34,211,238,0.14);
 }
+/* --- JarvQuant: system legibility tweaks --- */
+.hud-sub{
+  white-space: pre-line;
+}
+
+.chapter{
+  max-width: 640px;
+}
+
+.nav{
+  background: rgba(5,6,10,0.14);
+}
+
+.topbar{
+  mix-blend-mode: screen;
+}
