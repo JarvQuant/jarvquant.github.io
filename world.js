@@ -5,38 +5,133 @@ function lerp(a, b, t) { return a + (b - a) * t; }
 function rand(a, b) { return a + Math.random() * (b - a); }
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-function makeCapsuleRecord(i) {
-  const setups = ["Breakout Retest", "Liquidity Sweep", "Trend Continuation", "Range Fade", "Impulse Pullback", "Compression Release"];
-  const emotions = ["calm", "rushed", "hesitant", "certain", "numb", "sharp"];
-  const mistakes = ["late entry", "no plan", "risk drift", "confirmation bias", "moved stop", "overtraded"];
-  const insights = [
-    "Volatility was the signal — not the candle.",
-    "My entry was emotion disguised as logic.",
-    "The market repeated a pattern I refused to name.",
-    "Edge appeared only after I stopped forcing it.",
-    "Structure held. Discipline didn’t.",
-    "The setup worked. Timing didn’t."
+function makeRecord(i) {
+  const setups = ["Liquidity Sweep", "Breakout Retest", "Compression", "Impulse Pullback", "Range Fade", "Reversion"];
+  const instruments = ["ES", "NQ", "DAX", "BTC", "EURUSD", "CL"];
+  const notes = [
+    "The entry was clean. The hesitation wasn’t.",
+    "I saw the level. I ignored the pace.",
+    "The market offered structure. I brought noise.",
+    "Volatility was the context. Not the excuse.",
+    "Edge appeared after I stopped narrating.",
+    "The setup repeated. My discipline didn’t."
   ];
-
-  const daysAgo = Math.floor(rand(4, 280));
+  const days = Math.floor(rand(3, 320));
   const hh = String(Math.floor(rand(6, 22))).padStart(2, "0");
   const mm = String(Math.floor(rand(0, 59))).padStart(2, "0");
+  const r = (Math.round(rand(-18, 22)) / 10).toFixed(1);
 
-  const record = {
+  return {
     id: `JQ-${String(i + 1).padStart(4, "0")}`,
-    title: pick(["Decision Capsule", "Journal Imprint", "Replay Fragment", "Setup Echo"]),
-    ts: `T-${daysAgo}d · ${hh}:${mm}Z`,
-    tags: [pick(["ES", "NQ", "DAX", "BTC", "EURUSD"]), pick(setups)],
-    note: pick(insights),
-    meta: `state: ${pick(emotions)} · risk: ${pick(["0.5R", "1R", "1.5R", "2R"])} · error: ${pick(mistakes)}`
+    ts: `T-${days}d · ${hh}:${mm}Z`,
+    instrument: pick(instruments),
+    setup: pick(setups),
+    r: `${r}R`,
+    note: pick(notes)
   };
-
-  return record;
 }
 
-/**
- * createWorld(canvas, { onHoverFragment })
- */
+function buildLattice({ size = 180, step = 6, color = 0x22D3EE, opacity = 0.06 } = {}) {
+  // 3D lattice: lines along X, Y, Z planes.
+  // Use LineSegments to keep it fast.
+  const verts = [];
+  const half = size / 2;
+
+  // verticals (Y)
+  for (let x = -half; x <= half; x += step) {
+    for (let z = -half; z <= half; z += step) {
+      verts.push(x, -half, z, x, half, z);
+    }
+  }
+
+  // horizontals X (at several Y slices, fewer to avoid overdraw)
+  const yStep = step * 3;
+  for (let y = -half; y <= half; y += yStep) {
+    for (let z = -half; z <= half; z += step) {
+      verts.push(-half, y, z, half, y, z);
+    }
+  }
+
+  // horizontals Z (at several Y slices)
+  for (let y = -half; y <= half; y += yStep) {
+    for (let x = -half; x <= half; x += step) {
+      verts.push(x, y, -half, x, y, half);
+    }
+  }
+
+  const geom = new THREE.BufferGeometry();
+  geom.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+
+  const mat = new THREE.LineBasicMaterial({
+    color,
+    transparent: true,
+    opacity
+  });
+
+  return new THREE.LineSegments(geom, mat);
+}
+
+function makeFrameGeometry(w, h) {
+  // simple plane; "frame" feeling comes from border shader plane + inner image plane
+  return new THREE.PlaneGeometry(w, h, 1, 1);
+}
+
+function makeBorderMaterial({ color = 0x22D3EE, opacity = 0.16 } = {}) {
+  // Cheap border shader on a plane: draw border lines based on UV.
+  return new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    uniforms: {
+      uColor: { value: new THREE.Color(color) },
+      uOpacity: { value: opacity },
+      uThickness: { value: 0.035 }, // UV thickness
+      uGlow: { value: 0.35 },
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main(){
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uColor;
+      uniform float uOpacity;
+      uniform float uThickness;
+      uniform float uGlow;
+      varying vec2 vUv;
+
+      float edge(vec2 uv, float t){
+        float l = smoothstep(0.0, t, uv.x);
+        float r = smoothstep(0.0, t, 1.0 - uv.x);
+        float b = smoothstep(0.0, t, uv.y);
+        float top = smoothstep(0.0, t, 1.0 - uv.y);
+        float e = min(min(l, r), min(b, top));
+        return 1.0 - e;
+      }
+
+      void main(){
+        float e = edge(vUv, uThickness);
+        // glow falloff
+        float g = pow(e, 1.8) * uGlow;
+        float a = (e * uOpacity) + g * 0.22;
+        gl_FragColor = vec4(uColor, a);
+      }
+    `
+  });
+}
+
+function loadTexture(url) {
+  return new Promise((resolve, reject) => {
+    const loader = new THREE.TextureLoader();
+    loader.load(url, (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = 8;
+      resolve(tex);
+    }, undefined, reject);
+  });
+}
+
 export function createWorld(canvas, { onHoverFragment } = {}) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -47,213 +142,126 @@ export function createWorld(canvas, { onHoverFragment } = {}) {
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x05060a, 0.035);
+  scene.fog = new THREE.FogExp2(0x05060a, 0.022);
 
-  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 260);
-  camera.position.set(0, 1.35, 9.2);
+  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 520);
+  camera.position.set(0, 0.9, 10.5);
 
-  // Lights: keep minimal, but enough for readability
   scene.add(new THREE.AmbientLight(0xffffff, 0.75));
-
-  const dir = new THREE.DirectionalLight(0x88ddff, 0.35);
-  dir.position.set(6, 8, 5);
+  const dir = new THREE.DirectionalLight(0x88ddff, 0.28);
+  dir.position.set(6, 10, 6);
   scene.add(dir);
 
-  const rim = new THREE.PointLight(0x22D3EE, 0.55, 28);
-  rim.position.set(-6, 3, 6);
-  scene.add(rim);
+  // Lattice layers (JarvQuant version: market coordinate vault)
+  const latticeA = buildLattice({ size: 220, step: 6, color: 0x22D3EE, opacity: 0.055 });
+  latticeA.position.set(0, 2.5, -70);
+  scene.add(latticeA);
 
-  // --- BASE GRID PLANES ---
-  const grid1 = new THREE.GridHelper(260, 260, 0x22D3EE, 0x22D3EE);
-  grid1.material.opacity = 0.085;
-  grid1.material.transparent = true;
-  grid1.position.y = -1.25;
-  scene.add(grid1);
+  const latticeB = buildLattice({ size: 220, step: 12, color: 0x6D28D9, opacity: 0.028 });
+  latticeB.position.copy(latticeA.position);
+  scene.add(latticeB);
 
-  const grid2 = new THREE.GridHelper(260, 52, 0x6D28D9, 0x6D28D9);
-  grid2.material.opacity = 0.032;
-  grid2.material.transparent = true;
-  grid2.position.y = -1.22;
-  scene.add(grid2);
+  // A subtle axis plane near the viewer (so the user immediately reads “space”)
+  const floor = new THREE.GridHelper(420, 210, 0xffffff, 0xffffff);
+  floor.material.opacity = 0.035;
+  floor.material.transparent = true;
+  floor.position.y = -1.25;
+  scene.add(floor);
 
-  // Primary axis lines (helps orientation)
-  const axisMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.10 });
-  const axisGeomX = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-140, -1.18, 0), new THREE.Vector3(140, -1.18, 0)]);
-  const axisGeomZ = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, -1.18, -140), new THREE.Vector3(0, -1.18, 140)]);
-  scene.add(new THREE.Line(axisGeomX, axisMat));
-  scene.add(new THREE.Line(axisGeomZ, axisMat));
+  // Memory Frames group (static)
+  const frames = [];
+  const frameGroup = new THREE.Group();
+  frameGroup.position.set(0, 1.5, -70);
+  scene.add(frameGroup);
 
-  // --- MATRIX WALL (vertical lattice) ---
-  // Very thin lines + fog => "archive cathedral" feel without particles.
-  const wall = new THREE.Group();
-  scene.add(wall);
+  const borderMatBase = makeBorderMaterial({ color: 0x22D3EE, opacity: 0.12 });
+  const borderMatHover = makeBorderMaterial({ color: 0x22D3EE, opacity: 0.28 });
+  borderMatHover.uniforms.uGlow.value = 0.62;
 
-  const wallMat = new THREE.LineBasicMaterial({ color: 0x22D3EE, transparent: true, opacity: 0.055 });
-  const span = 120;
-  const step = 6;
+  // Create a bunch of small record frames (no textures)
+  const smallCount = 84;
+  for (let i = 0; i < smallCount; i++) {
+    const rec = makeRecord(i);
 
-  for (let x = -span; x <= span; x += step) {
-    const g = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(x, -1.25, -span),
-      new THREE.Vector3(x, 12.0, -span),
-    ]);
-    const ln = new THREE.Line(g, wallMat);
-    ln.position.z = 0;
-    wall.add(ln);
-  }
+    const w = rand(0.65, 1.35);
+    const h = w * rand(0.55, 0.75);
+    const geo = makeFrameGeometry(w, h);
 
-  const wallMat2 = new THREE.LineBasicMaterial({ color: 0x6D28D9, transparent: true, opacity: 0.030 });
-  for (let z = -span; z <= span; z += step) {
-    const g = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(-span, -1.25, z),
-      new THREE.Vector3(-span, 12.0, z),
-    ]);
-    const ln = new THREE.Line(g, wallMat2);
-    ln.position.x = 0;
-    wall.add(ln);
-  }
+    const border = new THREE.Mesh(geo, borderMatBase.clone());
+    border.userData.kind = "record";
+    border.userData.rec = rec;
 
-  // --- DISTANT NODES (points) ---
-  const N = 900; // bigger “archive dust” but still light
-  const positions = new Float32Array(N * 3);
-  const colors = new Float32Array(N * 3);
-
-  const c1 = new THREE.Color(0x6D28D9);
-  const c2 = new THREE.Color(0x22D3EE);
-  for (let i = 0; i < N; i++) {
-    const x = rand(-90, 90);
-    const y = rand(-1.0, 10.0);
-    const z = rand(-110, 70);
-    positions[i * 3 + 0] = x;
-    positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = z;
-
-    const mix = Math.random();
-    const col = c1.clone().lerp(c2, mix);
-    colors[i * 3 + 0] = col.r;
-    colors[i * 3 + 1] = col.g;
-    colors[i * 3 + 2] = col.b;
-  }
-
-  const pGeom = new THREE.BufferGeometry();
-  pGeom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  pGeom.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-
-  const pMat = new THREE.PointsMaterial({
-    size: 0.045,
-    vertexColors: true,
-    transparent: true,
-    opacity: 0.65,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-  });
-
-  const points = new THREE.Points(pGeom, pMat);
-  scene.add(points);
-
-  // --- CAPSULES (meaningful objects) ---
-  const capsuleGroup = new THREE.Group();
-  scene.add(capsuleGroup);
-
-  // Fresnel-like rim shader (simple, fast)
-  const fresnelMat = new THREE.ShaderMaterial({
-    transparent: true,
-    depthWrite: false,
-    uniforms: {
-      uColor: { value: new THREE.Color(0x22D3EE) },
-      uPower: { value: 2.2 },
-      uAlpha: { value: 0.18 },
-    },
-    vertexShader: `
-      varying vec3 vN;
-      varying vec3 vV;
-      void main(){
-        vN = normalize(normalMatrix * normal);
-        vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        vV = normalize(-mv.xyz);
-        gl_Position = projectionMatrix * mv;
-      }
-    `,
-    fragmentShader: `
-      uniform vec3 uColor;
-      uniform float uPower;
-      uniform float uAlpha;
-      varying vec3 vN;
-      varying vec3 vV;
-      void main(){
-        float f = pow(1.0 - max(dot(vN, vV), 0.0), uPower);
-        gl_FragColor = vec4(uColor, f * uAlpha);
-      }
-    `
-  });
-
-  const coreMat = new THREE.MeshStandardMaterial({
-    color: 0x0b1120,
-    metalness: 0.22,
-    roughness: 0.26,
-    transparent: true,
-    opacity: 0.72,
-    emissive: new THREE.Color(0x05070f),
-    emissiveIntensity: 0.4,
-  });
-
-  const glowMat = new THREE.MeshStandardMaterial({
-    color: 0x07101a,
-    metalness: 0.0,
-    roughness: 0.65,
-    transparent: true,
-    opacity: 0.12,
-    emissive: new THREE.Color(0x22D3EE),
-    emissiveIntensity: 0.28,
-  });
-
-  const capsuleData = [];
-  const capsuleCount = 96; // “real archive” feeling
-  for (let i = 0; i < capsuleCount; i++) {
-    const rec = makeCapsuleRecord(i);
-
-    // size variety
-    const w = rand(0.28, 0.65);
-    const h = rand(0.14, 0.30);
-    const d = rand(0.18, 0.42);
-    const geo = new THREE.BoxGeometry(w, h, d);
-
-    const glow = new THREE.Mesh(geo, glowMat.clone());
-    const core = new THREE.Mesh(geo, coreMat.clone());
-    const rimShell = new THREE.Mesh(geo, fresnelMat.clone());
-
-    // distribute in a “field”: forward and wide, with depth
+    // Place on a “wall field” inside lattice (static!)
     const x = rand(-8.5, 8.5);
-    const y = rand(-0.2, 2.8);
-    const z = rand(-28, -4.5);
+    const y = rand(-2.0, 4.6);
+    const z = rand(-18, 18);
 
-    core.position.set(x, y, z);
-    glow.position.copy(core.position);
-    rimShell.position.copy(core.position);
+    border.position.set(x, y, z);
+    border.rotation.y = rand(-0.55, 0.55);
 
-    const rx = rand(-0.22, 0.22);
-    const ry = rand(-0.65, 0.65);
-    core.rotation.set(rx, ry, 0);
-    glow.rotation.copy(core.rotation);
-    rimShell.rotation.copy(core.rotation);
-
-    capsuleGroup.add(glow);
-    capsuleGroup.add(core);
-    capsuleGroup.add(rimShell);
-
-    capsuleData.push({
-      core,
-      glow,
-      rim: rimShell,
-      rec
-    });
+    frameGroup.add(border);
+    frames.push(border);
   }
 
-  // Interaction
+  // Add three large “exhibits” using your existing images
+  const exhibits = [
+    { src: "assets/replay.jpg", title: "Replay Engine" },
+    { src: "assets/builder.jpg", title: "Strategy Builder" },
+    { src: "assets/journal.jpg", title: "Journal + Export" },
+  ];
+
+  const exhibitMeshes = [];
+  const exhibitGeo = makeFrameGeometry(4.8, 2.9);
+
+  // We'll attach textures async; meanwhile show border plates
+  for (let i = 0; i < exhibits.length; i++) {
+    const rec = {
+      id: `EX-${i + 1}`,
+      ts: "exhibit",
+      instrument: "JarvQuant",
+      setup: exhibits[i].title,
+      r: "—",
+      note: "A preserved surface of the tool."
+    };
+
+    const border = new THREE.Mesh(exhibitGeo, borderMatBase.clone());
+    border.userData.kind = "exhibit";
+    border.userData.rec = rec;
+
+    // Create inner plane for image
+    const inner = new THREE.Mesh(
+      makeFrameGeometry(4.55, 2.65),
+      new THREE.MeshBasicMaterial({ color: 0x0a0f18, transparent: true, opacity: 0.72 })
+    );
+    inner.position.z = 0.001;
+
+    // Place exhibits in a recognizable “gallery line”
+    border.position.set(-6.2 + i * 6.2, 0.6, -7.8);
+    border.rotation.y = rand(-0.20, 0.20);
+
+    border.add(inner);
+
+    frameGroup.add(border);
+    exhibitMeshes.push({ border, inner, ...exhibits[i] });
+    frames.push(border);
+  }
+
+  (async () => {
+    try {
+      for (const ex of exhibitMeshes) {
+        const tex = await loadTexture(ex.src);
+        const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.88 });
+        ex.inner.material = mat;
+      }
+    } catch {
+      // ignore; fallback stays dark plate
+    }
+  })();
+
+  // Raycast
   const raycaster = new THREE.Raycaster();
-  raycaster.params.Points.threshold = 0.12;
   const pointer = new THREE.Vector2(0, 0);
-  let hoveredKey = null;
+  let hovered = null;
 
   function setPointerFromEvent(e) {
     const rect = canvas.getBoundingClientRect();
@@ -265,17 +273,34 @@ export function createWorld(canvas, { onHoverFragment } = {}) {
 
   const state = {
     entered: false,
-    targetChapter: "threshold",
+    chapter: "threshold",
     mouseX: 0,
     mouseY: 0,
-    camZ: camera.position.z
+    // camera rail progress 0..1 (scroll drives this)
+    rail: 0,
+    railTarget: 0
+  };
+
+  function setEntered(v) { state.entered = !!v; }
+
+  // We map chapters to rail segments (drives camera z and slight x/y)
+  const chapterStops = {
+    threshold: 0.00,
+    memory:    0.32,
+    replay:    0.55,
+    structure: 0.77,
+    edge:      1.00,
   };
 
   function setChapter(name) {
-    state.targetChapter = name;
+    state.chapter = name;
+    const s = chapterStops[name] ?? 0;
+    state.railTarget = s;
   }
-  function setEntered(v) {
-    state.entered = !!v;
+
+  // External scroll driver: setRail(0..1)
+  function setRail(t) {
+    state.railTarget = clamp(t, 0, 1);
   }
 
   function resize() {
@@ -288,94 +313,76 @@ export function createWorld(canvas, { onHoverFragment } = {}) {
 
   function updateHover() {
     if (!state.entered) {
-      if (hoveredKey !== null) hoveredKey = null;
+      if (hovered) hovered = null;
       if (onHoverFragment) onHoverFragment(null);
       return;
     }
 
     raycaster.setFromCamera(pointer, camera);
-    const hitsCaps = raycaster.intersectObjects(capsuleData.map(x => x.core), false);
+    const hits = raycaster.intersectObjects(frames, false);
 
-    if (hitsCaps.length) {
-      const obj = hitsCaps[0].object;
-      const item = capsuleData.find(x => x.core === obj);
-      if (item) {
-        const key = item.rec.id;
-        if (hoveredKey !== key) {
-          hoveredKey = key;
-          if (onHoverFragment) {
-            onHoverFragment({
-              title: `${item.rec.id} · ${item.rec.title}`,
-              sub: `${item.rec.ts} · ${item.rec.tags.join(" · ")}\n${item.rec.note}\n${item.rec.meta}`
-            });
-          }
+    if (hits.length) {
+      const obj = hits[0].object;
+      if (hovered !== obj) {
+        // unhover previous
+        if (hovered) hovered.material = hovered.userData._matBase;
+        hovered = obj;
+
+        // store base material once
+        if (!obj.userData._matBase) obj.userData._matBase = obj.material;
+
+        // apply hover material (clone to avoid shared uniforms jitter)
+        const hm = borderMatHover.clone();
+        obj.material = hm;
+
+        const rec = obj.userData.rec;
+        if (onHoverFragment && rec) {
+          const title = `${rec.id} · ${rec.setup || rec.title || "Record"}`;
+          const sub =
+            `${rec.ts}${rec.instrument ? " · " + rec.instrument : ""}${rec.r ? " · " + rec.r : ""}\n` +
+            `${rec.note || ""}`;
+          onHoverFragment({ title, sub });
         }
-        return;
       }
-    }
-
-    // If nothing: clear
-    if (hoveredKey !== null) {
-      hoveredKey = null;
-      if (onHoverFragment) onHoverFragment(null);
+    } else {
+      if (hovered) {
+        hovered.material = hovered.userData._matBase || hovered.material;
+        hovered = null;
+        if (onHoverFragment) onHoverFragment(null);
+      }
     }
   }
 
-  // animation loop
+  // Animate
   let t0 = performance.now();
   function tick(now) {
     const dt = (now - t0) / 1000;
     t0 = now;
-    const time = now * 0.00018;
 
-    // subtle drift for the whole “cathedral”
-    grid1.position.x = Math.sin(time) * 0.55;
-    grid1.position.z = Math.cos(time) * 0.55;
-    grid2.position.x = Math.cos(time * 0.75) * 0.22;
-    grid2.position.z = Math.sin(time * 0.75) * 0.22;
+    // ease rail
+    state.rail = lerp(state.rail, state.railTarget, 0.06);
 
-    wall.rotation.y = Math.sin(time * 0.35) * 0.02;
-
-    // parallax camera (restrained)
+    // subtle parallax
     const px = clamp(state.mouseX, -1, 1);
     const py = clamp(state.mouseY, -1, 1);
 
-    const targetX = px * 0.65;
-    const targetY = 1.35 + py * 0.26;
+    // camera path through lattice (“walking” forward)
+    // rail 0..1 => z from +12 -> deep negative
+    const z = lerp(12.0, -110.0, state.rail);
+    const x = px * 0.75 + Math.sin(state.rail * Math.PI * 2) * 0.25;
+    const y = 0.8 + py * 0.28 + Math.cos(state.rail * Math.PI * 1.3) * 0.10;
 
-    camera.position.x = lerp(camera.position.x, targetX, 0.055);
-    camera.position.y = lerp(camera.position.y, targetY, 0.055);
+    camera.position.x = lerp(camera.position.x, x, 0.07);
+    camera.position.y = lerp(camera.position.y, y, 0.07);
+    camera.position.z = lerp(camera.position.z, z, 0.06);
 
-    // chapter camera depth
-    const zTargets = {
-      threshold: 9.2,
-      memory: 7.6,
-      replay: 8.2,
-      structure: 8.0,
-      edge: 8.8,
-    };
-    const zt = zTargets[state.targetChapter] ?? 9.2;
-    camera.position.z = lerp(camera.position.z, zt, 0.04);
+    // look into depth
+    camera.lookAt(0, 1.6, camera.position.z - 18);
 
-    // slow capsule drift + hover accent
-    capsuleGroup.rotation.y += dt * 0.03;
-
-    for (const c of capsuleData) {
-      const isOn = hoveredKey === c.rec.id;
-
-      const tGlow = isOn ? 0.24 : 0.11;
-      const tCore = isOn ? 0.92 : 0.72;
-      const tRimA = isOn ? 0.42 : 0.18;
-
-      c.glow.material.opacity = lerp(c.glow.material.opacity, tGlow, 0.08);
-      c.core.material.opacity = lerp(c.core.material.opacity, tCore, 0.08);
-      c.rim.material.uniforms.uAlpha.value = lerp(c.rim.material.uniforms.uAlpha.value, tRimA, 0.08);
-
-      // micro hover lift
-      c.core.position.y += (isOn ? 0.0009 : -0.0004);
-      c.glow.position.y = c.core.position.y;
-      c.rim.position.y = c.core.position.y;
-    }
+    // slight “breathing” in lattice opacity (very restrained)
+    const pulse = 0.5 + 0.5 * Math.sin(now * 0.00025);
+    latticeA.material.opacity = 0.048 + pulse * 0.010;
+    latticeB.material.opacity = 0.022 + pulse * 0.006;
 
     updateHover();
     renderer.render(scene, camera);
@@ -397,6 +404,7 @@ export function createWorld(canvas, { onHoverFragment } = {}) {
   return {
     setChapter,
     setEntered,
+    setRail,
     dispose() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onPointerMove);
