@@ -11,7 +11,7 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
   const lang = resolveLang();
   applyI18n(lang);
 
-  // Scanline element (ritual)
+  // Scanline
   const scan = document.createElement("div");
   scan.className = "scanline";
   document.body.appendChild(scan);
@@ -39,8 +39,7 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
     }
   });
 
-  // Text FX (subtle)
-  const unmountFX = mountTextFX(document);
+  mountTextFX(document);
 
   // Chapters
   const chapters = Array.from(document.querySelectorAll(".chapter"));
@@ -52,21 +51,18 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
   async function setActiveChapter(name, { ritual = false } = {}) {
     active = name;
     chapters.forEach((c) => c.classList.toggle("is-active", c.getAttribute("data-chapter") === name));
+
     world.setChapter(name);
 
     const el = getChapterEl(name);
     if (el) {
-      // Scramble title slightly (Giulio-like, but controlled)
       const title = el.querySelector(".chapter-title");
-      if (title) glyphScramble(title, { durationMs: 520, intensity: 0.65 });
-
-      // Reveal sequence
+      if (title) glyphScramble(title, { durationMs: 520, intensity: 0.62 });
       await revealSequence(el);
     }
 
     if (ritual) {
       scan.classList.remove("is-on");
-      // restart animation
       void scan.offsetWidth;
       scan.classList.add("is-on");
       setTimeout(() => scan.classList.remove("is-on"), 950);
@@ -95,51 +91,126 @@ import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
     });
   }
 
-  async function enterRitual() {
-    // enable hover + “earned” interaction
-    world.setEntered(true);
+  // --- Locked scroll rail ---
+  // rail 0..1 drives camera through the lattice
+  let rail = 0;
+  let railTarget = 0;
 
-    // audio starts after explicit action
-    await audio.ensureRunning();
-    audio.setMuted(false);
-    setMutedUI(false);
+  const stops = [
+    { name: "threshold", t: 0.00 },
+    { name: "memory", t: 0.32 },
+    { name: "replay", t: 0.55 },
+    { name: "structure", t: 0.77 },
+    { name: "edge", t: 1.00 },
+  ];
 
-    await setActiveChapter("memory", { ritual: true });
+  function nearestStop(t) {
+    let best = stops[0];
+    let bestD = Infinity;
+    for (const s of stops) {
+      const d = Math.abs(s.t - t);
+      if (d < bestD) { bestD = d; best = s; }
+    }
+    return best;
   }
 
-  // Enter
+  function syncChapterToRail(t) {
+    const s = nearestStop(t);
+    if (s.name !== active) setActiveChapter(s.name);
+  }
+
+  // Smoothly update rail towards target
+  function tick() {
+    rail += (railTarget - rail) * 0.08;
+    world.setRail(rail);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // Wheel handler (cinematic)
   let entered = false;
+  let wheelAcc = 0;
+  let wheelLock = false;
+
+  function bump(dir) {
+    // dir: +1 forward, -1 backward
+    const cur = nearestStop(railTarget);
+    const idx = stops.findIndex(s => s.name === cur.name);
+    const next = stops[Math.max(0, Math.min(stops.length - 1, idx + dir))];
+    railTarget = next.t;
+    syncChapterToRail(railTarget);
+  }
+
+  function onWheel(e) {
+    // Prevent page scrolling – we’re “moving through space”
+    e.preventDefault();
+
+    if (!entered) {
+      // allow a “peek” movement without audio
+      world.setEntered(true);
+      entered = true;
+    }
+
+    wheelAcc += e.deltaY;
+
+    if (wheelLock) return;
+
+    // threshold so trackpads don’t spam
+    if (Math.abs(wheelAcc) > 120) {
+      wheelLock = true;
+      bump(wheelAcc > 0 ? +1 : -1);
+      wheelAcc = 0;
+
+      // lock briefly to preserve cinematic steps
+      setTimeout(() => { wheelLock = false; }, 550);
+    }
+  }
+
+  window.addEventListener("wheel", onWheel, { passive: false });
+
+  // Enter ritual
   const enterBtn = document.getElementById("enterBtn");
   if (enterBtn) {
     enterBtn.addEventListener("click", async () => {
       entered = true;
-      await enterRitual();
+      world.setEntered(true);
+
+      await audio.ensureRunning();
+      audio.setMuted(false);
+      setMutedUI(false);
+
+      // Jump to memory stop with ritual
+      railTarget = 0.32;
+      await setActiveChapter("memory", { ritual: true });
     });
   }
 
-  // Nav
+  // Nav buttons jump stops
   document.querySelectorAll("[data-action='goto']").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const target = btn.getAttribute("data-target");
-      if (!target) return;
+      const s = stops.find(x => x.name === target);
+      if (!s) return;
 
-      // allow “peek” without full ritual
       if (!entered && target !== "threshold") {
         world.setEntered(true);
+        entered = true;
       }
-      await setActiveChapter(target, { ritual: false });
+
+      railTarget = s.t;
+      await setActiveChapter(target);
     });
   });
 
-  // Home
   document.querySelectorAll("[data-action='home']").forEach((a) => {
     a.addEventListener("click", async (e) => {
       e.preventDefault();
+      railTarget = 0.00;
       await setActiveChapter("threshold");
     });
   });
 
-  // Prime audio context (still muted) on first interaction anywhere
+  // Prime audio context (muted) on first interaction
   window.addEventListener("pointerdown", async () => {
     try { await audio.ensureRunning(); } catch {}
   }, { once: true, passive: true });
