@@ -1,4 +1,4 @@
-import { resolveLang, applyI18n, I18N } from "./i18n.js";
+import { resolveLang, applyI18n, I18N, setLang } from "./i18n.js";
 import { createAmbientEngine } from "./audio.js";
 import { createWorld } from "./world.js";
 import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
@@ -10,7 +10,16 @@ import { mountBeacons } from "./beacons.js";
 
   const lang = resolveLang();
   applyI18n(lang);
-
+  // Language dropdown
+  const langSelect = document.getElementById("langSelect");
+  if (langSelect) {
+    langSelect.value = lang;
+    langSelect.addEventListener("change", () => {
+      const next = setLang(langSelect.value);
+      applyI18n(next);
+    });
+  }
+  
   const scan = document.createElement("div");
   scan.className = "scanline";
   document.body.appendChild(scan);
