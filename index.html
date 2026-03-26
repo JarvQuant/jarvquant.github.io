@@ -1,12 +1,167 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="JarvQuant — Trade with structure. Not guesswork. Replay-first research, strategy building, and journaling in one desktop tool." />
   <title>JarvQuant</title>
+
+  <link rel="preload" href="styles.css" as="style" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <meta property="og:title" content="JarvQuant" />
+  <meta property="og:description" content="Trade with structure. Not guesswork." />
+  <meta property="og:type" content="website" />
 </head>
+
 <body>
-  <h1>JarvQuant</h1>
-  <p>Coming soon.</p>
+  <div class="bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div class="grid"></div>
+  </div>
+
+  <header class="top">
+    <div class="container topbar">
+      <a class="brand" href="#" aria-label="JarvQuant home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">JarvQuant</span>
+      </a>
+      <nav class="nav">
+        <a href="#product">Product</a>
+        <a href="#proof">Shipped</a>
+        <a class="btn btn-ghost" href="#waitlist">Get updates</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-left">
+        <div class="kicker">Replay-first research desk</div>
+        <h1 class="headline">Trade with structure.<br/>Not guesswork.</h1>
+        <p class="subline">
+          Replay-first research, strategy building, and journaling in one desktop tool.
+        </p>
+
+        <div id="proof" class="proof-strip" role="note" aria-label="Product status">
+          <span class="chip chip-live">Shipped v0.3.0</span>
+          <span class="chip">Replay Engine</span>
+          <span class="chip">Strategy Builder</span>
+          <span class="chip">Journal + PDF Export</span>
+          <span class="chip">Offline-first</span>
+        </div>
+
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#waitlist">Join the waitlist</a>
+          <a class="btn btn-ghost" href="#product">See the product</a>
+        </div>
+
+        <div class="micro">
+          Built in public. Screens below are from the actual app.
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="tilt-card" data-tilt>
+          <div class="tilt-glow" aria-hidden="true"></div>
+          <div class="tilt-inner">
+            <div class="tilt-title">JarvQuant Desktop</div>
+            <div class="tilt-sub">Replay • Build • Journal</div>
+            <div class="tilt-metrics">
+              <div class="metric"><span class="m-label">Status</span><span class="m-val">Shipped</span></div>
+              <div class="metric"><span class="m-label">Focus</span><span class="m-val">Evidence</span></div>
+              <div class="metric"><span class="m-label">Mode</span><span class="m-val">Offline-first</span></div>
+            </div>
+            <div class="tilt-footer">
+              <span class="dot"></span> Live development updates via waitlist
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="product" class="section">
+      <div class="section-head">
+        <h2>Screens over words</h2>
+        <p>Your biggest flex. Make it obvious.</p>
+      </div>
+
+      <div class="shots">
+        <button class="shot" data-lightbox="assets/replay.jpg" aria-label="Open Replay screenshot">
+          <div class="shot-label">Replay Engine</div>
+          <img src="assets/replay.jpg" alt="JarvQuant Replay Engine screenshot" loading="lazy" />
+        </button>
+
+        <button class="shot" data-lightbox="assets/builder.jpg" aria-label="Open Strategy Builder screenshot">
+          <div class="shot-label">Strategy Builder</div>
+          <img src="assets/builder.jpg" alt="JarvQuant Strategy Builder screenshot" loading="lazy" />
+        </button>
+
+        <button class="shot" data-lightbox="assets/journal.jpg" aria-label="Open Journal screenshot">
+          <div class="shot-label">Journal + Export</div>
+          <img src="assets/journal.jpg" alt="JarvQuant Journal screenshot" loading="lazy" />
+        </button>
+      </div>
+    </section>
+
+    <section id="waitlist" class="section">
+      <div class="panel">
+        <div class="panel-left">
+          <h2>Get updates</h2>
+          <p>
+            Shipping fast. If you want early access and changelog drops, join the waitlist.
+          </p>
+          <ul class="bullets">
+            <li>Early builds + release notes</li>
+            <li>Short surveys that actually shape the product</li>
+            <li>No spam</li>
+          </ul>
+        </div>
+
+        <div class="panel-right">
+          <!-- OPTION A (simple): mailto -->
+          <!-- Replace with a real form later (Formspree / Buttondown / ConvertKit). -->
+          <a class="btn btn-primary btn-wide"
+             href="mailto:hello@jarvquant.com?subject=JarvQuant%20Waitlist&body=Hi%20—%20please%20add%20me%20to%20the%20JarvQuant%20waitlist.%0A%0AName:%0AUse-case:%0A"
+          >
+            Email to join waitlist
+          </a>
+
+          <div class="small">
+            Want a proper embedded form? Tell me which provider you prefer (Formspree/Buttondown/ConvertKit).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <div class="brand-mini">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>JarvQuant</span>
+          </div>
+          <div class="small">© <span id="year"></span> JarvQuant. All rights reserved.</div>
+        </div>
+        <div class="footer-right small">
+          <a href="#" onclick="return false;">Imprint</a>
+          <span class="sep">•</span>
+          <a href="#" onclick="return false;">Privacy</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-backdrop" data-close></div>
+    <div class="lightbox-content" role="dialog" aria-modal="true" aria-label="Screenshot preview">
+      <button class="lightbox-close" data-close aria-label="Close">×</button>
+      <img id="lightbox-img" alt="Screenshot preview" />
+    </div>
+  </div>
+
+  <script src="main.js" defer></script>
 </body>
 </html>
