@@ -83,21 +83,19 @@ export function resolveLang() {
   const stored = (localStorage.getItem("jq_lang") || "").trim().toLowerCase();
   if (stored && I18N[stored]) return stored;
 
-  const nav = (navigator.language || "en").slice(0, 2).toLowerCase();
-  if (I18N[nav]) return nav;
-
+  // IMPORTANT: default to EN (do not auto-pick navigator language)
   return "en";
 }
 
-export function applyI18n(lang) {
-  const dict = I18N[lang] || I18N.en;
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n");
-    const val = dict[key];
-    if (typeof val === "string") el.textContent = val;
-  });
-  localStorage.setItem("jq_lang", lang);
+export function setLang(lang) {
+  const l = (lang || "").trim().toLowerCase();
+  if (!I18N[l]) return resolveLang();
+  localStorage.setItem("jq_lang", l);
 
-  const lv = document.getElementById("langValue");
-  if (lv) lv.textContent = lang.toUpperCase();
+  // keep URL clean but reflect current choice
+  const url = new URL(window.location.href);
+  url.searchParams.set("lang", l);
+  window.history.replaceState({}, "", url.toString());
+
+  return l;
 }
