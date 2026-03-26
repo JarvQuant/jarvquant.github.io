@@ -3,11 +3,25 @@
   const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 
-  // Tilt (scoped to the card so it doesn't freak out)
+  // Intro (premium quick reveal)
+  const intro = document.querySelector(".intro");
+  if (intro && intro.getAttribute("data-intro") === "on") {
+    const hide = () => intro.classList.add("is-hidden");
+    // Show briefly, then hide
+    window.addEventListener("load", () => {
+      setTimeout(hide, 650);
+    });
+    // Also allow click to dismiss
+    intro.addEventListener("click", hide);
+  } else if (intro) {
+    intro.classList.add("is-hidden");
+  }
+
+  // Tilt (scoped to the card)
   const tiltEl = document.querySelector("[data-tilt]");
   if (tiltEl) {
-    const maxTilt = 9;  // degrees
-    const maxMove = 6;  // px
+    const maxTilt = 9;
+    const maxMove = 6;
     let raf = 0;
 
     function applyTilt(clientX, clientY) {
