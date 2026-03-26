@@ -123,6 +123,17 @@ function loadTexture(url) {
   });
 }
 
+// ---- Gallery clear zone helpers ----
+// Our exhibits are around z ~ -10.5 in frameGroup-local space.
+// We reserve a corridor around that wall so random frames don't sit in front of it.
+function inGalleryClearZone(x, y, z) {
+  // Corridor around the exhibit wall:
+  // - z near the wall: [-16, -4]
+  // - x wide enough to cover 3 columns: [-14, 14]
+  // - y covers the 2 rows: [-6, 4]
+  return (z > -16 && z < -4) && (x > -14 && x < 14) && (y > -6 && y < 4);
+}
+
 export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
@@ -144,7 +155,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   floor.position.y = -1.25;
   scene.add(floor);
 
-  // Main lattice origin (slightly off-center to avoid center seam)
+  // Lattice origin (off-center)
   const origin = new THREE.Vector3(2.4, 2.2, -72);
   const yaw = 0.08;
 
@@ -185,7 +196,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const hoverBorder = makeBorderMaterial({ opacity: 0.38, thickness: 0.032, glow: 0.95 });
   const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.24 });
 
-  // Dense small records
+  // Dense small records — but avoid gallery corridor
   const smallCount = 320;
   for (let i = 0; i < smallCount; i++) {
     const rec = makeRecord(i);
@@ -199,27 +210,45 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     plate.position.z = -0.001;
     border.add(plate);
 
-    border.position.set(rand(-10.5, 10.5), rand(-2.2, 5.4), rand(-34, 34));
+    // sample positions until outside clear zone
+    let x, y, z;
+    for (let tries = 0; tries < 30; tries++) {
+      x = rand(-10.5, 10.5);
+      y = rand(-2.2, 5.4);
+      z = rand(-34, 34);
+      if (!inGalleryClearZone(x, y, z)) break;
+    }
+
+    border.position.set(x, y, z);
     border.rotation.y = rand(-0.75, 0.75);
 
     frameGroup.add(border);
     frames.push(border);
   }
 
-  // Micro frames (density)
+  // Micro frames — also avoid gallery corridor
   const microCount = 900;
   for (let i = 0; i < microCount; i++) {
     const w = rand(0.12, 0.32);
     const h = w * rand(0.55, 0.90);
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
-    border.position.set(rand(-18, 18), rand(-4, 10), rand(-90, 30));
+
+    let x, y, z;
+    for (let tries = 0; tries < 25; tries++) {
+      x = rand(-18, 18);
+      y = rand(-4, 10);
+      z = rand(-90, 30);
+      if (!inGalleryClearZone(x, y, z)) break;
+    }
+
+    border.position.set(x, y, z);
     border.rotation.y = rand(-1.2, 1.2);
     border.rotation.x = rand(-0.25, 0.25);
-    border.userData.rec = null; // not selectable
+    border.userData.rec = null;
     frameGroup.add(border);
   }
 
-  // Exhibits (6)
+  // Exhibits (6) — slightly forward (z -9.2) so they read cleaner
   const exhibits = [
     { src: "assets/replay.jpg", title: "Replay Engine" },
     { src: "assets/settings.jpg", title: "Assumptions + Presets" },
@@ -241,7 +270,10 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const plate = new THREE.Mesh(makeFrameGeometry(5.22, 3.05), plateMat.clone());
     plate.position.z = -0.001;
 
-    const inner = new THREE.Mesh(makeFrameGeometry(5.05, 2.92), new THREE.MeshBasicMaterial({ color: 0x0a0f18, transparent: true, opacity: 0.84 }));
+    const inner = new THREE.Mesh(
+      makeFrameGeometry(5.05, 2.92),
+      new THREE.MeshBasicMaterial({ color: 0x0a0f18, transparent: true, opacity: 0.90 })
+    );
     inner.position.z = 0.001;
 
     border.add(plate);
@@ -249,8 +281,9 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     const row = Math.floor(i / 3);
     const col = i % 3;
-    border.position.set(-7.4 + col * 7.4, 1.15 - row * 4.1, -10.5);
-    border.rotation.y = rand(-0.14, 0.14);
+
+    border.position.set(-7.4 + col * 7.4, 1.15 - row * 4.1, -9.2);
+    border.rotation.y = rand(-0.10, 0.10);
 
     frameGroup.add(border);
     frames.push(border);
@@ -261,12 +294,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     try {
       for (const ex of exhibitMeshes) {
         const tex = await loadTexture(ex.src);
-        ex.inner.material = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.94 });
+        ex.inner.material = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96 });
       }
     } catch {}
   })();
 
-  // Beacons (side-distributed so they don’t cluster in the center)
+  // Side-distributed beacons
   const beacons = [
     { id: "b1", pos: new THREE.Vector3(-6.8, 2.2,  6),   title: "[THRESHOLD]", body: "Enter the archive.\nSilence before structure." },
     { id: "b2", pos: new THREE.Vector3( 7.2, 1.4, -22),  title: "[MEMORY]", body: "Every decision leaves structure behind.\nRecords don’t judge. They preserve." },
@@ -358,7 +391,6 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     if (hits.length) {
       const obj = hits[0].object;
 
-      // ignore micro frames
       if (!obj.userData.rec) {
         if (hovered && hovered !== selected) hovered.material = hovered.userData._matBase || hovered.material;
         hovered = null;
