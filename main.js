@@ -1,10 +1,11 @@
 import { resolveLang, applyI18n, I18N, setLang } from "./i18n.js";
 import { createAmbientEngine } from "./audio.js";
 import { createWorld } from "./world.js";
-import { mountTextFX, revealSequence, glyphScramble } from "./textfx.js";
+import { revealSequence } from "./textfx.js";
 import { mountBeacons } from "./beacons.js";
 
 (function () {
+  // Year
   const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 
@@ -21,10 +22,17 @@ import { mountBeacons } from "./beacons.js";
     });
   }
 
-  // Scanline
+  // Scanline element
   const scan = document.createElement("div");
   scan.className = "scanline";
   document.body.appendChild(scan);
+
+  function ritualScan() {
+    scan.classList.remove("is-on");
+    void scan.offsetWidth;
+    scan.classList.add("is-on");
+    setTimeout(() => scan.classList.remove("is-on"), 950);
+  }
 
   // HUD
   const hud = document.getElementById("hud");
@@ -81,6 +89,7 @@ import { mountBeacons } from "./beacons.js";
   // Audio
   const audio = createAmbientEngine();
   const muteToggle = document.getElementById("muteToggle");
+
   function setMutedUI(muted) {
     if (!muteToggle) return;
     muteToggle.setAttribute("aria-pressed", muted ? "true" : "false");
@@ -116,6 +125,7 @@ import { mountBeacons } from "./beacons.js";
     onSelectRecord(data) {
       setPanel(data);
 
+      // Open lightbox for exhibits
       if (!data) return;
       const m = (data.title || "").match(/\bEX-\d+\b/);
       if (!m) return;
@@ -135,8 +145,8 @@ import { mountBeacons } from "./beacons.js";
   });
 
   mountBeacons(world);
-  mountTextFX(document);
 
+  // ESC closes overlays
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeImgBox();
@@ -160,25 +170,15 @@ import { mountBeacons } from "./beacons.js";
     world.setChapter(name);
 
     const el = getChapterEl(name);
-    if (el) {
-      const title = el.querySelector(".chapter-title");
-      if (title) glyphScramble(title, { durationMs: 520, intensity: 0.62 });
-      await revealSequence(el);
-    }
+    if (el) await revealSequence(el);
 
-    if (ritual) {
-      scan.classList.remove("is-on");
-      void scan.offsetWidth;
-      scan.classList.add("is-on");
-      setTimeout(() => scan.classList.remove("is-on"), 950);
-    }
+    if (ritual) ritualScan();
   }
 
   // Continuous rail
   let rail = 0;
   let railTarget = 0;
 
-  // ranges decide chapter automatically
   function chapterForRail(t) {
     if (t < 0.18) return "threshold";
     if (t < 0.47) return "memory";
@@ -191,9 +191,7 @@ import { mountBeacons } from "./beacons.js";
     rail += (railTarget - rail) * 0.08;
     world.setRail(rail);
 
-    // auto chapter selection
-    const ch = chapterForRail(rail);
-    setActiveChapter(ch);
+    setActiveChapter(chapterForRail(rail));
 
     requestAnimationFrame(tickRail);
   }
@@ -201,28 +199,31 @@ import { mountBeacons } from "./beacons.js";
 
   let entered = false;
 
+  // Wheel: safe continuous motion (never blocks if anything breaks)
   function onWheel(e) {
-    e.preventDefault();
+    try {
+      if (!entered) {
+        world.setEntered(true);
+        entered = true;
+      }
 
-    if (!entered) {
-      world.setEntered(true);
-      entered = true;
+      if (isLightboxOpen()) return;
+
+      // Tune these:
+      const sensitivity = 0.00026; // lower = slower
+      const distToMemory = Math.abs(railTarget - 0.32);
+      const damping = distToMemory < 0.12 ? 0.55 : 1.0;
+
+      const next = clamp(railTarget + e.deltaY * sensitivity * damping, 0, 1);
+
+      // only block native scroll if we're successfully updating our rail
+      e.preventDefault();
+      railTarget = next;
+    } catch (err) {
+      console.error("wheel handler failed:", err);
+      // allow default browser behavior
     }
-
-    if (isLightboxOpen()) return;
-
-    // sensitivity (lower = slower movement)
-    // trackpads often send small deltas; wheel sends bigger jumps.
-    const sensitivity = 0.00028;
-
-    // "gallery damping": slow down around memory area so you can inspect exhibits
-    // memory center approx t ~ 0.32
-    const distToMemory = Math.abs(railTarget - 0.32);
-    const damping = distToMemory < 0.10 ? 0.55 : 1.0;
-
-    railTarget = clamp(railTarget + e.deltaY * sensitivity * damping, 0, 1);
   }
-
   window.addEventListener("wheel", onWheel, { passive: false });
 
   // Buttons
@@ -233,7 +234,7 @@ import { mountBeacons } from "./beacons.js";
     peekBtn.addEventListener("click", async () => {
       entered = true;
       world.setEntered(true);
-      railTarget = 0.30;               // land near gallery
+      railTarget = 0.30;
       await setActiveChapter("memory", { ritual: true });
     });
   }
@@ -252,19 +253,19 @@ import { mountBeacons } from "./beacons.js";
     });
   }
 
-  // Nav jumps (still allowed)
+  // Nav jumps (still smooth, not snapped by world.js)
   const jump = {
     threshold: 0.00,
     memory: 0.30,
     replay: 0.56,
     structure: 0.78,
-    edge: 1.00
+    edge: 1.00,
   };
 
   document.querySelectorAll("[data-action='goto']").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const target = btn.getAttribute("data-target");
-      if (!jump.hasOwnProperty(target)) return;
+      if (!(target in jump)) return;
 
       if (!entered && target !== "threshold") {
         world.setEntered(true);
@@ -284,6 +285,7 @@ import { mountBeacons } from "./beacons.js";
     });
   });
 
+  // Prime audio context (muted)
   window.addEventListener("pointerdown", async () => {
     try { await audio.ensureRunning(); } catch {}
   }, { once: true, passive: true });
