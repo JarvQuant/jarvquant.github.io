@@ -345,3 +345,10 @@ body{
 .btn.primary{
   background: linear-gradient(90deg, rgba(109,40,217,0.52), rgba(34,211,238,0.38));
 }
+.hud-sub{
+  white-space: pre-line;
+  opacity: .72;
+}
+.hud{
+  border-color: rgba(34,211,238,0.14);
+}
