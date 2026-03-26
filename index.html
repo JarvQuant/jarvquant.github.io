@@ -17,11 +17,99 @@
 </head>
 
 <body>
+  <!-- Intro (auto-hides). Disable by setting data-intro="off" -->
+  <div class="intro" data-intro="on" aria-hidden="true">
+    <div class="intro-inner">
+      <img class="intro-logo" src="assets/logo.png" alt="" aria-hidden="true" />
+      <div class="intro-title">JarvQuant</div>
+      <div class="intro-sub">Trade with structure. Not guesswork.</div>
+      <div class="intro-line" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- Premium quant background -->
   <div class="bg" aria-hidden="true">
-    <div class="orb orb-a"></div>
-    <div class="orb orb-b"></div>
-    <div class="orb orb-c"></div>
-    <div class="grid"></div>
+    <div class="aurora"></div>
+    <div class="vignette"></div>
+    <div class="grain"></div>
+
+    <svg class="quant-overlay" viewBox="0 0 1200 700" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#6D28D9" stop-opacity="0.40"/>
+          <stop offset="1" stop-color="#22D3EE" stop-opacity="0.35"/>
+        </linearGradient>
+
+        <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.5" result="b"/>
+          <feColorMatrix in="b" type="matrix"
+            values="1 0 0 0 0
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    0 0 0 .55 0" result="g"/>
+          <feMerge>
+            <feMergeNode in="g"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+
+        <!-- subtle grid pattern -->
+        <pattern id="pGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+          <path d="M60 0H0V60" fill="none" stroke="white" stroke-opacity=".07" stroke-width="1"/>
+        </pattern>
+
+        <pattern id="pGridFine" width="12" height="12" patternUnits="userSpaceOnUse">
+          <path d="M12 0H0V12" fill="none" stroke="white" stroke-opacity=".035" stroke-width="1"/>
+        </pattern>
+      </defs>
+
+      <!-- grids -->
+      <rect x="0" y="0" width="1200" height="700" fill="url(#pGridFine)" opacity="0.85"/>
+      <rect x="0" y="0" width="1200" height="700" fill="url(#pGrid)" opacity="0.55"/>
+
+      <!-- faint axes / ticks -->
+      <g opacity="0.28">
+        <path d="M80 80V620" stroke="white" stroke-opacity=".18" stroke-width="1"/>
+        <path d="M80 620H1120" stroke="white" stroke-opacity=".18" stroke-width="1"/>
+        <g stroke="white" stroke-opacity=".14" stroke-width="1">
+          <path d="M80 140H88"/><path d="M80 200H88"/><path d="M80 260H88"/><path d="M80 320H88"/><path d="M80 380H88"/><path d="M80 440H88"/><path d="M80 500H88"/><path d="M80 560H88"/>
+          <path d="M180 620V612"/><path d="M280 620V612"/><path d="M380 620V612"/><path d="M480 620V612"/><path d="M580 620V612"/><path d="M680 620V612"/><path d="M780 620V612"/><path d="M880 620V612"/><path d="M980 620V612"/><path d="M1080 620V612"/>
+        </g>
+      </g>
+
+      <!-- ghost candlesticks (very subtle) -->
+      <g opacity="0.22" stroke="url(#g1)" stroke-width="2" fill="none">
+        <path d="M240 460v-44" opacity=".35"/>
+        <rect x="232" y="430" width="16" height="22" rx="4" opacity=".55"/>
+        <path d="M280 430v-58" opacity=".35"/>
+        <rect x="272" y="388" width="16" height="32" rx="4" opacity=".55"/>
+        <path d="M320 410v-70" opacity=".35"/>
+        <rect x="312" y="362" width="16" height="40" rx="4" opacity=".55"/>
+        <path d="M360 392v-40" opacity=".35"/>
+        <rect x="352" y="360" width="16" height="22" rx="4" opacity=".55"/>
+        <path d="M400 372v-64" opacity=".35"/>
+        <rect x="392" y="320" width="16" height="44" rx="4" opacity=".55"/>
+        <path d="M440 336v-48" opacity=".35"/>
+        <rect x="432" y="300" width="16" height="26" rx="4" opacity=".55"/>
+      </g>
+
+      <!-- signal curve -->
+      <path d="M120 520 C 250 470, 340 500, 430 420
+               S 620 330, 720 360
+               S 930 260, 1080 210"
+            fill="none" stroke="#22D3EE" stroke-opacity=".35" stroke-width="3"
+            filter="url(#softGlow)"/>
+
+      <!-- tiny math-ish labels -->
+      <g fill="white" fill-opacity=".42" font-family="ui-sans-serif, system-ui" font-size="12">
+        <text x="94" y="104">ΔP/L</text>
+        <text x="1040" y="646">tickSize</text>
+        <text x="1040" y="666">tickValue</text>
+        <text x="96" y="646">replay</text>
+        <text x="160" y="646">execution</text>
+        <text x="266" y="646">journal</text>
+      </g>
+    </svg>
   </div>
 
   <header class="top">
