@@ -12,7 +12,6 @@ import { mountBeacons } from "./beacons.js";
   const lang = resolveLang();
   applyI18n(lang);
 
-  // Language dropdown
   const langSelect = document.getElementById("langSelect");
   if (langSelect) {
     langSelect.value = lang;
@@ -50,7 +49,6 @@ import { mountBeacons } from "./beacons.js";
     panel.classList.add("is-on");
     panel.setAttribute("aria-hidden", "false");
   }
-
   if (panelClose) panelClose.addEventListener("click", () => setPanel(null));
 
   // Lightbox
@@ -64,13 +62,11 @@ import { mountBeacons } from "./beacons.js";
   function isLightboxOpen() {
     return !!imgBox?.classList.contains("is-on");
   }
-
   function closeImgBox() {
     if (!imgBox) return;
     imgBox.classList.remove("is-on");
     imgBox.setAttribute("aria-hidden", "true");
   }
-
   function openImgBox({ src, title, cap }) {
     if (!imgBox || !imgBoxImg || !imgBoxTitle || !imgBoxCap) return;
     imgBoxTitle.textContent = title || "EXHIBIT";
@@ -79,14 +75,12 @@ import { mountBeacons } from "./beacons.js";
     imgBox.classList.add("is-on");
     imgBox.setAttribute("aria-hidden", "false");
   }
-
   if (imgBoxClose) imgBoxClose.addEventListener("click", closeImgBox);
   if (imgBoxX) imgBoxX.addEventListener("click", closeImgBox);
 
   // Audio
   const audio = createAmbientEngine();
   const muteToggle = document.getElementById("muteToggle");
-
   function setMutedUI(muted) {
     if (!muteToggle) return;
     muteToggle.setAttribute("aria-pressed", muted ? "true" : "false");
@@ -159,7 +153,9 @@ import { mountBeacons } from "./beacons.js";
 
   let active = "threshold";
   async function setActiveChapter(name, { ritual = false } = {}) {
+    if (active === name) return;
     active = name;
+
     chapters.forEach((c) => c.classList.toggle("is-active", c.getAttribute("data-chapter") === name));
     world.setChapter(name);
 
@@ -178,47 +174,32 @@ import { mountBeacons } from "./beacons.js";
     }
   }
 
-  // Rail
+  // Continuous rail
   let rail = 0;
   let railTarget = 0;
 
-  const stops = [
-    { name: "threshold", t: 0.00 },
-    { name: "memory", t: 0.32 },
-    { name: "replay", t: 0.55 },
-    { name: "structure", t: 0.77 },
-    { name: "edge", t: 1.00 },
-  ];
-
-  function nearestStop(t) {
-    let best = stops[0];
-    let bestD = Infinity;
-    for (const s of stops) {
-      const d = Math.abs(s.t - t);
-      if (d < bestD) { bestD = d; best = s; }
-    }
-    return best;
+  // ranges decide chapter automatically
+  function chapterForRail(t) {
+    if (t < 0.18) return "threshold";
+    if (t < 0.47) return "memory";
+    if (t < 0.66) return "replay";
+    if (t < 0.88) return "structure";
+    return "edge";
   }
 
   function tickRail() {
     rail += (railTarget - rail) * 0.08;
     world.setRail(rail);
+
+    // auto chapter selection
+    const ch = chapterForRail(rail);
+    setActiveChapter(ch);
+
     requestAnimationFrame(tickRail);
   }
   requestAnimationFrame(tickRail);
 
-  // Locked scroll (with Gallery Lock at Memory)
   let entered = false;
-  let wheelAcc = 0;
-  let wheelLock = false;
-
-  function bump(dir) {
-    const cur = nearestStop(railTarget);
-    const idx = stops.findIndex(s => s.name === cur.name);
-    const next = stops[Math.max(0, Math.min(stops.length - 1, idx + dir))];
-    railTarget = next.t;
-    setActiveChapter(next.name);
-  }
 
   function onWheel(e) {
     e.preventDefault();
@@ -228,27 +209,20 @@ import { mountBeacons } from "./beacons.js";
       entered = true;
     }
 
-    // Don’t move while viewing an exhibit
     if (isLightboxOpen()) return;
 
-    const atMemory = Math.abs(railTarget - 0.32) < 0.0005;
+    // sensitivity (lower = slower movement)
+    // trackpads often send small deltas; wheel sends bigger jumps.
+    const sensitivity = 0.00028;
 
-    wheelAcc += e.deltaY;
+    // "gallery damping": slow down around memory area so you can inspect exhibits
+    // memory center approx t ~ 0.32
+    const distToMemory = Math.abs(railTarget - 0.32);
+    const damping = distToMemory < 0.10 ? 0.55 : 1.0;
 
-    // make it harder to accidentally leave Memory gallery
-    const threshold = atMemory ? 260 : 140;
-
-    if (wheelLock) return;
-
-    if (Math.abs(wheelAcc) > threshold) {
-      wheelLock = true;
-      bump(wheelAcc > 0 ? +1 : -1);
-      wheelAcc = 0;
-
-      // a bit longer lock feels more “cinematic”
-      setTimeout(() => { wheelLock = false; }, 650);
-    }
+    railTarget = clamp(railTarget + e.deltaY * sensitivity * damping, 0, 1);
   }
+
   window.addEventListener("wheel", onWheel, { passive: false });
 
   // Buttons
@@ -259,7 +233,7 @@ import { mountBeacons } from "./beacons.js";
     peekBtn.addEventListener("click", async () => {
       entered = true;
       world.setEntered(true);
-      railTarget = 0.32;
+      railTarget = 0.30;               // land near gallery
       await setActiveChapter("memory", { ritual: true });
     });
   }
@@ -273,25 +247,32 @@ import { mountBeacons } from "./beacons.js";
       audio.setMuted(false);
       setMutedUI(false);
 
-      railTarget = 0.32;
+      railTarget = 0.30;
       await setActiveChapter("memory", { ritual: true });
     });
   }
 
-  // Nav jumps
+  // Nav jumps (still allowed)
+  const jump = {
+    threshold: 0.00,
+    memory: 0.30,
+    replay: 0.56,
+    structure: 0.78,
+    edge: 1.00
+  };
+
   document.querySelectorAll("[data-action='goto']").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const target = btn.getAttribute("data-target");
-      const s = stops.find(x => x.name === target);
-      if (!s) return;
+      if (!jump.hasOwnProperty(target)) return;
 
       if (!entered && target !== "threshold") {
         world.setEntered(true);
         entered = true;
       }
 
-      railTarget = s.t;
-      await setActiveChapter(target);
+      railTarget = jump[target];
+      await setActiveChapter(target, { ritual: true });
     });
   });
 
@@ -299,11 +280,10 @@ import { mountBeacons } from "./beacons.js";
     a.addEventListener("click", async (e) => {
       e.preventDefault();
       railTarget = 0.00;
-      await setActiveChapter("threshold");
+      await setActiveChapter("threshold", { ritual: true });
     });
   });
 
-  // Prime audio context (muted)
   window.addEventListener("pointerdown", async () => {
     try { await audio.ensureRunning(); } catch {}
   }, { once: true, passive: true });
