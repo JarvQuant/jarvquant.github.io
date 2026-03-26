@@ -3,56 +3,58 @@
   const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 
-  // Simple tilt (parallax 3D feel)
+  // Tilt (scoped to the card so it doesn't freak out)
   const tiltEl = document.querySelector("[data-tilt]");
   if (tiltEl) {
-    const maxTilt = 10; // degrees
-    const maxMove = 8;  // px
+    const maxTilt = 9;  // degrees
+    const maxMove = 6;  // px
+    let raf = 0;
 
-    function onMove(clientX, clientY) {
+    function applyTilt(clientX, clientY) {
       const r = tiltEl.getBoundingClientRect();
       const px = (clientX - (r.left + r.width / 2)) / (r.width / 2);
       const py = (clientY - (r.top + r.height / 2)) / (r.height / 2);
 
-      const rx = (-py * maxTilt).toFixed(2);
-      const ry = (px * maxTilt).toFixed(2);
-      const tx = (px * maxMove).toFixed(2);
-      const ty = (py * maxMove).toFixed(2);
+      const cx = Math.max(-1, Math.min(1, px));
+      const cy = Math.max(-1, Math.min(1, py));
 
-      tiltEl.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translate3d(${tx}px, ${ty}px, 0)`;
+      const rx = (-cy * maxTilt).toFixed(2);
+      const ry = (cx * maxTilt).toFixed(2);
+      const tx = (cx * maxMove).toFixed(2);
+      const ty = (cy * maxMove).toFixed(2);
+
+      tiltEl.style.transform =
+        `rotateX(${rx}deg) rotateY(${ry}deg) translate3d(${tx}px, ${ty}px, 0)`;
+    }
+
+    function onMove(e) {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        applyTilt(e.clientX, e.clientY);
+      });
     }
 
     function reset() {
       tiltEl.style.transform = "rotateX(0deg) rotateY(0deg) translate3d(0,0,0)";
     }
 
-    // Mouse
-    window.addEventListener("mousemove", (e) => onMove(e.clientX, e.clientY), { passive: true });
-    window.addEventListener("mouseleave", reset);
-
-    // Mobile gyro (optional, safe fallback)
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", (e) => {
-        if (e.beta == null || e.gamma == null) return;
-        const px = Math.max(-1, Math.min(1, e.gamma / 30));
-        const py = Math.max(-1, Math.min(1, e.beta / 30));
-        const r = tiltEl.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
-        onMove(cx + px * (r.width / 2), cy + py * (r.height / 2));
-      }, { passive: true });
-    }
+    tiltEl.addEventListener("pointermove", onMove, { passive: true });
+    tiltEl.addEventListener("pointerleave", reset, { passive: true });
+    tiltEl.addEventListener("pointerdown", reset, { passive: true });
   }
 
   // Lightbox
   const box = document.getElementById("lightbox");
   const img = document.getElementById("lightbox-img");
+
   function open(src) {
     if (!box || !img) return;
     img.src = src;
     box.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
   }
+
   function close() {
     if (!box || !img) return;
     box.setAttribute("aria-hidden", "true");
