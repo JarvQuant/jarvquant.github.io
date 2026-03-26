@@ -8,8 +8,10 @@ import { mountBeacons } from "./beacons.js";
   const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 
+  // i18n
   const lang = resolveLang();
   applyI18n(lang);
+
   // Language dropdown
   const langSelect = document.getElementById("langSelect");
   if (langSelect) {
@@ -19,15 +21,18 @@ import { mountBeacons } from "./beacons.js";
       applyI18n(next);
     });
   }
-  
+
+  // Scanline
   const scan = document.createElement("div");
   scan.className = "scanline";
   document.body.appendChild(scan);
 
+  // HUD
   const hud = document.getElementById("hud");
   const hudTitle = document.getElementById("hudTitle");
   const hudSub = document.getElementById("hudSub");
 
+  // Panel
   const panel = document.getElementById("panel");
   const panelTitle = document.getElementById("panelTitle");
   const panelBody = document.getElementById("panelBody");
@@ -48,6 +53,7 @@ import { mountBeacons } from "./beacons.js";
 
   if (panelClose) panelClose.addEventListener("click", () => setPanel(null));
 
+  // Lightbox
   const imgBox = document.getElementById("imgBox");
   const imgBoxImg = document.getElementById("imgBoxImg");
   const imgBoxTitle = document.getElementById("imgBoxTitle");
@@ -55,11 +61,16 @@ import { mountBeacons } from "./beacons.js";
   const imgBoxClose = document.getElementById("imgBoxClose");
   const imgBoxX = document.getElementById("imgBoxX");
 
+  function isLightboxOpen() {
+    return !!imgBox?.classList.contains("is-on");
+  }
+
   function closeImgBox() {
     if (!imgBox) return;
     imgBox.classList.remove("is-on");
     imgBox.setAttribute("aria-hidden", "true");
   }
+
   function openImgBox({ src, title, cap }) {
     if (!imgBox || !imgBoxImg || !imgBoxTitle || !imgBoxCap) return;
     imgBoxTitle.textContent = title || "EXHIBIT";
@@ -68,11 +79,14 @@ import { mountBeacons } from "./beacons.js";
     imgBox.classList.add("is-on");
     imgBox.setAttribute("aria-hidden", "false");
   }
+
   if (imgBoxClose) imgBoxClose.addEventListener("click", closeImgBox);
   if (imgBoxX) imgBoxX.addEventListener("click", closeImgBox);
 
+  // Audio
   const audio = createAmbientEngine();
   const muteToggle = document.getElementById("muteToggle");
+
   function setMutedUI(muted) {
     if (!muteToggle) return;
     muteToggle.setAttribute("aria-pressed", muted ? "true" : "false");
@@ -91,6 +105,7 @@ import { mountBeacons } from "./beacons.js";
     });
   }
 
+  // World
   const world = createWorld(document.getElementById("world"), {
     onHoverFragment(fragment) {
       if (!hud || !hudTitle || !hudSub) return;
@@ -136,6 +151,7 @@ import { mountBeacons } from "./beacons.js";
     }
   });
 
+  // Chapters
   const chapters = Array.from(document.querySelectorAll(".chapter"));
   function getChapterEl(name) {
     return chapters.find((c) => c.getAttribute("data-chapter") === name);
@@ -162,6 +178,7 @@ import { mountBeacons } from "./beacons.js";
     }
   }
 
+  // Rail
   let rail = 0;
   let railTarget = 0;
 
@@ -190,6 +207,7 @@ import { mountBeacons } from "./beacons.js";
   }
   requestAnimationFrame(tickRail);
 
+  // Locked scroll (with Gallery Lock at Memory)
   let entered = false;
   let wheelAcc = 0;
   let wheelLock = false;
@@ -210,18 +228,30 @@ import { mountBeacons } from "./beacons.js";
       entered = true;
     }
 
+    // Don’t move while viewing an exhibit
+    if (isLightboxOpen()) return;
+
+    const atMemory = Math.abs(railTarget - 0.32) < 0.0005;
+
     wheelAcc += e.deltaY;
+
+    // make it harder to accidentally leave Memory gallery
+    const threshold = atMemory ? 260 : 140;
+
     if (wheelLock) return;
 
-    if (Math.abs(wheelAcc) > 140) {
+    if (Math.abs(wheelAcc) > threshold) {
       wheelLock = true;
       bump(wheelAcc > 0 ? +1 : -1);
       wheelAcc = 0;
-      setTimeout(() => { wheelLock = false; }, 520);
+
+      // a bit longer lock feels more “cinematic”
+      setTimeout(() => { wheelLock = false; }, 650);
     }
   }
   window.addEventListener("wheel", onWheel, { passive: false });
 
+  // Buttons
   const enterBtn = document.getElementById("enterBtn");
   const peekBtn = document.getElementById("peekBtn");
 
@@ -248,6 +278,7 @@ import { mountBeacons } from "./beacons.js";
     });
   }
 
+  // Nav jumps
   document.querySelectorAll("[data-action='goto']").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const target = btn.getAttribute("data-target");
@@ -272,6 +303,7 @@ import { mountBeacons } from "./beacons.js";
     });
   });
 
+  // Prime audio context (muted)
   window.addEventListener("pointerdown", async () => {
     try { await audio.ensureRunning(); } catch {}
   }, { once: true, passive: true });
