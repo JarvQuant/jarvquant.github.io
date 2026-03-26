@@ -123,14 +123,8 @@ function loadTexture(url) {
   });
 }
 
-// ---- Gallery clear zone helpers ----
-// Our exhibits are around z ~ -10.5 in frameGroup-local space.
-// We reserve a corridor around that wall so random frames don't sit in front of it.
+// Clear corridor around exhibit wall so random frames don't sit in front of it.
 function inGalleryClearZone(x, y, z) {
-  // Corridor around the exhibit wall:
-  // - z near the wall: [-16, -4]
-  // - x wide enough to cover 3 columns: [-14, 14]
-  // - y covers the 2 rows: [-6, 4]
   return (z > -16 && z < -4) && (x > -14 && x < 14) && (y > -6 && y < 4);
 }
 
@@ -196,7 +190,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const hoverBorder = makeBorderMaterial({ opacity: 0.38, thickness: 0.032, glow: 0.95 });
   const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.24 });
 
-  // Dense small records — but avoid gallery corridor
+  // Dense small records — avoid exhibit corridor
   const smallCount = 320;
   for (let i = 0; i < smallCount; i++) {
     const rec = makeRecord(i);
@@ -210,7 +204,6 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     plate.position.z = -0.001;
     border.add(plate);
 
-    // sample positions until outside clear zone
     let x, y, z;
     for (let tries = 0; tries < 30; tries++) {
       x = rand(-10.5, 10.5);
@@ -226,7 +219,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     frames.push(border);
   }
 
-  // Micro frames — also avoid gallery corridor
+  // Micro frames — avoid exhibit corridor
   const microCount = 900;
   for (let i = 0; i < microCount; i++) {
     const w = rand(0.12, 0.32);
@@ -248,7 +241,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     frameGroup.add(border);
   }
 
-  // Exhibits (6) — slightly forward (z -9.2) so they read cleaner
+  // Exhibits (6) — slightly forward (cleaner view)
   const exhibits = [
     { src: "assets/replay.jpg", title: "Replay Engine" },
     { src: "assets/settings.jpg", title: "Assumptions + Presets" },
@@ -299,7 +292,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     } catch {}
   })();
 
-  // Side-distributed beacons
+  // Beacons (side-distributed)
   const beacons = [
     { id: "b1", pos: new THREE.Vector3(-6.8, 2.2,  6),   title: "[THRESHOLD]", body: "Enter the archive.\nSilence before structure." },
     { id: "b2", pos: new THREE.Vector3( 7.2, 1.4, -22),  title: "[MEMORY]", body: "Every decision leaves structure behind.\nRecords don’t judge. They preserve." },
@@ -341,11 +334,15 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     focusPos: new THREE.Vector3(0, 1.6, -30),
   };
 
-  const chapterStops = { threshold: 0.00, memory: 0.32, replay: 0.55, structure: 0.77, edge: 1.00 };
   const biasX = 1.2;
 
   function setEntered(v) { state.entered = !!v; }
-  function setChapter(name) { state.chapter = name; state.railTarget = chapterStops[name] ?? 0; }
+
+  function setChapter(name) {
+    // IMPORTANT: continuous mode must NOT snap railTarget.
+    state.chapter = name;
+  }
+
   function setRail(t) { state.railTarget = clamp(t, 0, 1); }
 
   function clearSelection() {
@@ -432,7 +429,6 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     camera.updateProjectionMatrix();
   }
 
-  // Animate
   let t0 = performance.now();
   function tick(now) {
     t0 = now;
@@ -443,6 +439,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const px = clamp(state.mouseX, -1, 1);
     const py = clamp(state.mouseY, -1, 1);
 
+    // Camera rail: 0..1 => z range
     const baseZ = lerp(12.0, -160.0, state.rail);
     const baseX = px * 0.85 + Math.sin(state.rail * Math.PI * 2) * 0.25;
     const baseY = 0.8 + py * 0.30 + Math.cos(state.rail * Math.PI * 1.3) * 0.10;
@@ -472,7 +469,6 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       leash.material.opacity = lerp(leash.material.opacity, 0.0, 0.10);
     }
 
-    // breathing
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00025);
     latticeA.material.opacity = 0.10 + pulse * 0.03;
     latticeB.material.opacity = 0.05 + pulse * 0.02;
