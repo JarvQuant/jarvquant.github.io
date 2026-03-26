@@ -3,6 +3,7 @@ import { createAmbientEngine } from "./audio.js";
 import { createWorld } from "./world.js";
 import { revealSequence } from "./textfx.js";
 import { mountBeacons } from "./beacons.js";
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
 (function () {
   // Year
