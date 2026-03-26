@@ -54,7 +54,7 @@ function buildLattice({ size = 220, step = 6, color = 0x22D3EE, opacity = 0.06 }
 
   const geom = new THREE.BufferGeometry();
   geom.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-  const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+  const mat = new THREE.LineBasicMaterial({   color,   transparent: true,   opacity,   blending: THREE.AdditiveBlending });
   return new THREE.LineSegments(geom, mat);
 }
 
@@ -121,7 +121,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x05060a, 0.020);
+  scene.fog = new THREE.FogExp2(0x05060a, 0.028);
 
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 620);
   camera.position.set(0, 0.9, 10.5);
@@ -131,12 +131,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   dir.position.set(6, 10, 6);
   scene.add(dir);
 
-  const latticeA = buildLattice({ size: 240, step: 6, color: 0x22D3EE, opacity: 0.060 });
-  latticeA.position.set(0, 2.5, -70);
+  const latticeA = buildLattice({ size: 240, step: 6,  color: 0x22D3EE, opacity: 0.10 });
+  latticeA.position.set(2.4, 2.2, -72); latticeA.rotation.y = 0.08;
   scene.add(latticeA);
 
-  const latticeB = buildLattice({ size: 240, step: 12, color: 0x6D28D9, opacity: 0.030 });
-  latticeB.position.copy(latticeA.position);
+  const latticeB = buildLattice({ size: 240, step: 12, color: 0x6D28D9, opacity: 0.05 });
+  latticeB.position.copy(latticeA.position); latticeB.rotation.y = latticeA.rotation.y;
   scene.add(latticeB);
 
   const floor = new THREE.GridHelper(460, 230, 0xffffff, 0xffffff);
@@ -354,7 +354,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     // Look target
     const lookZ = lerp(camera.position.z - 18, state.focusPos.z, state.focus);
-    camera.lookAt(lerp(0, state.focusPos.x, state.focus * 0.65), lerp(1.6, state.focusPos.y, state.focus), lookZ);
+    const biasX = 1.2; // breaks the central seam
+    camera.lookAt(
+      lerp(biasX, state.focusPos.x, state.focus * 0.65),
+      lerp(1.6, state.focusPos.y, state.focus),
+      lookZ
+    );
 
     // Leash line
     if (selected) {
