@@ -233,13 +233,17 @@ body{
   font-size: 14px;
   line-height: 1.6;
   max-width: 54ch;
-}
+  
 .chapter-actions{
   display:flex;
   gap: 10px;
   align-items:center;
-  pointer-events:auto;
+  pointer-events: none;  /* <- war auto */
   margin-bottom: 12px;
+}
+
+.chapter.is-active .chapter-actions{
+  pointer-events: auto;
 }
 .btn{
   border: 1px solid rgba(255,255,255,0.12);
