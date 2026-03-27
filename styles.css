@@ -204,6 +204,8 @@ body{
   opacity: 0;
   transform: translate3d(0, 10px, 0);
   transition: opacity .45s ease, transform .45s ease;
+
+  pointer-events: none; /* FIX: prevent invisible chapters from stealing clicks */
 }
 .chapter.is-active{
   opacity: 1;
