@@ -10,6 +10,8 @@ export function mountBeacons(world) {
 
     el = document.createElement("div");
     el.className = "beacon";
+    el.dataset.title = b.title || "INFO";
+    el.dataset.body = b.body || "";
     el.innerHTML = `<div class="beacon-title"></div><div class="beacon-body"></div>`;
     el.querySelector(".beacon-title").textContent = b.title;
     el.querySelector(".beacon-body").textContent = b.body;
