@@ -64,7 +64,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   }
   if (panelClose) panelClose.addEventListener("click", () => setPanel(null));
 
-  // Lightbox
+  // Lightbox (image + text mode)
   const imgBox = document.getElementById("imgBox");
   const imgBoxImg = document.getElementById("imgBoxImg");
   const imgBoxTitle = document.getElementById("imgBoxTitle");
@@ -75,14 +75,19 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   function isLightboxOpen() {
     return !!imgBox?.classList.contains("is-on");
   }
+ 
   function closeImgBox() {
     if (!imgBox) return;
     imgBox.classList.remove("is-on");
     imgBox.setAttribute("aria-hidden", "true");
+
+    // reset image visibility for next open
     if (imgBoxImg) imgBoxImg.style.display = "";
   }
+
   function openBox({ src = null, title = "—", cap = "" }) {
     if (!imgBox || !imgBoxTitle || !imgBoxCap) return;
+
     imgBoxTitle.textContent = title;
     imgBoxCap.textContent = cap;
 
@@ -91,6 +96,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
         imgBoxImg.src = src;
         imgBoxImg.style.display = "";
       } else {
+        // text-only mode
         imgBoxImg.removeAttribute("src");
         imgBoxImg.style.display = "none";
       }
@@ -100,9 +106,24 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     imgBox.setAttribute("aria-hidden", "false");
   }
 
+  // Close actions
   if (imgBoxClose) imgBoxClose.addEventListener("click", closeImgBox);
   if (imgBoxX) imgBoxX.addEventListener("click", closeImgBox);
 
+// Beacon click → open text lightbox (capture so it wins over other click handlers)
+document.addEventListener("click", (e) => {
+  const el = e.target?.closest?.(".beacon");
+  if (!el) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  openBox({
+    title: el.dataset.title || "INFO",
+    cap: el.dataset.body || ""
+  });
+}, true);
+  
   // Beacon click → open text lightbox
   window.addEventListener("jq:beaconOpen", (ev) => {
     const b = ev.detail;
