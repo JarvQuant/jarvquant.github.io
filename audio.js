@@ -1,5 +1,5 @@
 export function createAmbientEngine({
-  src = "assets/ambient.mp3",
+  src = "assets/audio.mp3",
   baseGain = 0.18,
   fadeSeconds = 0.65,
 } = {}) {
