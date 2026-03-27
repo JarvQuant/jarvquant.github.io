@@ -1,3 +1,4 @@
+```js
 import { resolveLang, applyI18n, I18N, setLang } from "./i18n.js";
 import { createAmbientEngine } from "./audio.js";
 import { createWorld } from "./world.js";
@@ -6,6 +7,10 @@ import { revealSequence } from "./textfx.js";
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
 (function () {
+  const isMobile =
+    window.matchMedia("(max-width: 820px)").matches ||
+    window.matchMedia("(pointer: coarse)").matches;
+
   const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 
@@ -25,7 +30,9 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   const bwReplay = document.getElementById("bwReplay");
   const bwStructure = document.getElementById("bwStructure");
   const bwEdge = document.getElementById("bwEdge");
-  function setWord(el, on) { if (el) el.classList.toggle("is-on", !!on); }
+  function setWord(el, on) {
+    if (el) el.classList.toggle("is-on", !!on);
+  }
 
   const scan = document.createElement("div");
   scan.className = "scanline";
@@ -108,7 +115,9 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (!muteToggle) return;
     muteToggle.setAttribute("aria-pressed", muted ? "true" : "false");
     const dict = I18N[resolveLang()] || I18N.en;
-    const label = muted ? (dict["ui.mute"] || "Muted") : (dict["ui.unmute"] || "Audio");
+    const label = muted
+      ? dict["ui.mute"] || "Muted"
+      : dict["ui.unmute"] || "Audio";
     const t = muteToggle.querySelector(".pill-text");
     if (t) t.textContent = label;
   }
@@ -122,62 +131,89 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   }
 
-  // World
-  const world = createWorld(document.getElementById("world"), {
-    onHoverFragment(fragment) {
-      if (!hud || !hudTitle || !hudSub) return;
-      if (!fragment) {
-        hud.classList.remove("is-on");
-        hud.setAttribute("aria-hidden", "true");
-        return;
-      }
-      hudTitle.textContent = fragment.title;
-      hudSub.textContent = fragment.sub;
-      hud.classList.add("is-on");
-      hud.setAttribute("aria-hidden", "false");
-    },
+  // World (desktop only)
+  let world = null;
+  if (!isMobile) {
+    world = createWorld(document.getElementById("world"), {
+      onHoverFragment(fragment) {
+        if (!hud || !hudTitle || !hudSub) return;
+        if (!fragment) {
+          hud.classList.remove("is-on");
+          hud.setAttribute("aria-hidden", "true");
+          return;
+        }
+        hudTitle.textContent = fragment.title;
+        hudSub.textContent = fragment.sub;
+        hud.classList.add("is-on");
+        hud.setAttribute("aria-hidden", "false");
+      },
 
-    onSelectRecord(data) {
-      setPanel(data);
-      if (!data) return;
+      onSelectRecord(data) {
+        setPanel(data);
+        if (!data) return;
 
-      const title = data.title || "";
-      const idMatch = title.match(/\b(?:EX|IP|MF)-\d+\b/);
-      const id = idMatch ? idMatch[0] : null;
+        const title = data.title || "";
+        const idMatch = title.match(/\b(?:EX|IP|MF)-\d+\b/);
+        const id = idMatch ? idMatch[0] : null;
 
-      // EX-* → image lightbox
-      if (id && id.startsWith("EX-")) {
-        const map = {
-          "EX-1": { src: "assets/replay.jpg", title: "Replay Engine", cap: "Reconstructed moments suspended in time." },
-          "EX-2": { src: "assets/settings.jpg", title: "Assumptions + Presets", cap: "Constraints, validation, and repeatable runs." },
-          "EX-3": { src: "assets/journal.jpg", title: "Journal + Export", cap: "Memory fragments turned into evidence." },
-          "EX-4": { src: "assets/replay-trader.jpg", title: "Replay Trader", cap: "Execution inside preserved volatility." },
-          "EX-5": { src: "assets/strategy-trades.jpg", title: "Strategy → Trades", cap: "From structure to outcomes — preserved." },
-          "EX-6": { src: "assets/place-holder-strat.jpg", title: "Strategy Capsule (WIP)", cap: "A placeholder surface for the system layer." },
-        };
-        const ex = map[id];
-        if (ex) openBox(ex);
-        return;
-      }
+        // EX-* → image lightbox
+        if (id && id.startsWith("EX-")) {
+          const map = {
+            "EX-1": {
+              src: "assets/replay.jpg",
+              title: "Replay Engine",
+              cap: "Reconstructed moments suspended in time.",
+            },
+            "EX-2": {
+              src: "assets/settings.jpg",
+              title: "Assumptions + Presets",
+              cap: "Constraints, validation, and repeatable runs.",
+            },
+            "EX-3": {
+              src: "assets/journal.jpg",
+              title: "Journal + Export",
+              cap: "Memory fragments turned into evidence.",
+            },
+            "EX-4": {
+              src: "assets/replay-trader.jpg",
+              title: "Replay Trader",
+              cap: "Execution inside preserved volatility.",
+            },
+            "EX-5": {
+              src: "assets/strategy-trades.jpg",
+              title: "Strategy → Trades",
+              cap: "From structure to outcomes — preserved.",
+            },
+            "EX-6": {
+              src: "assets/place-holder-strat.jpg",
+              title: "Strategy Capsule (WIP)",
+              cap: "A placeholder surface for the system layer.",
+            },
+          };
+          const ex = map[id];
+          if (ex) openBox(ex);
+          return;
+        }
 
-      // IP-* / MF-* → text lightbox (readable)
-      if (id && (id.startsWith("IP-") || id.startsWith("MF-"))) {
-        openBox({
-          src: null,
-          title: data.title || "INFO",
-          cap: data.body || ""
-        });
-        return;
-      }
-    }
-  });
+        // IP-* / MF-* → text lightbox (readable)
+        if (id && (id.startsWith("IP-") || id.startsWith("MF-"))) {
+          openBox({
+            src: null,
+            title: data.title || "INFO",
+            cap: data.body || "",
+          });
+          return;
+        }
+      },
+    });
+  }
 
   // ESC closes overlays
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeImgBox();
       setPanel(null);
-      if (world.clearSelection) world.clearSelection();
+      if (world?.clearSelection) world.clearSelection();
     }
   });
 
@@ -192,8 +228,11 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (active === name) return;
     active = name;
 
-    chapters.forEach((c) => c.classList.toggle("is-active", c.getAttribute("data-chapter") === name));
-    world.setChapter(name);
+    chapters.forEach((c) =>
+      c.classList.toggle("is-active", c.getAttribute("data-chapter") === name)
+    );
+
+    if (world?.setChapter) world.setChapter(name);
 
     const el = getChapterEl(name);
     if (el) await revealSequence(el);
@@ -201,7 +240,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (ritual) ritualScan();
   }
 
-  // Continuous rail
+  // Desktop rail
   let rail = 0;
   let railTarget = 0;
 
@@ -215,7 +254,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
   function tickRail() {
     rail += (railTarget - rail) * 0.08;
-    world.setRail(rail);
+    if (world?.setRail) world.setRail(rail);
 
     const ch = chapterForRail(rail);
     setActiveChapter(ch);
@@ -227,14 +266,13 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
     requestAnimationFrame(tickRail);
   }
-  requestAnimationFrame(tickRail);
 
   let entered = false;
 
   function onWheel(e) {
     try {
       if (!entered) {
-        world.setEntered(true);
+        world?.setEntered?.(true);
         entered = true;
       }
 
@@ -252,14 +290,18 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
       console.error("wheel handler failed:", err);
     }
   }
-  window.addEventListener("wheel", onWheel, { passive: false });
+
+  if (!isMobile) {
+    requestAnimationFrame(tickRail);
+    window.addEventListener("wheel", onWheel, { passive: false });
+  }
 
   // Enter starts journey
   const enterBtn = document.getElementById("enterBtn");
   if (enterBtn) {
     enterBtn.addEventListener("click", async () => {
       entered = true;
-      world.setEntered(true);
+      world?.setEntered?.(true);
 
       await audio.ensureRunning();
       await audio.setMuted(false);
@@ -271,15 +313,29 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   }
 
   // Nav jumps
-  const jump = { threshold: 0.00, memory: 0.30, replay: 0.56, structure: 0.78, edge: 1.00 };
+  const jump = {
+    threshold: 0.0,
+    memory: 0.3,
+    replay: 0.56,
+    structure: 0.78,
+    edge: 1.0,
+  };
 
   document.querySelectorAll("[data-action='goto']").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const target = btn.getAttribute("data-target");
+      if (!target) return;
+
+      if (isMobile) {
+        const el = document.querySelector(`#chapter-${target}`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+
       if (!(target in jump)) return;
 
       if (!entered && target !== "threshold") {
-        world.setEntered(true);
+        world?.setEntered?.(true);
         entered = true;
       }
 
@@ -291,14 +347,28 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   document.querySelectorAll("[data-action='home']").forEach((a) => {
     a.addEventListener("click", async (e) => {
       e.preventDefault();
-      railTarget = 0.00;
+
+      if (isMobile) {
+        const el = document.querySelector("#chapter-threshold");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+
+      railTarget = 0.0;
       await setActiveChapter("threshold", { ritual: true });
     });
   });
 
-  window.addEventListener("pointerdown", async () => {
-    try { await audio.ensureRunning(); } catch {}
-  }, { once: true, passive: true });
+  window.addEventListener(
+    "pointerdown",
+    async () => {
+      try {
+        await audio.ensureRunning();
+      } catch {}
+    },
+    { once: true, passive: true }
+  );
 
   setActiveChapter("threshold");
 })();
+```
