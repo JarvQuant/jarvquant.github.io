@@ -1,4 +1,3 @@
-```js
 import { resolveLang, applyI18n, I18N, setLang } from "./i18n.js";
 import { createAmbientEngine } from "./audio.js";
 import { createWorld } from "./world.js";
@@ -371,4 +370,3 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
   setActiveChapter("threshold");
 })();
-```
