@@ -280,10 +280,9 @@ document.addEventListener("click", (e) => {
       await audio.setMuted(false);
       setMutedUI(false);
 
-      railTarget = 0.30;
-      await setActiveChapter("memory", { ritual: true });
-    });
-  }
+     // Start the journey from the beginning (no jump)
+     railTarget = 0.02;
+     await setActiveChapter("threshold", { ritual: true });
 
   // Nav jumps
   const jump = { threshold: 0.00, memory: 0.30, replay: 0.56, structure: 0.78, edge: 1.00 };
