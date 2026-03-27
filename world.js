@@ -172,8 +172,6 @@ export function createWorld(canvas,{onHoverFragment,onSelectRecord}={}){
   const manifest=[
     {id:"MF-1",title:"[JARVQUANT]",body:"Replay-first archive of market memory.\nEvidence over hype."},
     {id:"MF-2",title:"[MISSION]",body:"Preserve decisions.\nReconstruct markets.\nTurn memory into structure."},
-    {id:"MF-3",title:"[METHOD]",body:"Replay → Journal → Build → Validate.\nEdge is repetition made explicit."},
-    {id:"MF-4",title:"[FOCUS]",body:"Quiet intensity.\nPrecision.\nSignificance."},
   ];
   for(let i=0;i<manifest.length;i++){
     const tex=makeTextTexture({title:manifest[i].title,body:manifest[i].body});
@@ -266,13 +264,15 @@ export function createWorld(canvas,{onHoverFragment,onSelectRecord}={}){
 
   // Beacons (side distributed)
   const beacons=[
-    {id:"b1",pos:new THREE.Vector3(-6.8,2.2,6),title:"[THRESHOLD]",body:"Enter the archive.\nSilence before structure."},
-    {id:"b2",pos:new THREE.Vector3(7.2,1.4,-22),title:"[MEMORY]",body:"Every decision leaves structure behind.\nRecords don’t judge. They preserve."},
-    {id:"b3",pos:new THREE.Vector3(-7.4,1.2,-48),title:"[REPLAY]",body:"Reconstruct the moment.\nTrain inside preserved volatility."},
-    {id:"b4",pos:new THREE.Vector3(7.8,1.7,-76),title:"[STRUCTURE]",body:"Turn repetition into architecture.\nRules make edge repeatable."},
-    {id:"b5",pos:new THREE.Vector3(-6.4,1.3,-110),title:"[EDGE]",body:"Precision is memory organized.\nAccess is earned, not sold."},
-  ];
+    {id:"b1",pos:new THREE.Vector3(-7.0,2.2,  10), title:"[THRESHOLD]", body:"Enter the archive.\nSilence before structure."},
+    {id:"b2",pos:new THREE.Vector3( 7.2,1.4,  -24), title:"[MEMORY]", body:"Every decision leaves structure behind.\nRecords don’t judge. They preserve."},
 
+    // pushed deeper so they don't overlap the exhibit wall
+    {id:"b3",pos:new THREE.Vector3(-7.4,1.2,  -62), title:"[REPLAY]", body:"Reconstruct the moment.\nTrain inside preserved volatility."},
+    {id:"b4",pos:new THREE.Vector3( 7.8,1.7,  -92), title:"[STRUCTURE]", body:"Turn repetition into architecture.\nRules make edge repeatable."},
+    {id:"b5",pos:new THREE.Vector3(-6.4,1.3, -124), title:"[EDGE]", body:"Precision is memory organized.\nAccess is earned, not sold."},
+  ];
+  
   const leashMat=new THREE.LineBasicMaterial({color:0x22D3EE,transparent:true,opacity:0.0});
   const leash=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(),new THREE.Vector3()]),leashMat);
   scene.add(leash);
