@@ -3,14 +3,13 @@ import { createAmbientEngine } from "./audio.js";
 import { createWorld } from "./world.js";
 import { revealSequence } from "./textfx.js";
 import { mountBeacons } from "./beacons.js";
+
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
 (function () {
-  // Year
   const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 
-  // i18n
   const lang = resolveLang();
   applyI18n(lang);
 
@@ -23,11 +22,19 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   }
 
-  // Scanline element
+  const bwMemory = document.getElementById("bwMemory");
+  const bwReplay = document.getElementById("bwReplay");
+  const bwStructure = document.getElementById("bwStructure");
+  const bwEdge = document.getElementById("bwEdge");
+
+  function setWord(el, on) {
+    if (!el) return;
+    el.classList.toggle("is-on", !!on);
+  }
+
   const scan = document.createElement("div");
   scan.className = "scanline";
   document.body.appendChild(scan);
-
   function ritualScan() {
     scan.classList.remove("is-on");
     void scan.offsetWidth;
@@ -35,17 +42,14 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     setTimeout(() => scan.classList.remove("is-on"), 950);
   }
 
-  // HUD
   const hud = document.getElementById("hud");
   const hudTitle = document.getElementById("hudTitle");
   const hudSub = document.getElementById("hudSub");
 
-  // Panel
   const panel = document.getElementById("panel");
   const panelTitle = document.getElementById("panelTitle");
   const panelBody = document.getElementById("panelBody");
   const panelClose = document.getElementById("panelClose");
-
   function setPanel(data) {
     if (!panel || !panelTitle || !panelBody) return;
     if (!data) {
@@ -60,7 +64,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   }
   if (panelClose) panelClose.addEventListener("click", () => setPanel(null));
 
-  // Lightbox
   const imgBox = document.getElementById("imgBox");
   const imgBoxImg = document.getElementById("imgBoxImg");
   const imgBoxTitle = document.getElementById("imgBoxTitle");
@@ -87,10 +90,8 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   if (imgBoxClose) imgBoxClose.addEventListener("click", closeImgBox);
   if (imgBoxX) imgBoxX.addEventListener("click", closeImgBox);
 
-  // Audio
   const audio = createAmbientEngine();
   const muteToggle = document.getElementById("muteToggle");
-
   function setMutedUI(muted) {
     if (!muteToggle) return;
     muteToggle.setAttribute("aria-pressed", muted ? "true" : "false");
@@ -100,7 +101,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (t) t.textContent = label;
   }
   setMutedUI(true);
-
   if (muteToggle) {
     muteToggle.addEventListener("click", async () => {
       await audio.ensureRunning();
@@ -109,7 +109,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   }
 
-  // World
   const world = createWorld(document.getElementById("world"), {
     onHoverFragment(fragment) {
       if (!hud || !hudTitle || !hudSub) return;
@@ -126,7 +125,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     onSelectRecord(data) {
       setPanel(data);
 
-      // Open lightbox for exhibits
       if (!data) return;
       const m = (data.title || "").match(/\bEX-\d+\b/);
       if (!m) return;
@@ -139,7 +137,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
         "EX-5": { src: "assets/strategy-trades.jpg", title: "Strategy → Trades", cap: "From structure to outcomes — preserved." },
         "EX-6": { src: "assets/place-holder-strat.jpg", title: "Strategy Capsule (WIP)", cap: "A placeholder surface for the system layer." },
       };
-
       const ex = map[m[0]];
       if (ex) openImgBox(ex);
     }
@@ -147,7 +144,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
   mountBeacons(world);
 
-  // ESC closes overlays
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeImgBox();
@@ -156,7 +152,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     }
   });
 
-  // Chapters
   const chapters = Array.from(document.querySelectorAll(".chapter"));
   function getChapterEl(name) {
     return chapters.find((c) => c.getAttribute("data-chapter") === name);
@@ -176,7 +171,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (ritual) ritualScan();
   }
 
-  // Continuous rail
   let rail = 0;
   let railTarget = 0;
 
@@ -192,7 +186,13 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     rail += (railTarget - rail) * 0.08;
     world.setRail(rail);
 
-    setActiveChapter(chapterForRail(rail));
+    const ch = chapterForRail(rail);
+    setActiveChapter(ch);
+
+    setWord(bwMemory, ch === "memory");
+    setWord(bwReplay, ch === "replay");
+    setWord(bwStructure, ch === "structure");
+    setWord(bwEdge, ch === "edge");
 
     requestAnimationFrame(tickRail);
   }
@@ -200,7 +200,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
   let entered = false;
 
-  // Wheel: safe continuous motion (never blocks if anything breaks)
   function onWheel(e) {
     try {
       if (!entered) {
@@ -210,24 +209,20 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
       if (isLightboxOpen()) return;
 
-      // Tune these:
-      const sensitivity = 0.00026; // lower = slower
+      const sensitivity = 0.00024;
       const distToMemory = Math.abs(railTarget - 0.32);
-      const damping = distToMemory < 0.12 ? 0.55 : 1.0;
+      const damping = distToMemory < 0.15 ? 0.55 : 1.0;
 
       const next = clamp(railTarget + e.deltaY * sensitivity * damping, 0, 1);
 
-      // only block native scroll if we're successfully updating our rail
       e.preventDefault();
       railTarget = next;
     } catch (err) {
       console.error("wheel handler failed:", err);
-      // allow default browser behavior
     }
   }
   window.addEventListener("wheel", onWheel, { passive: false });
 
-  // Buttons
   const enterBtn = document.getElementById("enterBtn");
   const peekBtn = document.getElementById("peekBtn");
 
@@ -254,14 +249,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   }
 
-  // Nav jumps (still smooth, not snapped by world.js)
-  const jump = {
-    threshold: 0.00,
-    memory: 0.30,
-    replay: 0.56,
-    structure: 0.78,
-    edge: 1.00,
-  };
+  const jump = { threshold: 0.00, memory: 0.30, replay: 0.56, structure: 0.78, edge: 1.00 };
 
   document.querySelectorAll("[data-action='goto']").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -286,7 +274,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   });
 
-  // Prime audio context (muted)
   window.addEventListener("pointerdown", async () => {
     try { await audio.ensureRunning(); } catch {}
   }, { once: true, passive: true });
