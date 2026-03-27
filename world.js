@@ -228,13 +228,18 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const hoverBorder = makeBorderMaterial({ opacity: 0.38, thickness: 0.032, glow: 0.95 });
   const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.24 });
 
-  // --- 3D Info plates (replace DOM beacons) ---
+  // --- 3D Info plates (MOVED deeper so they never sit inside the gallery wall) ---
   const infoPlates = [];
   const info = [
-    { id: "IP-1", title: "[MEMORY]", body: "Store imprints.\nRetrieve patterns.", x: 9.6, y: 1.4, z: -10, ry: -0.30, a: 0.18, b: 0.47 },
-    { id: "IP-2", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: -9.8, y: 1.2, z: -46, ry: 0.30, a: 0.47, b: 0.66 },
-    { id: "IP-3", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: 10.2, y: 1.6, z: -78, ry: -0.30, a: 0.66, b: 0.88 },
-    { id: "IP-4", title: "[EDGE]", body: "Precision is memory organized.", x: -9.2, y: 1.3, z: -120, ry: 0.30, a: 0.88, b: 1.00 },
+    // NOTE: z moved from -10 -> -26 (no overlap with exhibit wall at ~ -9.2)
+    { id: "IP-1", title: "[MEMORY]", body: "Store imprints.\nRetrieve patterns.", x: 9.8, y: 1.5, z: -26, ry: -0.26, a: 0.18, b: 0.47 },
+
+    // moved a bit deeper too
+    { id: "IP-2", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: -10.2, y: 1.2, z: -58, ry: 0.28, a: 0.47, b: 0.66 },
+
+    { id: "IP-3", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: 10.2, y: 1.6, z: -94, ry: -0.28, a: 0.66, b: 0.88 },
+
+    { id: "IP-4", title: "[EDGE]", body: "Precision is memory organized.", x: -9.2, y: 1.3, z: -132, ry: 0.28, a: 0.88, b: 1.00 },
   ];
 
   for (const it of info) {
@@ -380,7 +385,6 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     border.add(plate);
     border.add(inner);
 
-    // placed deeper than the exhibit wall
     const x = (i % 2 === 0) ? -10.5 : 10.5;
     const y = 1.8 - (i * 0.6);
     const z = -42 - (i * 18);
@@ -428,8 +432,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   function setEntered(v) { state.entered = !!v; }
 
   function setChapter(name) {
-    // IMPORTANT: continuous scroll mode must NOT snap rail target.
-    state.chapter = name;
+    state.chapter = name; // continuous: no snapping here
   }
 
   function setRail(t) { state.railTarget = clamp(t, 0, 1); }
@@ -493,7 +496,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
         if (onHoverFragment) {
           if (rec.id.startsWith("EX-")) onHoverFragment({ title: `${rec.id} · EXHIBIT`, sub: `${rec.setup}\nClick to open.` });
-          else if (rec.id.startsWith("MF-")) onHoverFragment({ title: `${rec.id} · MANIFEST`, sub: `${rec.setup}\nClick to focus.` });
+          else if (rec.id.startsWith("MF-")) onHoverFragment({ title: `${rec.id} · MANIFEST`, sub: `${rec.setup}\nClick to read.` });
           else if (rec.id.startsWith("IP-")) onHoverFragment({ title: `${rec.id} · SYSTEM`, sub: `${rec.setup}\nClick to read.` });
           else onHoverFragment({ title: `${rec.id} · ${rec.setup}`, sub: `${rec.ts} · ${rec.instrument} · ${rec.r}\n${rec.note}` });
         }
@@ -616,7 +619,6 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     setEntered,
     setRail,
     clearSelection,
-    // kept for compatibility if you still call mountBeacons somewhere
     getBeaconScreenspace() { return []; },
     dispose() {
       window.removeEventListener("resize", resize);
