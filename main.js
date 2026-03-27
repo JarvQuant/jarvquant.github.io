@@ -6,9 +6,11 @@ import { revealSequence } from "./textfx.js";
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
 (function () {
+  // Year
   const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 
+  // i18n
   const lang = resolveLang();
   applyI18n(lang);
 
@@ -74,13 +76,11 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   function isLightboxOpen() {
     return !!imgBox?.classList.contains("is-on");
   }
- 
+
   function closeImgBox() {
     if (!imgBox) return;
     imgBox.classList.remove("is-on");
     imgBox.setAttribute("aria-hidden", "true");
-
-    // reset image visibility for next open
     if (imgBoxImg) imgBoxImg.style.display = "";
   }
 
@@ -95,7 +95,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
         imgBoxImg.src = src;
         imgBoxImg.style.display = "";
       } else {
-        // text-only mode
         imgBoxImg.removeAttribute("src");
         imgBoxImg.style.display = "none";
       }
@@ -105,30 +104,8 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     imgBox.setAttribute("aria-hidden", "false");
   }
 
-  // Close actions
   if (imgBoxClose) imgBoxClose.addEventListener("click", closeImgBox);
   if (imgBoxX) imgBoxX.addEventListener("click", closeImgBox);
-
-// Beacon click → open text lightbox (capture so it wins over other click handlers)
-document.addEventListener("click", (e) => {
-  const el = e.target?.closest?.(".beacon");
-  if (!el) return;
-
-  e.preventDefault();
-  e.stopPropagation();
-
-  openBox({
-    title: el.dataset.title || "INFO",
-    cap: el.dataset.body || ""
-  });
-}, true);
-  
-  // Beacon click → open text lightbox
-  window.addEventListener("jq:beaconOpen", (ev) => {
-    const b = ev.detail;
-    if (!b) return;
-    openBox({ title: b.title || "INFO", cap: b.body || "" });
-  });
 
   // Audio
   const audio = createAmbientEngine();
@@ -168,6 +145,7 @@ document.addEventListener("click", (e) => {
     onSelectRecord(data) {
       setPanel(data);
 
+      // Exhibits → image lightbox
       if (!data) return;
       const m = (data.title || "").match(/\bEX-\d+\b/);
       if (!m) return;
@@ -186,8 +164,7 @@ document.addEventListener("click", (e) => {
     }
   });
 
-  //mountBeacons(world);
-
+  // ESC closes overlays
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeImgBox();
@@ -269,7 +246,7 @@ document.addEventListener("click", (e) => {
   }
   window.addEventListener("wheel", onWheel, { passive: false });
 
-  // Enter only (Peek removed in index.html)
+  // Enter starts journey (no jump into memory)
   const enterBtn = document.getElementById("enterBtn");
   if (enterBtn) {
     enterBtn.addEventListener("click", async () => {
@@ -280,11 +257,12 @@ document.addEventListener("click", (e) => {
       await audio.setMuted(false);
       setMutedUI(false);
 
-     // Start the journey from the beginning (no jump)
-     railTarget = 0.02;
-     await setActiveChapter("threshold", { ritual: true });
+      railTarget = 0.02;
+      await setActiveChapter("threshold", { ritual: true });
+    });
+  }
 
-  // Nav jumps
+  // Nav jumps (global, not inside enter handler!)
   const jump = { threshold: 0.00, memory: 0.30, replay: 0.56, structure: 0.78, edge: 1.00 };
 
   document.querySelectorAll("[data-action='goto']").forEach((btn) => {
@@ -310,6 +288,7 @@ document.addEventListener("click", (e) => {
     });
   });
 
+  // Prime audio context (muted)
   window.addEventListener("pointerdown", async () => {
     try { await audio.ensureRunning(); } catch {}
   }, { once: true, passive: true });
