@@ -224,16 +224,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   window.addEventListener("wheel", onWheel, { passive: false });
 
   const enterBtn = document.getElementById("enterBtn");
-  const peekBtn = document.getElementById("peekBtn");
-
-  if (peekBtn) {
-    peekBtn.addEventListener("click", async () => {
-      entered = true;
-      world.setEntered(true);
-      railTarget = 0.30;
-      await setActiveChapter("memory", { ritual: true });
-    });
-  }
 
   if (enterBtn) {
     enterBtn.addEventListener("click", async () => {
