@@ -2,7 +2,6 @@ import { resolveLang, applyI18n, I18N, setLang } from "./i18n.js";
 import { createAmbientEngine } from "./audio.js";
 import { createWorld } from "./world.js";
 import { revealSequence } from "./textfx.js";
-import { mountBeacons } from "./beacons.js";
 
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
