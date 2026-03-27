@@ -25,6 +25,12 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   }
 
+  // Mobile: Enter button is meaningless in fallback mode
+  if (isMobile) {
+    const enterBtn = document.getElementById("enterBtn");
+    if (enterBtn) enterBtn.remove();
+  }
+
   const bwMemory = document.getElementById("bwMemory");
   const bwReplay = document.getElementById("bwReplay");
   const bwStructure = document.getElementById("bwStructure");
@@ -110,6 +116,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   // Audio
   const audio = createAmbientEngine();
   const muteToggle = document.getElementById("muteToggle");
+
   function setMutedUI(muted) {
     if (!muteToggle) return;
     muteToggle.setAttribute("aria-pressed", muted ? "true" : "false");
@@ -120,7 +127,35 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     const t = muteToggle.querySelector(".pill-text");
     if (t) t.textContent = label;
   }
-  setMutedUI(true);
+
+  // Mobile: keep muted. Desktop: try to start unmuted (autoplay may block).
+  if (isMobile) {
+    setMutedUI(true);
+  } else {
+    setMutedUI(false);
+    (async () => {
+      try {
+        await audio.ensureRunning();
+        await audio.setMuted(false);
+        setMutedUI(false);
+      } catch {
+        // Autoplay blocked → show muted until first user gesture
+        setMutedUI(true);
+
+        const arm = async () => {
+          try {
+            await audio.ensureRunning();
+            await audio.setMuted(false);
+            setMutedUI(false);
+          } catch {}
+        };
+
+        window.addEventListener("pointerdown", arm, { once: true, passive: true });
+        window.addEventListener("wheel", arm, { once: true, passive: true });
+        window.addEventListener("keydown", arm, { once: true, passive: true });
+      }
+    })();
+  }
 
   if (muteToggle) {
     muteToggle.addEventListener("click", async () => {
@@ -295,7 +330,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     window.addEventListener("wheel", onWheel, { passive: false });
   }
 
-  // Enter starts journey
+  // Enter starts journey (desktop only; button removed on mobile)
   const enterBtn = document.getElementById("enterBtn");
   if (enterBtn) {
     enterBtn.addEventListener("click", async () => {
@@ -358,6 +393,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   });
 
+  // Prime audio on first interaction (safe on both, but mobile stays muted anyway)
   window.addEventListener(
     "pointerdown",
     async () => {
