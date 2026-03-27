@@ -31,6 +31,17 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (enterBtn) enterBtn.remove();
   }
 
+  // Mini navigation tutorial (desktop only)
+  const navHint = document.getElementById("navHint");
+  if (navHint && !isMobile) {
+    navHint.classList.add("is-on");
+    navHint.setAttribute("aria-hidden", "false");
+    setTimeout(() => {
+      navHint.classList.remove("is-on");
+      navHint.setAttribute("aria-hidden", "true");
+    }, 5200);
+  }
+
   const bwMemory = document.getElementById("bwMemory");
   const bwReplay = document.getElementById("bwReplay");
   const bwStructure = document.getElementById("bwStructure");
@@ -393,7 +404,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   });
 
-  // Prime audio on first interaction (safe on both, but mobile stays muted anyway)
+  // Prime audio on first interaction (safe on both; mobile stays muted anyway)
   window.addEventListener(
     "pointerdown",
     async () => {
