@@ -241,7 +241,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
       world.setEntered(true);
 
       await audio.ensureRunning();
-      audio.setMuted(false);
+      await audio.setMuted(false);
       setMutedUI(false);
 
       railTarget = 0.30;
