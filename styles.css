@@ -56,8 +56,8 @@ body{
   position: absolute;
   font: 900 clamp(56px, 7.5vw, 110px)/0.9 var(--mono);
   letter-spacing: 0.04em;
-  color: rgba(245,247,255,0.07);
-  text-shadow: 0 0 80px rgba(34,211,238,0.05);
+  color: rgba(245,247,255,0.09);
+  text-shadow: 0 0 80px rgba(34,211,238,0.07);
   opacity: 0;
   transform: translate3d(0, 10px, 0);
   transition: opacity .35s ease, transform .35s ease;
@@ -245,7 +245,18 @@ body{
 .chapter.is-active .chapter-actions{
   pointer-events: auto;
 }
-
+.chapter::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: inherit;
+  background: rgba(6, 7, 12, 0.55);
+  pointer-events:none;
+}
+.chapter > *{
+  position: relative;
+  z-index: 1;
+}
 .btn{
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.04);
