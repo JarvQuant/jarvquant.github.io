@@ -45,6 +45,7 @@ body{
   filter: saturate(1.05) contrast(1.02);
 }
 
+/* Big branding words */
 .brandwords{
   position: fixed;
   inset: 0;
@@ -70,6 +71,7 @@ body{
 .bw-structure{ left: 7vw; bottom: 18vh; }
 .bw-edge{ right: 7vw; bottom: 16vh; text-align:right; }
 
+/* top bar */
 .topbar{
   position: fixed;
   top: 18px;
@@ -179,6 +181,7 @@ body{
   font: 700 12px/1 var(--sans);
 }
 
+/* UI */
 .ui{
   position: fixed;
   inset: 0;
@@ -268,9 +271,11 @@ body{
   letter-spacing: .2px;
 }
 
+/* Hard block mailto until Access active */
 .chapter a[href^="mailto:"]{ pointer-events:none; }
 #chapter-edge.is-active a[href^="mailto:"]{ pointer-events:auto; }
 
+/* HUD */
 .hud{
   position: fixed;
   left: 18px;
@@ -279,7 +284,7 @@ body{
   padding: 12px 12px;
   border-radius: 12px;
   border: 1px solid rgba(34,211,238,0.12);
-  background: rgba(6, 7, 12, 0.22);
+  background: rgba(6, 7, 12, 0.26);
   backdrop-filter: blur(var(--blur));
   box-shadow: 0 18px 70px rgba(0,0,0,.55);
 
@@ -288,7 +293,7 @@ body{
   transition: opacity .18s ease, transform .18s ease;
   pointer-events:none;
   min-width: 260px;
-  max-width: 380px;
+  max-width: 420px;
 }
 .hud.is-on{ opacity: 1; transform: translate3d(0,0,0); }
 .hud-title{
@@ -299,19 +304,20 @@ body{
 }
 .hud-sub{
   white-space: pre-line;
-  color: rgba(245,247,255,0.65);
-  font: 650 12px/1.45 var(--mono);
+  color: rgba(245,247,255,0.72);
+  font: 700 13px/1.55 var(--mono);
 }
 
+/* Panel */
 .panel{
   position: fixed;
   right: 18px;
   bottom: 18px;
-  width: min(460px, calc(100vw - 36px));
+  width: min(520px, calc(100vw - 36px));
   padding: 14px 14px 12px;
   border-radius: 14px;
   border: 1px solid rgba(34,211,238,0.16);
-  background: rgba(6, 7, 12, 0.22);
+  background: rgba(6, 7, 12, 0.26);
   backdrop-filter: blur(var(--blur));
   box-shadow: 0 22px 90px rgba(0,0,0,.6);
   z-index: 80;
@@ -336,12 +342,13 @@ body{
 }
 .panel-body{
   white-space: pre-line;
-  font: 650 12px/1.5 var(--mono);
-  color: rgba(245,247,255,0.66);
+  font: 700 13px/1.55 var(--mono);
+  color: rgba(245,247,255,0.72);
   margin-bottom: 12px;
 }
 .panel-actions{ display:flex; justify-content:flex-end; }
 
+/* Scanline */
 .scanline{
   position: fixed;
   left: -20%;
@@ -365,24 +372,29 @@ body{
   100%{ transform: translate3d(0, 520px, 0) scaleX(1.05); opacity: 0; }
 }
 
+/* Beacons */
 .beacons{
   position: fixed;
   inset: 0;
   z-index: 65;
-  pointer-events: none;
+  pointer-events: none; /* container */
 }
 .beacon{
   position: absolute;
   transform: translate3d(-50%, -50%, 0);
-  max-width: 380px;
+  max-width: 440px;
   padding: 10px 10px 9px;
   border-radius: 12px;
-  border: 1px solid rgba(34,211,238,0.12);
-  background: rgba(6, 7, 12, 0.14);
+  border: 1px solid rgba(34,211,238,0.16);
+  background: rgba(6, 7, 12, 0.28);
   backdrop-filter: blur(10px);
+
   opacity: 0;
   transition: opacity .20s ease;
+  pointer-events: auto; /* clickable */
+  cursor: pointer;
 }
+.beacon:hover{ border-color: rgba(34,211,238,0.26); }
 .beacon.is-on{ opacity: 1; }
 .beacon-title{
   font: 900 11px/1 var(--mono);
@@ -391,11 +403,12 @@ body{
   margin-bottom: 7px;
 }
 .beacon-body{
-  font: 650 12px/1.45 var(--mono);
-  color: rgba(245,247,255,0.62);
+  font: 700 13px/1.55 var(--mono);
+  color: rgba(245,247,255,0.72);
   white-space: pre-line;
 }
 
+/* Lightbox */
 .lightbox{
   position: fixed;
   inset: 0;
@@ -460,8 +473,8 @@ body{
 }
 .lightbox-cap{
   padding: 10px 4px 2px;
-  font: 650 12px/1.45 var(--mono);
-  color: rgba(245,247,255,0.62);
+  font: 700 13px/1.55 var(--mono);
+  color: rgba(245,247,255,0.72);
   white-space: pre-line;
 }
 
