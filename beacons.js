@@ -13,6 +13,12 @@ export function mountBeacons(world) {
     el.innerHTML = `<div class="beacon-title"></div><div class="beacon-body"></div>`;
     el.querySelector(".beacon-title").textContent = b.title;
     el.querySelector(".beacon-body").textContent = b.body;
+
+    // Click → open text lightbox via event (main.js listens)
+    el.addEventListener("click", () => {
+      window.dispatchEvent(new CustomEvent("jq:beaconOpen", { detail: b }));
+    });
+
     root.appendChild(el);
     els.set(b.id, el);
     return el;
@@ -22,6 +28,7 @@ export function mountBeacons(world) {
   function tick() {
     const list = world.getBeaconScreenspace();
 
+    // Sort by depth so near ones win
     const sorted = [...list].sort((a, b) => a.z - b.z);
 
     let shown = 0;
@@ -33,10 +40,12 @@ export function mountBeacons(world) {
         b.x > -80 && b.x < window.innerWidth + 80 &&
         b.y > -80 && b.y < window.innerHeight + 80;
 
+      // reduce clutter around center (gallery zone)
       const cx = window.innerWidth * 0.5;
       const cy = window.innerHeight * 0.5;
       const dist = Math.hypot(b.x - cx, b.y - cy);
 
+      // centerFade: near center -> low, far -> high
       const centerFade = Math.max(0, Math.min(1, (dist - 140) / 260));
 
       const allow = inView && (shown < 2) && centerFade > 0.15;
