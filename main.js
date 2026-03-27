@@ -22,16 +22,14 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   }
 
+  // Branding word elements
   const bwMemory = document.getElementById("bwMemory");
   const bwReplay = document.getElementById("bwReplay");
   const bwStructure = document.getElementById("bwStructure");
   const bwEdge = document.getElementById("bwEdge");
+  function setWord(el, on) { if (el) el.classList.toggle("is-on", !!on); }
 
-  function setWord(el, on) {
-    if (!el) return;
-    el.classList.toggle("is-on", !!on);
-  }
-
+  // Scanline
   const scan = document.createElement("div");
   scan.className = "scanline";
   document.body.appendChild(scan);
@@ -42,10 +40,12 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     setTimeout(() => scan.classList.remove("is-on"), 950);
   }
 
+  // HUD
   const hud = document.getElementById("hud");
   const hudTitle = document.getElementById("hudTitle");
   const hudSub = document.getElementById("hudSub");
 
+  // Panel
   const panel = document.getElementById("panel");
   const panelTitle = document.getElementById("panelTitle");
   const panelBody = document.getElementById("panelBody");
@@ -64,6 +64,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   }
   if (panelClose) panelClose.addEventListener("click", () => setPanel(null));
 
+  // Lightbox
   const imgBox = document.getElementById("imgBox");
   const imgBoxImg = document.getElementById("imgBoxImg");
   const imgBoxTitle = document.getElementById("imgBoxTitle");
@@ -78,18 +79,38 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (!imgBox) return;
     imgBox.classList.remove("is-on");
     imgBox.setAttribute("aria-hidden", "true");
+    if (imgBoxImg) imgBoxImg.style.display = "";
   }
-  function openImgBox({ src, title, cap }) {
-    if (!imgBox || !imgBoxImg || !imgBoxTitle || !imgBoxCap) return;
-    imgBoxTitle.textContent = title || "EXHIBIT";
-    imgBoxCap.textContent = cap || "";
-    imgBoxImg.src = src;
+  function openBox({ src = null, title = "—", cap = "" }) {
+    if (!imgBox || !imgBoxTitle || !imgBoxCap) return;
+    imgBoxTitle.textContent = title;
+    imgBoxCap.textContent = cap;
+
+    if (imgBoxImg) {
+      if (src) {
+        imgBoxImg.src = src;
+        imgBoxImg.style.display = "";
+      } else {
+        imgBoxImg.removeAttribute("src");
+        imgBoxImg.style.display = "none";
+      }
+    }
+
     imgBox.classList.add("is-on");
     imgBox.setAttribute("aria-hidden", "false");
   }
+
   if (imgBoxClose) imgBoxClose.addEventListener("click", closeImgBox);
   if (imgBoxX) imgBoxX.addEventListener("click", closeImgBox);
 
+  // Beacon click → open text lightbox
+  window.addEventListener("jq:beaconOpen", (ev) => {
+    const b = ev.detail;
+    if (!b) return;
+    openBox({ title: b.title || "INFO", cap: b.body || "" });
+  });
+
+  // Audio
   const audio = createAmbientEngine();
   const muteToggle = document.getElementById("muteToggle");
   function setMutedUI(muted) {
@@ -101,14 +122,16 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (t) t.textContent = label;
   }
   setMutedUI(true);
+
   if (muteToggle) {
     muteToggle.addEventListener("click", async () => {
       await audio.ensureRunning();
-      const isMuted = audio.toggleMute();
+      const isMuted = await audio.toggleMute();
       setMutedUI(isMuted);
     });
   }
 
+  // World
   const world = createWorld(document.getElementById("world"), {
     onHoverFragment(fragment) {
       if (!hud || !hudTitle || !hudSub) return;
@@ -137,8 +160,9 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
         "EX-5": { src: "assets/strategy-trades.jpg", title: "Strategy → Trades", cap: "From structure to outcomes — preserved." },
         "EX-6": { src: "assets/place-holder-strat.jpg", title: "Strategy Capsule (WIP)", cap: "A placeholder surface for the system layer." },
       };
+
       const ex = map[m[0]];
-      if (ex) openImgBox(ex);
+      if (ex) openBox(ex);
     }
   });
 
@@ -152,6 +176,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     }
   });
 
+  // Chapters
   const chapters = Array.from(document.querySelectorAll(".chapter"));
   function getChapterEl(name) {
     return chapters.find((c) => c.getAttribute("data-chapter") === name);
@@ -171,6 +196,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (ritual) ritualScan();
   }
 
+  // Continuous rail
   let rail = 0;
   let railTarget = 0;
 
@@ -223,8 +249,8 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   }
   window.addEventListener("wheel", onWheel, { passive: false });
 
+  // Enter only (Peek removed in index.html)
   const enterBtn = document.getElementById("enterBtn");
-
   if (enterBtn) {
     enterBtn.addEventListener("click", async () => {
       entered = true;
@@ -239,6 +265,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   }
 
+  // Nav jumps
   const jump = { threshold: 0.00, memory: 0.30, replay: 0.56, structure: 0.78, edge: 1.00 };
 
   document.querySelectorAll("[data-action='goto']").forEach((btn) => {
