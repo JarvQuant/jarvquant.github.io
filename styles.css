@@ -485,8 +485,50 @@ body{
 }
 
 @media (max-width: 820px){
-  .topbar{ top: 12px; left: 12px; right: 12px; }
+  body{
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* kill the heavy background */
+  #world{ display:none; }
+
+  .topbar{
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    mix-blend-mode: normal;
+  }
+
   .nav{ display:none; }
-  .chapter{ left: 12px; right: 12px; width: auto; bottom: 12px; }
   .bw{ display:none; }
+
+  /* make UI a normal document flow */
+  .ui{
+    position: relative;
+    inset: auto;
+    pointer-events: auto;
+    padding-top: 84px; /* space for fixed topbar */
+    padding-bottom: 18px;
+  }
+
+  /* chapters become stacked cards */
+  .chapter{
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: auto;
+    margin: 12px;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  /* keep actions clickable */
+  .chapter-actions{ pointer-events: auto; }
+
+  /* optional: move HUD/panel out of the way on mobile */
+  .hud{ display:none; }
+  .panel{ display:none; }
 }
