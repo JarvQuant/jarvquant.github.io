@@ -187,7 +187,7 @@ document.addEventListener("click", (e) => {
     }
   });
 
-  mountBeacons(world);
+  //mountBeacons(world);
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
