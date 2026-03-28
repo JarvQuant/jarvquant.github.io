@@ -162,6 +162,76 @@ function makeTextTexture({ title, body, w = 1024, h = 640 }) {
   return tex;
 }
 
+// Mini record texture: tiny label + micro chart
+function makeMiniRecordTexture({ id, instrument, setup, r, w = 512, h = 320 }) {
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  const g = c.getContext("2d");
+
+  // translucent surface
+  g.clearRect(0, 0, w, h);
+  g.fillStyle = "rgba(6, 7, 12, 0.45)";
+  g.fillRect(0, 0, w, h);
+
+  // header line
+  g.fillStyle = "rgba(34,211,238,0.78)";
+  g.font = "900 20px ui-monospace, Menlo, Consolas, monospace";
+  g.fillText(id, 18, 34);
+
+  g.fillStyle = "rgba(245,247,255,0.60)";
+  g.font = "800 18px ui-monospace, Menlo, Consolas, monospace";
+  g.fillText(`${instrument}  ·  ${r}`, 18, 62);
+
+  g.fillStyle = "rgba(245,247,255,0.72)";
+  g.font = "800 18px ui-monospace, Menlo, Consolas, monospace";
+  const s = (setup || "").slice(0, 26);
+  g.fillText(s, 18, 92);
+
+  // micro chart area
+  const x0 = 18, y0 = 118, ww = w - 36, hh = h - 140;
+  g.strokeStyle = "rgba(245,247,255,0.08)";
+  g.lineWidth = 1;
+  g.strokeRect(x0, y0, ww, hh);
+
+  // sparkline
+  g.strokeStyle = "rgba(34,211,238,0.28)";
+  g.lineWidth = 2;
+  g.beginPath();
+  for (let i = 0; i < 22; i++) {
+    const t = i / 21;
+    const xx = x0 + t * ww;
+    const noise = Math.sin((t * 6.0 + id.length) * 1.7) * 0.22 + Math.sin(t * 13.0) * 0.10;
+    const yy = y0 + hh * (0.55 - noise);
+    if (i === 0) g.moveTo(xx, yy);
+    else g.lineTo(xx, yy);
+  }
+  g.stroke();
+
+  // a few candle-ish marks (subtle)
+  for (let k = 0; k < 8; k++) {
+    const t = (k + 1) / 9;
+    const xx = x0 + t * ww;
+    const base = y0 + hh * (0.55 + Math.sin(t * 8.0) * 0.08);
+    const wick = 18 + (k % 3) * 6;
+    const body = 10 + (k % 4) * 4;
+
+    g.strokeStyle = "rgba(245,247,255,0.12)";
+    g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(xx, base - wick);
+    g.lineTo(xx, base + wick);
+    g.stroke();
+
+    g.fillStyle = "rgba(109,40,217,0.18)";
+    g.fillRect(xx - 3, base - body, 6, body * 2);
+  }
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  return tex;
+}
+
 export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -228,18 +298,25 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const hoverBorder = makeBorderMaterial({ opacity: 0.38, thickness: 0.032, glow: 0.95 });
   const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.24 });
 
-  // --- 3D Info plates (MOVED deeper so they never sit inside the gallery wall) ---
+  // --- 3D Info plates (multiple per chapter window) ---
   const infoPlates = [];
   const info = [
-    // NOTE: z moved from -10 -> -26 (no overlap with exhibit wall at ~ -9.2)
-    { id: "IP-1", title: "[MEMORY]", body: "Store imprints.\nRetrieve patterns.", x: 9.8, y: 1.5, z: -26, ry: -0.26, a: 0.18, b: 0.47 },
+    // threshold -> memory transition
+    { id: "IP-0", title: "[JARVQUANT]", body: "Private internal builds.\nBeta planned at v0.5.0.", x: -10.6, y: 1.55, z: -22, ry: 0.30, a: 0.00, b: 0.22 },
+    { id: "IP-1", title: "[MEMORY]", body: "Capture context.\nRetrieve patterns.\nRepeat what works.", x: 9.8, y: 1.5, z: -26, ry: -0.26, a: 0.18, b: 0.47 },
+    { id: "IP-1B", title: "[MEMORY]", body: "From notes to evidence.\nNot vibes.", x: -8.8, y: 0.95, z: -34, ry: 0.24, a: 0.22, b: 0.47 },
 
-    // moved a bit deeper too
+    // memory -> replay
     { id: "IP-2", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: -10.2, y: 1.2, z: -58, ry: 0.28, a: 0.47, b: 0.66 },
+    { id: "IP-2B", title: "[EXECUTION]", body: "Spread • fees • slippage\n(iterating)", x: 10.4, y: 1.55, z: -66, ry: -0.26, a: 0.47, b: 0.66 },
 
+    // replay -> structure
     { id: "IP-3", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: 10.2, y: 1.6, z: -94, ry: -0.28, a: 0.66, b: 0.88 },
+    { id: "IP-3B", title: "[PRESETS]", body: "Repeat experiments.\nClean comparisons.", x: -10.1, y: 1.25, z: -102, ry: 0.28, a: 0.66, b: 0.88 },
 
-    { id: "IP-4", title: "[EDGE]", body: "Precision is memory organized.", x: -9.2, y: 1.3, z: -132, ry: 0.28, a: 0.88, b: 1.00 },
+    // structure -> edge
+    { id: "IP-4", title: "[ACCESS]", body: "Discord + socials\nfor drops.", x: -9.2, y: 1.3, z: -132, ry: 0.28, a: 0.88, b: 1.00 },
+    { id: "IP-4B", title: "[REQUEST]", body: "Email with your use-case\nfor invites.", x: 9.8, y: 1.55, z: -140, ry: -0.28, a: 0.88, b: 1.00 },
   ];
 
   for (const it of info) {
@@ -276,8 +353,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     infoPlates.push(border);
   }
 
-  // --- Random record frames (avoid exhibit corridor) ---
-  const smallCount = 260;
+  // --- Random record frames (now: many have subtle mini content) ---
+  const smallCount = 280;
   for (let i = 0; i < smallCount; i++) {
     const rec = makeRecord(i);
     const w = rand(0.55, 1.35);
@@ -289,6 +366,18 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const plate = new THREE.Mesh(makeFrameGeometry(w * 0.985, h * 0.985), plateMat.clone());
     plate.position.z = -0.001;
     border.add(plate);
+
+    // Add a mini inner texture to a subset (keeps scene light but richer)
+    const chance = 0.38; // 38% of small frames get content
+    if (Math.random() < chance) {
+      const tex = makeMiniRecordTexture(rec);
+      const inner = new THREE.Mesh(
+        makeFrameGeometry(w * 0.95, h * 0.95),
+        new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.75 })
+      );
+      inner.position.z = 0.001;
+      border.add(inner);
+    }
 
     let x, y, z;
     for (let tries = 0; tries < 30; tries++) {
@@ -355,10 +444,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     } catch {}
   })();
 
-  // --- Manifest plates AFTER the gallery ---
+  // --- Manifest plates AFTER the gallery (now: more JarvQuant branding) ---
   const manifest = [
     { id: "MF-1", title: "[JARVQUANT]", body: "Replay-first archive of market memory.\nEvidence over hype." },
     { id: "MF-2", title: "[MISSION]", body: "Preserve decisions.\nReconstruct markets.\nTurn memory into structure." },
+    { id: "MF-3", title: "[STATUS]", body: "Internal v0.3.0.\nBeta planned at v0.5.0." },
+    { id: "MF-4", title: "[LINKS]", body: "discord.gg/fYWSz2NpaC\nx.com/JarvQuant\nyoutube.com/@JarvQuant" },
   ];
 
   for (let i = 0; i < manifest.length; i++) {
@@ -430,11 +521,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const biasX = 1.2;
 
   function setEntered(v) { state.entered = !!v; }
-
-  function setChapter(name) {
-    state.chapter = name; // continuous: no snapping here
-  }
-
+  function setChapter(name) { state.chapter = name; }
   function setRail(t) { state.railTarget = clamp(t, 0, 1); }
 
   function clearSelection() {
