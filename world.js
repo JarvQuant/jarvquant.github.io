@@ -337,7 +337,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     depthWrite: false,
   });
 
-  // --- 3D Info plates (always visible) ---
+  // --- 3D Info plates (segmented windows; left pulled slightly inward) ---
   const infoPlates = [];
 
   // Pull both rails slightly toward center to reduce edge clipping / overlaps in perspective.
@@ -345,6 +345,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const XL = -7.6;
 
   const reserved = [];
+
   function inReservedZone(x, y, z) {
     for (const r of reserved) {
       const dx = x - r.x;
@@ -356,31 +357,42 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   }
 
   const info = [
-    { id: "IP-0A", title: "[JARVQUANT]", body: "Internal v0.3.0\n(not public)", x: XL, y: 1.65, z: -42, ry: 0.30 },
-    { id: "IP-0B", title: "[BETA]", body: "Planned at v0.5.0\n(limited invites)", x: XR, y: 1.45, z: -54, ry: -0.30 },
+    // Threshold / intro
+    // Push the first plate further behind the exhibit wall so it doesn't get occluded by the 6 big exhibit frames.
+    { id: "IP-0A", title: "[JARVQUANT]", body: "Internal v0.3.0\n(not public)", x: XL, y: 1.65, z: -42, ry: 0.30, a: 0.00, b: 0.22 },
+    { id: "IP-0B", title: "[BETA]", body: "Planned at v0.5.0\n(limited invites)", x: XR, y: 1.45, z: -54, ry: -0.30, a: 0.00, b: 0.22 },
 
-    { id: "IP-1A", title: "[MEMORY]", body: "Capture context.\nRetrieve patterns.", x: XR, y: 1.55, z: -56, ry: -0.26 },
-    { id: "IP-1B", title: "[JOURNAL]", body: "Notes → evidence.\nExport-ready.", x: XL, y: 1.25, z: -70, ry: 0.26 },
+    // MEMORY
+    // Push this segment a bit deeper so it never visually collides with the BETA plate (see relay screenshot).
+    { id: "IP-1A", title: "[MEMORY]", body: "Capture context.\nRetrieve patterns.", x: XR, y: 1.55, z: -68, ry: -0.26, a: 0.10, b: 0.44 },
+    { id: "IP-1B", title: "[JOURNAL]", body: "Notes → evidence.\nExport-ready.", x: XL, y: 1.25, z: -84, ry: 0.26, a: 0.10, b: 0.44 },
 
-    { id: "IP-2A", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: XL, y: 1.45, z: -108, ry: 0.28 },
-    { id: "IP-2B", title: "[EXECUTION]", body: "Spread • fees • slippage\n(iterating)", x: XR, y: 1.65, z: -122, ry: -0.28 },
+    // REPLAY
+    { id: "IP-2A", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: XL, y: 1.45, z: -108, ry: 0.28, a: 0.36, b: 0.68 },
+    { id: "IP-2B", title: "[EXECUTION]", body: "Spread • fees • slippage\n(iterating)", x: XR, y: 1.65, z: -122, ry: -0.28, a: 0.36, b: 0.68 },
 
-    { id: "IP-3A", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: XR, y: 1.65, z: -162, ry: -0.28 },
-    { id: "IP-3B", title: "[PRESETS]", body: "Repeat experiments.\nClean comparisons.", x: XL, y: 1.35, z: -178, ry: 0.28 },
+    // STRUCTURE
+    { id: "IP-3A", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: XR, y: 1.65, z: -162, ry: -0.28, a: 0.62, b: 0.90 },
+    { id: "IP-3B", title: "[PRESETS]", body: "Repeat experiments.\nClean comparisons.", x: XL, y: 1.35, z: -178, ry: 0.28, a: 0.62, b: 0.90 },
 
-    { id: "IP-4A", title: "[ACCESS]", body: "Discord + socials\nfor drops.", x: XL, y: 1.55, z: -220, ry: 0.28 },
-    { id: "IP-4B", title: "[REQUEST]", body: "Email with your use-case\nfor invites.", x: XR, y: 1.35, z: -236, ry: -0.28 },
+    // ACCESS
+    { id: "IP-4A", title: "[ACCESS]", body: "Discord + socials\nfor drops.", x: XL, y: 1.55, z: -220, ry: 0.28, a: 0.84, b: 1.00 },
+    { id: "IP-4B", title: "[REQUEST]", body: "Email with your use-case\nfor invites.", x: XR, y: 1.35, z: -236, ry: -0.28, a: 0.84, b: 1.00 },
   ];
 
   for (const it of info) {
     const tex = makeTextTexture({ title: it.title, body: it.body, w: 980, h: 560 });
+    // Disable fog on text so plates stay readable deeper into the corridor.
+    // depthWrite:false avoids flicker with other transparent surfaces.
     const innerMat = new THREE.MeshBasicMaterial({
       map: tex,
       transparent: true,
-      opacity: 0.92,     // ALWAYS VISIBLE
+      // Always visible (no fade-in/out)
+      opacity: 0.92,
       fog: false,
-      depthWrite: false, // prevent flicker
-      depthTest: true,
+      depthWrite: false,
+      // Let text draw on top of its own card (avoid z-fighting / flicker).
+      depthTest: false,
     });
 
     const w = 4.9, h = 3.0;
@@ -394,11 +406,14 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       note: it.body,
     };
 
+    // Larger Z separation + explicit renderOrder to avoid z-fighting / flicker.
     const plate = new THREE.Mesh(makeFrameGeometry(w * 0.985, h * 0.985), plateMat.clone());
-    plate.position.z = -0.001;
+    plate.position.z = -0.010;
+    plate.renderOrder = 1;
 
     const inner = new THREE.Mesh(makeFrameGeometry(w * 0.95, h * 0.95), innerMat);
-    inner.position.z = 0.001;
+    inner.position.z = 0.010;
+    inner.renderOrder = 3;
 
     border.add(plate);
     border.add(inner);
@@ -406,7 +421,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     border.position.set(it.x, it.y, it.z);
     border.rotation.y = it.ry;
 
-    // Generous bubble to stop random frames overlapping the big cards.
+    // Keep a clear bubble around big text plates so random frames never overlap them.
+    // (Radius is generous to avoid the "double panel" overlap issue.)
     reserved.push({ x: it.x, y: it.y, z: it.z, r: 6.4 });
 
     frameGroup.add(border);
@@ -443,7 +459,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     for (let tries = 0; tries < 40; tries++) {
       x = rand(-12.5, 12.5);
       y = rand(-2.4, 5.6);
-      z = rand(-60, 90);
+      z = rand(-60, 90); // local space around gallery / mid-zone
       if (!inGalleryClearZone(x, y, z) && !inDeepClearZone(x, y, z) && !inReservedZone(x, y, z)) break;
     }
 
@@ -495,6 +511,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const row = (i / 3) | 0;
     const col = i % 3;
 
+    // Keep the exhibit wall orthogonal (no yaw). Widen spacing a touch to avoid screen-space overlap.
     border.position.set(-8.2 + col * 8.2, 1.15 - row * 4.1, -9.2);
     border.rotation.y = 0.0;
 
@@ -522,16 +539,11 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     { id: "MF-4", title: "[LINKS]", body: "discord.gg/fYWSz2NpaC\nx.com/JarvQuant\nyoutube.com/@JarvQuant" },
   ];
 
-  const manifestZ = [-260, -300, -340, -380];
+  const manifestZ = [-260, -300, -340, -380]; // local to frameGroup
   for (let i = 0; i < manifest.length; i++) {
     const tex = makeTextTexture({ title: manifest[i].title, body: manifest[i].body, w: 1200, h: 760 });
-    const innerMat = new THREE.MeshBasicMaterial({
-      map: tex,
-      transparent: true,
-      opacity: 0.96,
-      fog: false,
-      depthWrite: false,
-    });
+    // Disable fog on manifest text (it sits very deep; fog was washing it out).
+    const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96, fog: false, depthWrite: false, depthTest: false });
 
     const w = 7.2, h = 4.4;
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
@@ -544,16 +556,19 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       note: manifest[i].body,
     };
 
+    // Larger Z separation + explicit renderOrder to avoid z-fighting / flicker.
     const plate = new THREE.Mesh(makeFrameGeometry(w * 0.985, h * 0.985), plateMat.clone());
-    plate.position.z = -0.001;
+    plate.position.z = -0.012;
+    plate.renderOrder = 1;
 
     const inner = new THREE.Mesh(makeFrameGeometry(w * 0.95, h * 0.95), innerMat);
-    inner.position.z = 0.001;
+    inner.position.z = 0.012;
+    inner.renderOrder = 3;
 
     border.add(plate);
     border.add(inner);
 
-    const x = i % 2 === 0 ? -7.8 : 8.8;
+    const x = i % 2 === 0 ? -7.8 : 8.8; // <- keep big plates nearer to center so nothing gets clipped
     const y = 1.85 - i * 0.25;
     const z = manifestZ[i];
     border.position.set(x, y, z);
@@ -689,7 +704,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     state.rail = lerp(state.rail, state.railTarget, 0.06);
     state.focus = lerp(state.focus, state.focusTarget, 0.055);
 
-    // Info plates: keep border glow stable (no fade).
+    // Info plates: always visible (no rail-window fade / flicker).
     for (const p of infoPlates) {
       p.material.uniforms.uOpacity.value = 0.38;
       p.material.uniforms.uGlow.value = 0.95;
@@ -698,6 +713,9 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const px = clamp(state.mouseX, -1, 1);
     const py = clamp(state.mouseY, -1, 1);
 
+    // extended runway
+    // Keep the default flight path dead-straight (no diagonal drift / yaw bias).
+    // We still allow a tiny vertical parallax so it doesn't feel "on rails".
     const baseZ = lerp(12.0, -420.0, state.rail);
     const baseX = 0.0;
     const baseY = 0.8 + py * 0.22 + Math.cos(state.rail * Math.PI * 1.3) * 0.08;
