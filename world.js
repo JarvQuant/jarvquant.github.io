@@ -332,8 +332,9 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   // --- 3D Info plates (segmented windows; left pulled slightly inward) ---
   const infoPlates = [];
 
-  const XR = 9.2;
-  const XL = -7.9; // <- pulled further inward so left plates stay in view on a straight flight
+  // Pull both rails slightly toward center to reduce edge clipping / overlaps in perspective.
+  const XR = 8.6;
+  const XL = -7.6;
 
   const info = [
     // Threshold / intro
@@ -371,7 +372,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       instrument: "JarvQuant",
       setup: it.title,
       r: "—",
-      note: it.body.replace(/\n/g, " "),
+      note: it.body,
     };
 
     const plate = new THREE.Mesh(makeFrameGeometry(w * 0.985, h * 0.985), plateMat.clone());
@@ -473,8 +474,10 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     const row = (i / 3) | 0;
     const col = i % 3;
-    border.position.set(-7.4 + col * 7.4, 1.15 - row * 4.1, -9.2);
-    border.rotation.y = rand(-0.10, 0.10);
+
+    // Keep the exhibit wall orthogonal (no yaw). Widen spacing a touch to avoid screen-space overlap.
+    border.position.set(-8.2 + col * 8.2, 1.15 - row * 4.1, -9.2);
+    border.rotation.y = 0.0;
 
     frameGroup.add(border);
     frames.push(border);
@@ -512,7 +515,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       instrument: "JarvQuant",
       setup: manifest[i].title,
       r: "—",
-      note: manifest[i].body.replace(/\n/g, " "),
+      note: manifest[i].body,
     };
 
     const plate = new THREE.Mesh(makeFrameGeometry(w * 0.985, h * 0.985), plateMat.clone());
@@ -524,11 +527,11 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     border.add(plate);
     border.add(inner);
 
-    const x = i % 2 === 0 ? -8.2 : 9.6; // <- pull the left manifest plates inward so they stay in frame
+    const x = i % 2 === 0 ? -7.8 : 8.8; // <- keep big plates nearer to center so nothing gets clipped
     const y = 1.85 - i * 0.25;
     const z = manifestZ[i];
     border.position.set(x, y, z);
-    border.rotation.y = i % 2 === 0 ? 0.28 : -0.28;
+    border.rotation.y = i % 2 === 0 ? 0.22 : -0.22;
 
     frameGroup.add(border);
     frames.push(border);
