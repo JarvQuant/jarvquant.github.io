@@ -119,6 +119,26 @@ body{
 
 .controls{ display:flex; align-items:center; gap: 10px; }
 
+.socials{ display:flex; gap: 8px; align-items:center; flex-wrap: wrap; }
+.social{
+  display:inline-flex;
+  align-items:center;
+  padding: 9px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(5,6,10,0.14);
+  backdrop-filter: blur(var(--blur));
+  color: rgba(245,247,255,0.62);
+  text-decoration:none;
+  font: 650 12px/1 var(--sans);
+  letter-spacing: .25px;
+}
+.social:hover{
+  color: var(--fg);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.16);
+}
+
 .pill{
   display:flex;
   align-items:center;
@@ -194,7 +214,7 @@ body{
   position: absolute;
   left: 50%;
   bottom: 96px;
-  width: min(640px, calc(100vw - 112px));
+  width: min(700px, calc(100vw - 112px));
   padding: 22px 22px 20px;
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: var(--radius);
@@ -214,6 +234,19 @@ body{
   pointer-events:auto;
 }
 
+.chapter::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: inherit;
+  background: rgba(6, 7, 12, 0.55);
+  pointer-events:none;
+}
+.chapter > *{
+  position: relative;
+  z-index: 1;
+}
+
 .chapter-kicker{
   font: 800 11px/1 var(--mono);
   letter-spacing: 1.2px;
@@ -229,34 +262,40 @@ body{
   text-shadow: 0 0 22px rgba(34,211,238,0.06);
 }
 .chapter-sub{
-  margin: 0 0 16px 0;
+  margin: 0 0 12px 0;
   color: rgba(245,247,255,0.72);
   font-size: 14px;
   line-height: 1.6;
-  max-width: 54ch;
+  max-width: 60ch;
 }
+
+.bullets{
+  margin: 10px 0 14px;
+  padding-left: 18px;
+  color: rgba(245,247,255,0.72);
+  font: 650 12px/1.55 var(--mono);
+}
+.bullets li{ margin: 6px 0; }
+
+.status{
+  margin-top: 6px;
+  color: rgba(34,211,238,0.70);
+  font: 800 11px/1.2 var(--mono);
+  letter-spacing: .6px;
+  text-transform: uppercase;
+}
+
 .chapter-actions{
   display:flex;
   gap: 10px;
   align-items:center;
-  pointer-events: none; /* FIX: only active chapter's actions should be clickable */
-  margin-bottom: 12px;
+  pointer-events: none; /* only active chapter's actions clickable */
+  margin: 6px 0 8px;
 }
 .chapter.is-active .chapter-actions{
   pointer-events: auto;
 }
-.chapter::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius: inherit;
-  background: rgba(6, 7, 12, 0.55);
-  pointer-events:none;
-}
-.chapter > *{
-  position: relative;
-  z-index: 1;
-}
+
 .btn{
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.04);
@@ -293,7 +332,7 @@ body{
 .chapter a[href^="mailto:"]{ pointer-events:none; }
 #chapter-edge.is-active a[href^="mailto:"]{ pointer-events:auto; }
 
-/* Navigation hint (optional; add HTML div#navHint + JS to toggle .is-on) */
+/* Navigation hint */
 .hint{
   position: fixed;
   left: 50%;
@@ -546,6 +585,7 @@ body{
   }
 
   .nav{ display:none; }
+  .socials{ display:none; }
   .bw{ display:none; }
 
   .ui{
@@ -569,6 +609,7 @@ body{
   }
 
   .chapter-actions{ pointer-events: auto; }
+  .hint{ display:none; }
 
   /* optional: less clutter */
   .hud{ display:none; }
