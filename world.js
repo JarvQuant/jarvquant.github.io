@@ -283,6 +283,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
   const latticeB = buildLattice({ size: 260, step: 12, color: 0x6d28d9, opacity: 0.06 });
   latticeB.position.copy(origin);
+  latticeB.position.x += 0.35;
   latticeB.rotation.y = yaw;
   scene.add(latticeB);
 
