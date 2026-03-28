@@ -678,9 +678,11 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const py = clamp(state.mouseY, -1, 1);
 
     // extended runway
+    // Keep the default flight path dead-straight (no diagonal drift / yaw bias).
+    // We still allow a tiny vertical parallax so it doesn't feel "on rails".
     const baseZ = lerp(12.0, -420.0, state.rail);
-    const baseX = px * 0.65 + Math.sin(state.rail * Math.PI * 2) * 0.06; // a bit narrower
-    const baseY = 0.8 + py * 0.30 + Math.cos(state.rail * Math.PI * 1.3) * 0.10;
+    const baseX = 0.0;
+    const baseY = 0.8 + py * 0.22 + Math.cos(state.rail * Math.PI * 1.3) * 0.08;
 
     const focusZ = state.focusPos.z + 4.4;
     const focusX = state.focusPos.x * 0.55;
@@ -692,7 +694,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     const lookZ = lerp(camera.position.z - 18, state.focusPos.z, state.focus);
     camera.lookAt(
-      lerp(biasX, state.focusPos.x, state.focus * 0.65),
+      lerp(0.0, state.focusPos.x, state.focus * 0.65),
       lerp(1.6, state.focusPos.y, state.focus),
       lookZ
     );
