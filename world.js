@@ -277,9 +277,10 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   floor.position.y = -1.25;
   scene.add(floor);
 
-  // Lattice (off-center)
-  const origin = new THREE.Vector3(2.4, 2.2, -72);
-  const yaw = 0.08;
+  // Lattice (aligned to corridor)
+  // Keep it centered + no yaw so the camera flight reads dead-straight.
+  const origin = new THREE.Vector3(0.0, 2.2, -72);
+  const yaw = 0.0;
 
   const latticeA = buildLattice({ size: 260, step: 6, color: 0x22d3ee, opacity: 0.12 });
   latticeA.position.copy(origin);
@@ -332,12 +333,13 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const infoPlates = [];
 
   const XR = 9.2;
-  const XL = -8.9; // <- slightly inward so left text never clips
+  const XL = -7.9; // <- pulled further inward so left plates stay in view on a straight flight
 
   const info = [
     // Threshold / intro
-    { id: "IP-0A", title: "[JARVQUANT]", body: "Internal v0.3.0\n(not public)", x: XL, y: 1.65, z: -18, ry: 0.30, a: 0.00, b: 0.22 },
-    { id: "IP-0B", title: "[BETA]", body: "Planned at v0.5.0\n(limited invites)", x: XR, y: 1.45, z: -30, ry: -0.30, a: 0.00, b: 0.22 },
+    // Push the first plate further behind the exhibit wall so it doesn't get occluded by the 6 big exhibit frames.
+    { id: "IP-0A", title: "[JARVQUANT]", body: "Internal v0.3.0\n(not public)", x: XL, y: 1.65, z: -42, ry: 0.30, a: 0.00, b: 0.22 },
+    { id: "IP-0B", title: "[BETA]", body: "Planned at v0.5.0\n(limited invites)", x: XR, y: 1.45, z: -54, ry: -0.30, a: 0.00, b: 0.22 },
 
     // MEMORY
     { id: "IP-1A", title: "[MEMORY]", body: "Capture context.\nRetrieve patterns.", x: XR, y: 1.55, z: -56, ry: -0.26, a: 0.10, b: 0.44 },
@@ -358,7 +360,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
   for (const it of info) {
     const tex = makeTextTexture({ title: it.title, body: it.body, w: 980, h: 560 });
-    const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.0 });
+    // Disable fog on text so plates stay readable deeper into the corridor.
+    const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.0, fog: false });
 
     const w = 4.9, h = 3.0;
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
@@ -498,7 +501,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const manifestZ = [-260, -300, -340, -380]; // local to frameGroup
   for (let i = 0; i < manifest.length; i++) {
     const tex = makeTextTexture({ title: manifest[i].title, body: manifest[i].body, w: 1200, h: 760 });
-    const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96 });
+    // Disable fog on manifest text (it sits very deep; fog was washing it out).
+    const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96, fog: false });
 
     const w = 7.2, h = 4.4;
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
@@ -520,7 +524,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     border.add(plate);
     border.add(inner);
 
-    const x = i % 2 === 0 ? -9.2 : 9.6; // <- left pulled inward slightly
+    const x = i % 2 === 0 ? -8.2 : 9.6; // <- pull the left manifest plates inward so they stay in frame
     const y = 1.85 - i * 0.25;
     const z = manifestZ[i];
     border.position.set(x, y, z);
