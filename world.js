@@ -328,29 +328,32 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const hoverBorder = makeBorderMaterial({ opacity: 0.38, thickness: 0.032, glow: 0.95 });
   const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.24 });
 
-  // --- 3D Info plates (ordered, closer to center; segmented windows) ---
+  // --- 3D Info plates (segmented windows; left pulled slightly inward) ---
   const infoPlates = [];
+
+  const XR = 9.2;
+  const XL = -8.9; // <- slightly inward so left text never clips
 
   const info = [
     // Threshold / intro
-    { id: "IP-0A", title: "[JARVQUANT]", body: "Internal v0.3.0\n(not public)", x: -9.2, y: 1.65, z: -18, ry: 0.30, a: 0.00, b: 0.22 },
-    { id: "IP-0B", title: "[BETA]", body: "Planned at v0.5.0\n(limited invites)", x: 9.2, y: 1.45, z: -30, ry: -0.30, a: 0.00, b: 0.22 },
+    { id: "IP-0A", title: "[JARVQUANT]", body: "Internal v0.3.0\n(not public)", x: XL, y: 1.65, z: -18, ry: 0.30, a: 0.00, b: 0.22 },
+    { id: "IP-0B", title: "[BETA]", body: "Planned at v0.5.0\n(limited invites)", x: XR, y: 1.45, z: -30, ry: -0.30, a: 0.00, b: 0.22 },
 
     // MEMORY
-    { id: "IP-1A", title: "[MEMORY]", body: "Capture context.\nRetrieve patterns.", x: 9.2, y: 1.55, z: -56, ry: -0.26, a: 0.10, b: 0.44 },
-    { id: "IP-1B", title: "[JOURNAL]", body: "Notes → evidence.\nExport-ready.", x: -9.2, y: 1.25, z: -70, ry: 0.26, a: 0.10, b: 0.44 },
+    { id: "IP-1A", title: "[MEMORY]", body: "Capture context.\nRetrieve patterns.", x: XR, y: 1.55, z: -56, ry: -0.26, a: 0.10, b: 0.44 },
+    { id: "IP-1B", title: "[JOURNAL]", body: "Notes → evidence.\nExport-ready.", x: XL, y: 1.25, z: -70, ry: 0.26, a: 0.10, b: 0.44 },
 
     // REPLAY
-    { id: "IP-2A", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: -9.2, y: 1.45, z: -108, ry: 0.28, a: 0.36, b: 0.68 },
-    { id: "IP-2B", title: "[EXECUTION]", body: "Spread • fees • slippage\n(iterating)", x: 9.2, y: 1.65, z: -122, ry: -0.28, a: 0.36, b: 0.68 },
+    { id: "IP-2A", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: XL, y: 1.45, z: -108, ry: 0.28, a: 0.36, b: 0.68 },
+    { id: "IP-2B", title: "[EXECUTION]", body: "Spread • fees • slippage\n(iterating)", x: XR, y: 1.65, z: -122, ry: -0.28, a: 0.36, b: 0.68 },
 
     // STRUCTURE
-    { id: "IP-3A", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: 9.2, y: 1.65, z: -162, ry: -0.28, a: 0.62, b: 0.90 },
-    { id: "IP-3B", title: "[PRESETS]", body: "Repeat experiments.\nClean comparisons.", x: -9.2, y: 1.35, z: -178, ry: 0.28, a: 0.62, b: 0.90 },
+    { id: "IP-3A", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: XR, y: 1.65, z: -162, ry: -0.28, a: 0.62, b: 0.90 },
+    { id: "IP-3B", title: "[PRESETS]", body: "Repeat experiments.\nClean comparisons.", x: XL, y: 1.35, z: -178, ry: 0.28, a: 0.62, b: 0.90 },
 
     // ACCESS
-    { id: "IP-4A", title: "[ACCESS]", body: "Discord + socials\nfor drops.", x: -9.2, y: 1.55, z: -220, ry: 0.28, a: 0.84, b: 1.00 },
-    { id: "IP-4B", title: "[REQUEST]", body: "Email with your use-case\nfor invites.", x: 9.2, y: 1.35, z: -236, ry: -0.28, a: 0.84, b: 1.00 },
+    { id: "IP-4A", title: "[ACCESS]", body: "Discord + socials\nfor drops.", x: XL, y: 1.55, z: -220, ry: 0.28, a: 0.84, b: 1.00 },
+    { id: "IP-4B", title: "[REQUEST]", body: "Email with your use-case\nfor invites.", x: XR, y: 1.35, z: -236, ry: -0.28, a: 0.84, b: 1.00 },
   ];
 
   for (const it of info) {
@@ -517,7 +520,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     border.add(plate);
     border.add(inner);
 
-    const x = i % 2 === 0 ? -9.6 : 9.6;
+    const x = i % 2 === 0 ? -9.2 : 9.6; // <- left pulled inward slightly
     const y = 1.85 - i * 0.25;
     const z = manifestZ[i];
     border.position.set(x, y, z);
@@ -562,6 +565,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     focusPos: new THREE.Vector3(0, 1.6, -30),
   };
 
+  // camera: neutral (no right bias)
   const biasX = 0.0;
 
   function setEntered(v) { state.entered = !!v; }
@@ -675,7 +679,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     // extended runway
     const baseZ = lerp(12.0, -420.0, state.rail);
-    const baseX = px * 0.75 + Math.sin(state.rail * Math.PI * 2) * 0.08;
+    const baseX = px * 0.65 + Math.sin(state.rail * Math.PI * 2) * 0.06; // a bit narrower
     const baseY = 0.8 + py * 0.30 + Math.cos(state.rail * Math.PI * 1.3) * 0.10;
 
     const focusZ = state.focusPos.z + 4.4;
