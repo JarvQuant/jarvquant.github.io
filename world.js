@@ -327,7 +327,15 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
   const baseBorder = makeBorderMaterial({ opacity: 0.22, thickness: 0.028, glow: 0.65 });
   const hoverBorder = makeBorderMaterial({ opacity: 0.38, thickness: 0.032, glow: 0.95 });
-  const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.24 });
+
+  // IMPORTANT: many surfaces are transparent. If any of them write depth, you get flicker / disappearing text.
+  // Keep depthWrite disabled on plates/text to stabilize render order.
+  const plateMat = new THREE.MeshBasicMaterial({
+    color: 0x070b14,
+    transparent: true,
+    opacity: 0.24,
+    depthWrite: false,
+  });
 
   // --- 3D Info plates (segmented windows; left pulled slightly inward) ---
   const infoPlates = [];
@@ -335,6 +343,18 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   // Pull both rails slightly toward center to reduce edge clipping / overlaps in perspective.
   const XR = 8.6;
   const XL = -7.6;
+
+  const reserved = [];
+
+  function inReservedZone(x, y, z) {
+    for (const r of reserved) {
+      const dx = x - r.x;
+      const dy = y - r.y;
+      const dz = z - r.z;
+      if (dx * dx + dy * dy + dz * dz < r.r * r.r) return true;
+    }
+    return false;
+  }
 
   const info = [
     // Threshold / intro
@@ -362,7 +382,14 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   for (const it of info) {
     const tex = makeTextTexture({ title: it.title, body: it.body, w: 980, h: 560 });
     // Disable fog on text so plates stay readable deeper into the corridor.
-    const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.0, fog: false });
+    // depthWrite:false avoids flicker with other transparent surfaces.
+    const innerMat = new THREE.MeshBasicMaterial({
+      map: tex,
+      transparent: true,
+      opacity: 0.0,
+      fog: false,
+      depthWrite: false,
+    });
 
     const w = 4.9, h = 3.0;
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
@@ -386,6 +413,9 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     border.position.set(it.x, it.y, it.z);
     border.rotation.y = it.ry;
+
+    // Keep a clear bubble around big text plates so random frames never overlap them.
+    reserved.push({ x: it.x, y: it.y, z: it.z, r: 4.2 });
 
     border.userData.fade = { a: it.a, b: it.b, innerMat };
 
@@ -413,7 +443,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       const tex = makeMiniRecordTexture(rec);
       const inner = new THREE.Mesh(
         makeFrameGeometry(w * 0.95, h * 0.95),
-        new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.78 })
+        new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.78, depthWrite: false })
       );
       inner.position.z = 0.001;
       border.add(inner);
@@ -424,7 +454,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       x = rand(-12.5, 12.5);
       y = rand(-2.4, 5.6);
       z = rand(-60, 90); // local space around gallery / mid-zone
-      if (!inGalleryClearZone(x, y, z) && !inDeepClearZone(x, y, z)) break;
+      if (!inGalleryClearZone(x, y, z) && !inDeepClearZone(x, y, z) && !inReservedZone(x, y, z)) break;
     }
 
     border.position.set(x, y, z);
@@ -465,7 +495,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     const inner = new THREE.Mesh(
       makeFrameGeometry(5.05, 2.92),
-      new THREE.MeshBasicMaterial({ color: 0x0a0f18, transparent: true, opacity: 0.90 })
+      new THREE.MeshBasicMaterial({ color: 0x0a0f18, transparent: true, opacity: 0.90, depthWrite: false })
     );
     inner.position.z = 0.001;
 
@@ -478,6 +508,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     // Keep the exhibit wall orthogonal (no yaw). Widen spacing a touch to avoid screen-space overlap.
     border.position.set(-8.2 + col * 8.2, 1.15 - row * 4.1, -9.2);
     border.rotation.y = 0.0;
+
+    reserved.push({ x: border.position.x, y: border.position.y, z: border.position.z, r: 5.2 });
 
     frameGroup.add(border);
     frames.push(border);
@@ -505,7 +537,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   for (let i = 0; i < manifest.length; i++) {
     const tex = makeTextTexture({ title: manifest[i].title, body: manifest[i].body, w: 1200, h: 760 });
     // Disable fog on manifest text (it sits very deep; fog was washing it out).
-    const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96, fog: false });
+    const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96, fog: false, depthWrite: false });
 
     const w = 7.2, h = 4.4;
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
@@ -532,6 +564,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const z = manifestZ[i];
     border.position.set(x, y, z);
     border.rotation.y = i % 2 === 0 ? 0.22 : -0.22;
+
+    reserved.push({ x, y, z, r: 5.4 });
 
     frameGroup.add(border);
     frames.push(border);
