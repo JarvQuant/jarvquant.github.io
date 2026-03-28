@@ -563,7 +563,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     focusPos: new THREE.Vector3(0, 1.6, -30)
   };
 
-  const biasX = 1.2;
+  const biasX = 0.25;
 
   function setEntered(v) {
     state.entered = !!v;
@@ -689,7 +689,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     // EXTENDED RUNWAY: end of travel now -420
     const baseZ = lerp(12.0, -420.0, state.rail);
 
-    const baseX = px * 0.85 + Math.sin(state.rail * Math.PI * 2) * 0.25;
+    const baseX = px * 0.85 + Math.sin(state.rail * Math.PI * 2) * 0.12;
     const baseY = 0.8 + py * 0.30 + Math.cos(state.rail * Math.PI * 1.3) * 0.10;
 
     const focusZ = state.focusPos.z + 4.4;
