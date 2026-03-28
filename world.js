@@ -31,7 +31,7 @@ function makeRecord(i) {
   };
 }
 
-function buildLattice({ size = 240, step = 6, color = 0x22D3EE, opacity = 0.08 } = {}) {
+function buildLattice({ size = 240, step = 6, color = 0x22d3ee, opacity = 0.08 } = {}) {
   const verts = [];
   const half = size / 2;
 
@@ -69,7 +69,7 @@ function makeFrameGeometry(w, h) {
   return new THREE.PlaneGeometry(w, h, 1, 1);
 }
 
-function makeBorderMaterial({ color = 0x22D3EE, opacity = 0.20, thickness = 0.028, glow = 0.60 } = {}) {
+function makeBorderMaterial({ color = 0x22d3ee, opacity = 0.2, thickness = 0.028, glow = 0.6 } = {}) {
   return new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -77,7 +77,7 @@ function makeBorderMaterial({ color = 0x22D3EE, opacity = 0.20, thickness = 0.02
       uColor: { value: new THREE.Color(color) },
       uOpacity: { value: opacity },
       uThickness: { value: thickness },
-      uGlow: { value: glow },
+      uGlow: { value: glow }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -115,27 +115,41 @@ function makeBorderMaterial({ color = 0x22D3EE, opacity = 0.20, thickness = 0.02
 function loadTexture(url) {
   return new Promise((resolve, reject) => {
     const loader = new THREE.TextureLoader();
-    loader.load(url, (tex) => {
-      tex.colorSpace = THREE.SRGBColorSpace;
-      tex.anisotropy = 8;
-      resolve(tex);
-    }, undefined, reject);
+    loader.load(
+      url,
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = 8;
+        resolve(tex);
+      },
+      undefined,
+      reject
+    );
   });
 }
 
 // Clear corridor around exhibit wall so random frames don't sit in front of it.
 function inGalleryClearZone(x, y, z) {
-  return (z > -16 && z < -4) && (x > -14 && x < 14) && (y > -6 && y < 4);
+  return z > -16 && z < -4 && x > -14 && x < 14 && y > -6 && y < 4;
+}
+
+// Also keep a clear lane for deep manifest/hub plates.
+function inDeepClearZone(x, y, z) {
+  // local z around [-330 .. -120] is our deep lane
+  if (z > -120 || z < -330) return false;
+  // corridor around center
+  return x > -16 && x < 16 && y > -6 && y < 6;
 }
 
 // Canvas text -> texture
 function makeTextTexture({ title, body, w = 1024, h = 640 }) {
   const c = document.createElement("canvas");
-  c.width = w; c.height = h;
+  c.width = w;
+  c.height = h;
   const g = c.getContext("2d");
   g.clearRect(0, 0, w, h);
 
-  g.fillStyle = "rgba(34,211,238,0.85)";
+  g.fillStyle = "rgba(34,211,238,0.88)";
   g.font = "900 44px ui-monospace, Menlo, Consolas, monospace";
   g.fillText(title, 56, 96);
 
@@ -146,7 +160,7 @@ function makeTextTexture({ title, body, w = 1024, h = 640 }) {
   g.lineTo(w - 56, 116);
   g.stroke();
 
-  g.fillStyle = "rgba(245,247,255,0.78)";
+  g.fillStyle = "rgba(245,247,255,0.82)";
   g.font = "700 30px ui-monospace, Menlo, Consolas, monospace";
 
   const lines = body.split("\n");
@@ -165,15 +179,14 @@ function makeTextTexture({ title, body, w = 1024, h = 640 }) {
 // Mini record texture: tiny label + micro chart
 function makeMiniRecordTexture({ id, instrument, setup, r, w = 512, h = 320 }) {
   const c = document.createElement("canvas");
-  c.width = w; c.height = h;
+  c.width = w;
+  c.height = h;
   const g = c.getContext("2d");
 
-  // translucent surface
   g.clearRect(0, 0, w, h);
   g.fillStyle = "rgba(6, 7, 12, 0.45)";
   g.fillRect(0, 0, w, h);
 
-  // header line
   g.fillStyle = "rgba(34,211,238,0.78)";
   g.font = "900 20px ui-monospace, Menlo, Consolas, monospace";
   g.fillText(id, 18, 34);
@@ -182,32 +195,33 @@ function makeMiniRecordTexture({ id, instrument, setup, r, w = 512, h = 320 }) {
   g.font = "800 18px ui-monospace, Menlo, Consolas, monospace";
   g.fillText(`${instrument}  ·  ${r}`, 18, 62);
 
-  g.fillStyle = "rgba(245,247,255,0.72)";
+  g.fillStyle = "rgba(245,247,255,0.74)";
   g.font = "800 18px ui-monospace, Menlo, Consolas, monospace";
-  const s = (setup || "").slice(0, 26);
-  g.fillText(s, 18, 92);
+  g.fillText((setup || "").slice(0, 26), 18, 92);
 
-  // micro chart area
-  const x0 = 18, y0 = 118, ww = w - 36, hh = h - 140;
+  const x0 = 18,
+    y0 = 118,
+    ww = w - 36,
+    hh = h - 140;
   g.strokeStyle = "rgba(245,247,255,0.08)";
   g.lineWidth = 1;
   g.strokeRect(x0, y0, ww, hh);
 
-  // sparkline
-  g.strokeStyle = "rgba(34,211,238,0.28)";
+  g.strokeStyle = "rgba(34,211,238,0.30)";
   g.lineWidth = 2;
   g.beginPath();
   for (let i = 0; i < 22; i++) {
     const t = i / 21;
     const xx = x0 + t * ww;
-    const noise = Math.sin((t * 6.0 + id.length) * 1.7) * 0.22 + Math.sin(t * 13.0) * 0.10;
+    const noise =
+      Math.sin((t * 6.0 + id.length) * 1.7) * 0.22 +
+      Math.sin(t * 13.0) * 0.10;
     const yy = y0 + hh * (0.55 - noise);
     if (i === 0) g.moveTo(xx, yy);
     else g.lineTo(xx, yy);
   }
   g.stroke();
 
-  // a few candle-ish marks (subtle)
   for (let k = 0; k < 8; k++) {
     const t = (k + 1) / 9;
     const xx = x0 + t * ww;
@@ -244,16 +258,16 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x05060a, 0.028);
 
-  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 820);
+  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 1200);
   camera.position.set(0, 0.9, 10.5);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.80));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.8));
   const dir = new THREE.DirectionalLight(0x88ddff, 0.32);
   dir.position.set(6, 10, 6);
   scene.add(dir);
 
-  const floor = new THREE.GridHelper(520, 260, 0xffffff, 0xffffff);
-  floor.material.opacity = 0.035;
+  const floor = new THREE.GridHelper(900, 320, 0xffffff, 0xffffff);
+  floor.material.opacity = 0.03;
   floor.material.transparent = true;
   floor.position.y = -1.25;
   scene.add(floor);
@@ -262,20 +276,30 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const origin = new THREE.Vector3(2.4, 2.2, -72);
   const yaw = 0.08;
 
-  const latticeA = buildLattice({ size: 260, step: 6, color: 0x22D3EE, opacity: 0.12 });
+  const latticeA = buildLattice({ size: 260, step: 6, color: 0x22d3ee, opacity: 0.12 });
   latticeA.position.copy(origin);
   latticeA.rotation.y = yaw;
   scene.add(latticeA);
 
-  const latticeB = buildLattice({ size: 260, step: 12, color: 0x6D28D9, opacity: 0.06 });
+  const latticeB = buildLattice({ size: 260, step: 12, color: 0x6d28d9, opacity: 0.06 });
   latticeB.position.copy(origin);
   latticeB.rotation.y = yaw;
   scene.add(latticeB);
 
   const farVolumes = [];
-  for (let k = 0; k < 4; k++) {
-    const la = buildLattice({ size: 320 + k * 70, step: 6, color: 0x22D3EE, opacity: 0.060 - k * 0.006 });
-    const lb = buildLattice({ size: 320 + k * 70, step: 12, color: 0x6D28D9, opacity: 0.032 - k * 0.004 });
+  for (let k = 0; k < 6; k++) {
+    const la = buildLattice({
+      size: 320 + k * 70,
+      step: 6,
+      color: 0x22d3ee,
+      opacity: 0.060 - k * 0.006
+    });
+    const lb = buildLattice({
+      size: 320 + k * 70,
+      step: 12,
+      color: 0x6d28d9,
+      opacity: 0.032 - k * 0.004
+    });
 
     la.position.set(origin.x, origin.y, origin.z - (k + 1) * 110);
     lb.position.copy(la.position);
@@ -298,32 +322,39 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const hoverBorder = makeBorderMaterial({ opacity: 0.38, thickness: 0.032, glow: 0.95 });
   const plateMat = new THREE.MeshBasicMaterial({ color: 0x070b14, transparent: true, opacity: 0.24 });
 
-  // --- 3D Info plates (multiple per chapter window) ---
+  // --- 3D Info plates (ordered, no overlap) ---
   const infoPlates = [];
+
+  // Layout grid: clusters at fixed z, alternating x
+  // Note: these z values are LOCAL to frameGroup (world z = frameGroup.z + local z).
   const info = [
-    // threshold -> memory transition
-    { id: "IP-0", title: "[JARVQUANT]", body: "Private internal builds.\nBeta planned at v0.5.0.", x: -10.6, y: 1.55, z: -22, ry: 0.30, a: 0.00, b: 0.22 },
-    { id: "IP-1", title: "[MEMORY]", body: "Capture context.\nRetrieve patterns.\nRepeat what works.", x: 9.8, y: 1.5, z: -26, ry: -0.26, a: 0.18, b: 0.47 },
-    { id: "IP-1B", title: "[MEMORY]", body: "From notes to evidence.\nNot vibes.", x: -8.8, y: 0.95, z: -34, ry: 0.24, a: 0.22, b: 0.47 },
+    // Threshold / intro (near the start, readable)
+    { id: "IP-0A", title: "[JARVQUANT]", body: "Internal v0.3.0\n(not public)", x: -10.5, y: 1.65, z: -18, ry: 0.30, a: 0.00, b: 0.24 },
+    { id: "IP-0B", title: "[BETA]", body: "Planned at v0.5.0\n(limited invites)", x: 10.5, y: 1.45, z: -30, ry: -0.30, a: 0.00, b: 0.24 },
 
-    // memory -> replay
-    { id: "IP-2", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: -10.2, y: 1.2, z: -58, ry: 0.28, a: 0.47, b: 0.66 },
-    { id: "IP-2B", title: "[EXECUTION]", body: "Spread • fees • slippage\n(iterating)", x: 10.4, y: 1.55, z: -66, ry: -0.26, a: 0.47, b: 0.66 },
+    // MEMORY cluster
+    { id: "IP-1A", title: "[MEMORY]", body: "Capture context.\nRetrieve patterns.", x: 10.5, y: 1.55, z: -56, ry: -0.26, a: 0.18, b: 0.47 },
+    { id: "IP-1B", title: "[JOURNAL]", body: "Notes → evidence.\nExport-ready.", x: -10.5, y: 1.25, z: -70, ry: 0.26, a: 0.18, b: 0.47 },
 
-    // replay -> structure
-    { id: "IP-3", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: 10.2, y: 1.6, z: -94, ry: -0.28, a: 0.66, b: 0.88 },
-    { id: "IP-3B", title: "[PRESETS]", body: "Repeat experiments.\nClean comparisons.", x: -10.1, y: 1.25, z: -102, ry: 0.28, a: 0.66, b: 0.88 },
+    // REPLAY cluster
+    { id: "IP-2A", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: -10.5, y: 1.45, z: -108, ry: 0.28, a: 0.47, b: 0.66 },
+    { id: "IP-2B", title: "[EXECUTION]", body: "Spread • fees • slippage\n(iterating)", x: 10.5, y: 1.65, z: -122, ry: -0.28, a: 0.47, b: 0.66 },
 
-    // structure -> edge
-    { id: "IP-4", title: "[ACCESS]", body: "Discord + socials\nfor drops.", x: -9.2, y: 1.3, z: -132, ry: 0.28, a: 0.88, b: 1.00 },
-    { id: "IP-4B", title: "[REQUEST]", body: "Email with your use-case\nfor invites.", x: 9.8, y: 1.55, z: -140, ry: -0.28, a: 0.88, b: 1.00 },
+    // STRUCTURE cluster
+    { id: "IP-3A", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: 10.5, y: 1.65, z: -162, ry: -0.28, a: 0.66, b: 0.88 },
+    { id: "IP-3B", title: "[PRESETS]", body: "Repeat experiments.\nClean comparisons.", x: -10.5, y: 1.35, z: -178, ry: 0.28, a: 0.66, b: 0.88 },
+
+    // ACCESS cluster (still within rail end)
+    { id: "IP-4A", title: "[ACCESS]", body: "Discord + socials\nfor drops.", x: -10.5, y: 1.55, z: -220, ry: 0.28, a: 0.88, b: 1.00 },
+    { id: "IP-4B", title: "[REQUEST]", body: "Email with your use-case\nfor invites.", x: 10.5, y: 1.35, z: -236, ry: -0.28, a: 0.88, b: 1.00 }
   ];
 
   for (const it of info) {
-    const tex = makeTextTexture({ title: it.title, body: it.body, w: 900, h: 520 });
+    const tex = makeTextTexture({ title: it.title, body: it.body, w: 980, h: 560 });
     const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.0 });
 
-    const w = 4.6, h = 2.9;
+    const w = 4.9,
+      h = 3.0;
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
     border.userData.rec = {
       id: it.id,
@@ -353,8 +384,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     infoPlates.push(border);
   }
 
-  // --- Random record frames (now: many have subtle mini content) ---
-  const smallCount = 280;
+  // --- Random record frames (content density increased) ---
+  const smallCount = 320;
   for (let i = 0; i < smallCount; i++) {
     const rec = makeRecord(i);
     const w = rand(0.55, 1.35);
@@ -367,24 +398,24 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     plate.position.z = -0.001;
     border.add(plate);
 
-    // Add a mini inner texture to a subset (keeps scene light but richer)
-    const chance = 0.38; // 38% of small frames get content
+    // Most small frames now get mini content (still a few empty for breathing room)
+    const chance = 0.82;
     if (Math.random() < chance) {
       const tex = makeMiniRecordTexture(rec);
       const inner = new THREE.Mesh(
         makeFrameGeometry(w * 0.95, h * 0.95),
-        new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.75 })
+        new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.78 })
       );
       inner.position.z = 0.001;
       border.add(inner);
     }
 
     let x, y, z;
-    for (let tries = 0; tries < 30; tries++) {
-      x = rand(-10.5, 10.5);
-      y = rand(-2.2, 5.4);
-      z = rand(-34, 34);
-      if (!inGalleryClearZone(x, y, z)) break;
+    for (let tries = 0; tries < 40; tries++) {
+      x = rand(-12.5, 12.5);
+      y = rand(-2.4, 5.6);
+      z = rand(-60, 90); // local space around gallery / mid-zone
+      if (!inGalleryClearZone(x, y, z) && !inDeepClearZone(x, y, z)) break;
     }
 
     border.position.set(x, y, z);
@@ -401,14 +432,21 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     { src: "assets/journal.jpg", title: "Journal + Export" },
     { src: "assets/replay-trader.jpg", title: "Replay Trader" },
     { src: "assets/strategy-trades.jpg", title: "Strategy → Trades" },
-    { src: "assets/place-holder-strat.jpg", title: "Strategy Capsule (WIP)" },
+    { src: "assets/place-holder-strat.jpg", title: "Strategy Capsule (WIP)" }
   ];
 
   const exhibitGeo = makeFrameGeometry(5.4, 3.2);
   const exhibitMeshes = [];
 
   for (let i = 0; i < exhibits.length; i++) {
-    const rec = { id: `EX-${i + 1}`, ts: "exhibit", instrument: "JarvQuant", setup: exhibits[i].title, r: "—", note: "Exhibit plate." };
+    const rec = {
+      id: `EX-${i + 1}`,
+      ts: "exhibit",
+      instrument: "JarvQuant",
+      setup: exhibits[i].title,
+      r: "—",
+      note: "Exhibit plate."
+    };
 
     const border = new THREE.Mesh(exhibitGeo, baseBorder.clone());
     border.userData.rec = rec;
@@ -444,19 +482,22 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     } catch {}
   })();
 
-  // --- Manifest plates AFTER the gallery (now: more JarvQuant branding) ---
+  // --- Manifest plates (bigger + always readable in-world; no extra count) ---
   const manifest = [
     { id: "MF-1", title: "[JARVQUANT]", body: "Replay-first archive of market memory.\nEvidence over hype." },
     { id: "MF-2", title: "[MISSION]", body: "Preserve decisions.\nReconstruct markets.\nTurn memory into structure." },
     { id: "MF-3", title: "[STATUS]", body: "Internal v0.3.0.\nBeta planned at v0.5.0." },
-    { id: "MF-4", title: "[LINKS]", body: "discord.gg/fYWSz2NpaC\nx.com/JarvQuant\nyoutube.com/@JarvQuant" },
+    { id: "MF-4", title: "[LINKS]", body: "discord.gg/fYWSz2NpaC\nx.com/JarvQuant\nyoutube.com/@JarvQuant" }
   ];
 
+  // Place them deeper (still reachable, and gives runway for future content)
+  const manifestZ = [-260, -300, -340, -380]; // LOCAL to frameGroup
   for (let i = 0; i < manifest.length; i++) {
-    const tex = makeTextTexture({ title: manifest[i].title, body: manifest[i].body });
+    const tex = makeTextTexture({ title: manifest[i].title, body: manifest[i].body, w: 1200, h: 760 });
     const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96 });
 
-    const w = 6.2, h = 3.9;
+    const w = 7.2,
+      h = 4.4;
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
     border.userData.rec = {
       id: manifest[i].id,
@@ -476,19 +517,22 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     border.add(plate);
     border.add(inner);
 
-    const x = (i % 2 === 0) ? -10.5 : 10.5;
-    const y = 1.8 - (i * 0.6);
-    const z = -42 - (i * 18);
+    const x = i % 2 === 0 ? -10.8 : 10.8;
+    const y = 1.85 - i * 0.25;
+    const z = manifestZ[i];
     border.position.set(x, y, z);
-    border.rotation.y = (i % 2 === 0) ? 0.30 : -0.30;
+    border.rotation.y = i % 2 === 0 ? 0.28 : -0.28;
 
     frameGroup.add(border);
     frames.push(border);
   }
 
   // Selection leash
-  const leashMat = new THREE.LineBasicMaterial({ color: 0x22D3EE, transparent: true, opacity: 0.0 });
-  const leash = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), leashMat);
+  const leashMat = new THREE.LineBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.0 });
+  const leash = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]),
+    leashMat
+  );
   scene.add(leash);
 
   // Raycast
@@ -515,14 +559,20 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     railTarget: 0,
     focus: 0,
     focusTarget: 0,
-    focusPos: new THREE.Vector3(0, 1.6, -30),
+    focusPos: new THREE.Vector3(0, 1.6, -30)
   };
 
   const biasX = 1.2;
 
-  function setEntered(v) { state.entered = !!v; }
-  function setChapter(name) { state.chapter = name; }
-  function setRail(t) { state.railTarget = clamp(t, 0, 1); }
+  function setEntered(v) {
+    state.entered = !!v;
+  }
+  function setChapter(name) {
+    state.chapter = name;
+  }
+  function setRail(t) {
+    state.railTarget = clamp(t, 0, 1);
+  }
 
   function clearSelection() {
     if (!selected) return;
@@ -539,7 +589,10 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const rec = obj.userData.rec;
     if (onSelectRecord) {
       if (rec?.id?.startsWith("EX-")) {
-        onSelectRecord({ title: `${rec.id} · ${rec.setup}`, body: `Exhibit plate.\nClick again or press ESC to close.` });
+        onSelectRecord({
+          title: `${rec.id} · ${rec.setup}`,
+          body: `Exhibit plate.\nClick again or press ESC to close.`
+        });
       } else if (rec) {
         onSelectRecord({
           title: `${rec.id} · ${rec.instrument} · ${rec.setup}`,
@@ -596,7 +649,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   }
 
   function resize() {
-    const w = window.innerWidth, h = window.innerHeight;
+    const w = window.innerWidth,
+      h = window.innerHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -606,25 +660,34 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     state.rail = lerp(state.rail, state.railTarget, 0.06);
     state.focus = lerp(state.focus, state.focusTarget, 0.055);
 
-    // Fade info plates by rail window
+    // Fade info plates by rail window (wider ramps + minimum readability)
+    const fadeRamp = 0.12;
+    const minInWindow = 0.22;
+
     for (const p of infoPlates) {
       const f = p.userData.fade;
       if (!f) continue;
 
       const t = state.rail;
-      const inT = clamp((t - f.a) / 0.06, 0, 1);
-      const outT = clamp((f.b - t) / 0.06, 0, 1);
+
+      const inT = clamp((t - f.a) / fadeRamp, 0, 1);
+      const outT = clamp((f.b - t) / fadeRamp, 0, 1);
       const vis = Math.min(inT, outT);
 
-      f.innerMat.opacity = 0.92 * vis;
-      p.material.uniforms.uOpacity.value = 0.22 + 0.16 * vis;
-      p.material.uniforms.uGlow.value = 0.65 + 0.25 * vis;
+      // if we're in the window at all, keep it readable (no more "empty frames")
+      const opacity = (vis > 0 ? (minInWindow + (1 - minInWindow) * vis) : 0) * 0.92;
+      f.innerMat.opacity = opacity;
+
+      p.material.uniforms.uOpacity.value = 0.22 + 0.18 * vis;
+      p.material.uniforms.uGlow.value = 0.65 + 0.28 * vis;
     }
 
     const px = clamp(state.mouseX, -1, 1);
     const py = clamp(state.mouseY, -1, 1);
 
-    const baseZ = lerp(12.0, -160.0, state.rail);
+    // EXTENDED RUNWAY: end of travel now -420
+    const baseZ = lerp(12.0, -420.0, state.rail);
+
     const baseX = px * 0.85 + Math.sin(state.rail * Math.PI * 2) * 0.25;
     const baseY = 0.8 + py * 0.30 + Math.cos(state.rail * Math.PI * 1.3) * 0.10;
 
@@ -644,7 +707,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     );
 
     if (selected) {
-      const a = new THREE.Vector3(); selected.getWorldPosition(a);
+      const a = new THREE.Vector3();
+      selected.getWorldPosition(a);
       const b = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z - 6.5);
       leash.geometry.setFromPoints([a, b]);
       leash.material.opacity = lerp(leash.material.opacity, 0.35, 0.12);
@@ -657,7 +721,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     latticeB.material.opacity = 0.05 + pulse * 0.02;
     for (let i = 0; i < farVolumes.length; i++) {
       const v = farVolumes[i];
-      const a = Math.max(0.010, 0.045 - i * 0.006);
+      const a = Math.max(0.008, 0.045 - i * 0.006);
       const b = Math.max(0.006, 0.022 - i * 0.004);
       v.la.material.opacity = a + pulse * 0.008;
       v.lb.material.opacity = b + pulse * 0.006;
@@ -680,13 +744,19 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     raycaster.setFromCamera(pointer, camera);
 
     const hits = raycaster.intersectObjects(frames, false);
-    if (!hits.length) { clearSelection(); return; }
+    if (!hits.length) {
+      clearSelection();
+      return;
+    }
 
     const obj = hits[0].object;
     if (!obj.userData.rec) return;
 
     if (selected === obj) clearSelection();
-    else { if (selected) clearSelection(); selectObject(obj); }
+    else {
+      if (selected) clearSelection();
+      selectObject(obj);
+    }
   }
 
   function onKeyDown(e) {
@@ -706,7 +776,9 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     setEntered,
     setRail,
     clearSelection,
-    getBeaconScreenspace() { return []; },
+    getBeaconScreenspace() {
+      return [];
+    },
     dispose() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onPointerMove);
