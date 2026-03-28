@@ -562,7 +562,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     focusPos: new THREE.Vector3(0, 1.6, -30),
   };
 
-  const biasX = 0.25;
+  const biasX = 0.0;
 
   function setEntered(v) { state.entered = !!v; }
   function setChapter(name) { state.chapter = name; }
