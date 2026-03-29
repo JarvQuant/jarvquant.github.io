@@ -71,9 +71,10 @@ function buildLattice({ size = 240, step = 6, color = 0x22d3ee, opacity = 0.08 }
       uColor: { value: new THREE.Color(color) },
       uBaseOpacity: { value: opacity },
       uTime: { value: 0.0 },
-      uWaveAmp: { value: 0.045 },
-      uWaveFreq: { value: 0.85 },
-      uWaveSpeed: { value: 0.85 },
+      // Wave is rendered as a thin travelling "front"; amp can be higher without flooding.
+      uWaveAmp: { value: 0.085 },
+      uWaveFreq: { value: 0.075 },
+      uWaveSpeed: { value: 0.55 },
     },
     vertexShader: `
       varying float vZ;
@@ -94,8 +95,15 @@ function buildLattice({ size = 240, step = 6, color = 0x22d3ee, opacity = 0.08 }
 
       void main(){
         float ph = (vZ * uWaveFreq) + (uTime * uWaveSpeed);
-        float w = 0.5 + 0.5 * sin(ph);
-        float a = uBaseOpacity + w * uWaveAmp;
+        float s = sin(ph);
+
+        // A narrow scan-front: only the top of the sine contributes (thin travelling band).
+        float w = smoothstep(0.85, 0.995, s);
+
+        // Slight secondary shimmer so it's not "binary"
+        float shimmer = 0.15 * (0.5 + 0.5 * sin(ph * 3.0 + 1.2));
+
+        float a = uBaseOpacity + (w + shimmer * w) * uWaveAmp;
         gl_FragColor = vec4(uColor, a);
       }
     `,
@@ -410,14 +418,14 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
   const scene = new THREE.Scene();
-  // Slightly brighter / more JarvQuant-tinted atmosphere
-  scene.fog = new THREE.FogExp2(0x070a12, 0.022);
+  // Atmosphere (avoid cyan flood; keep depth)
+  scene.fog = new THREE.FogExp2(0x05060a, 0.028);
 
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 1200);
   camera.position.set(0, 0.9, 10.5);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 1.05));
-  const dir = new THREE.DirectionalLight(0x88ddff, 0.48);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.82));
+  const dir = new THREE.DirectionalLight(0x88ddff, 0.34);
   dir.position.set(6, 10, 6);
   scene.add(dir);
 
@@ -1240,16 +1248,16 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     latticeA.material.uniforms.uTime.value = t;
     latticeB.material.uniforms.uTime.value = t + 1.7;
 
-    latticeA.material.uniforms.uBaseOpacity.value = 0.10 + pulse * 0.02;
-    latticeB.material.uniforms.uBaseOpacity.value = 0.05 + pulse * 0.015;
+    latticeA.material.uniforms.uBaseOpacity.value = 0.038 + pulse * 0.010;
+    latticeB.material.uniforms.uBaseOpacity.value = 0.022 + pulse * 0.008;
 
     for (let i = 0; i < farVolumes.length; i++) {
       const v = farVolumes[i];
       v.la.material.uniforms.uTime.value = t + i * 0.55;
       v.lb.material.uniforms.uTime.value = t + i * 0.55 + 1.4;
 
-      v.la.material.uniforms.uBaseOpacity.value = Math.max(0.010, 0.045 - i * 0.006) + pulse * 0.006;
-      v.lb.material.uniforms.uBaseOpacity.value = Math.max(0.008, 0.022 - i * 0.004) + pulse * 0.004;
+      v.la.material.uniforms.uBaseOpacity.value = Math.max(0.006, 0.020 - i * 0.0028) + pulse * 0.003;
+      v.lb.material.uniforms.uBaseOpacity.value = Math.max(0.004, 0.010 - i * 0.0018) + pulse * 0.002;
     }
 
     // Animate data rain
