@@ -531,54 +531,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     } catch {}
   })();
 
-  // --- Manifest plates (bigger, deeper, readable in-world) ---
-  const manifest = [
-    { id: "MF-1", title: "[JARVQUANT]", body: "Replay-first archive of market memory.\nEvidence over hype." },
-    { id: "MF-2", title: "[MISSION]", body: "Preserve decisions.\nReconstruct markets.\nTurn memory into structure." },
-    { id: "MF-3", title: "[STATUS]", body: "Internal v0.3.0.\nBeta planned at v0.5.0." },
-    { id: "MF-4", title: "[LINKS]", body: "discord.gg/fYWSz2NpaC\nx.com/JarvQuant\nyoutube.com/@JarvQuant" },
-  ];
-
-  const manifestZ = [-260, -300, -340, -380]; // local to frameGroup
-  for (let i = 0; i < manifest.length; i++) {
-    const tex = makeTextTexture({ title: manifest[i].title, body: manifest[i].body, w: 1200, h: 760 });
-    // Disable fog on manifest text (it sits very deep; fog was washing it out).
-    const innerMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96, fog: false, depthWrite: false, depthTest: false });
-
-    const w = 7.2, h = 4.4;
-    const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
-    border.userData.rec = {
-      id: manifest[i].id,
-      ts: "manifest",
-      instrument: "JarvQuant",
-      setup: manifest[i].title,
-      r: "—",
-      note: manifest[i].body,
-    };
-
-    // Larger Z separation + explicit renderOrder to avoid z-fighting / flicker.
-    const plate = new THREE.Mesh(makeFrameGeometry(w * 0.985, h * 0.985), plateMat.clone());
-    plate.position.z = -0.012;
-    plate.renderOrder = 1;
-
-    const inner = new THREE.Mesh(makeFrameGeometry(w * 0.95, h * 0.95), innerMat);
-    inner.position.z = 0.012;
-    inner.renderOrder = 3;
-
-    border.add(plate);
-    border.add(inner);
-
-    const x = i % 2 === 0 ? -7.8 : 8.8; // <- keep big plates nearer to center so nothing gets clipped
-    const y = 1.85 - i * 0.25;
-    const z = manifestZ[i];
-    border.position.set(x, y, z);
-    border.rotation.y = i % 2 === 0 ? 0.22 : -0.22;
-
-    reserved.push({ x, y, z, r: 7.4 });
-
-    frameGroup.add(border);
-    frames.push(border);
-  }
+  // (Manifest plates removed — keep all information in in-world cards only.)
 
   // Selection leash
   const leashMat = new THREE.LineBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.0 });
@@ -681,7 +634,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
         if (onHoverFragment) {
           if (rec.id.startsWith("EX-")) onHoverFragment({ title: `${rec.id} · EXHIBIT`, sub: `${rec.setup}\nClick to open.` });
-          else if (rec.id.startsWith("MF-")) onHoverFragment({ title: `${rec.id} · MANIFEST`, sub: `${rec.setup}\nClick to read.` });
+          // MF-* manifest plates removed
           else if (rec.id.startsWith("IP-")) onHoverFragment({ title: `${rec.id} · SYSTEM`, sub: `${rec.setup}\nClick to read.` });
           else onHoverFragment({ title: `${rec.id} · ${rec.setup}`, sub: `${rec.ts} · ${rec.instrument} · ${rec.r}\n${rec.note}` });
         }
