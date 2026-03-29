@@ -71,16 +71,18 @@ function buildLattice({ size = 240, step = 6, color = 0x22d3ee, opacity = 0.08 }
       uColor: { value: new THREE.Color(color) },
       uBaseOpacity: { value: opacity },
       uTime: { value: 0.0 },
-      // Wave is rendered as a thin travelling "front"; amp can be higher without flooding.
-      uWaveAmp: { value: 0.085 },
-      uWaveFreq: { value: 0.075 },
-      uWaveSpeed: { value: 0.55 },
+      // Ripple/wave amount (kept low; lattice is dense)
+      uWaveAmp: { value: 0.040 },
+      uWaveFreq: { value: 0.055 },
+      uWaveSpeed: { value: 0.45 },
     },
     vertexShader: `
       varying float vZ;
+      varying vec2 vXY;
       void main(){
         vec4 wp = modelMatrix * vec4(position, 1.0);
         vZ = wp.z;
+        vXY = wp.xy;
         gl_Position = projectionMatrix * viewMatrix * wp;
       }
     `,
@@ -92,18 +94,36 @@ function buildLattice({ size = 240, step = 6, color = 0x22d3ee, opacity = 0.08 }
       uniform float uWaveFreq;
       uniform float uWaveSpeed;
       varying float vZ;
+      varying vec2 vXY;
+
+      // Soft ripple rings (raindrop-on-water vibe), but in a technical / lattice way.
+      float ripple(vec2 p, vec2 c, float t){
+        float r = distance(p, c);
+        float env = exp(-r * 0.18);
+        float w = sin(r * 2.6 - t * 1.7);
+        // thin rings
+        float ring = smoothstep(0.75, 0.95, w);
+        return ring * env;
+      }
 
       void main(){
+        // travelling wave down the corridor
         float ph = (vZ * uWaveFreq) + (uTime * uWaveSpeed);
-        float s = sin(ph);
+        float drift = 0.35 + 0.65 * (0.5 + 0.5 * sin(ph));
 
-        // A narrow scan-front: only the top of the sine contributes (thin travelling band).
-        float w = smoothstep(0.85, 0.995, s);
+        // 3 procedural ripple centers, drifting slowly (no uniform arrays needed)
+        float t = uTime;
+        vec2 c1 = vec2(sin(t * 0.23) * 10.0, 1.8 + cos(t * 0.19) * 4.0);
+        vec2 c2 = vec2(sin(t * 0.17 + 2.1) * 12.0, 1.4 + cos(t * 0.21 + 1.7) * 5.0);
+        vec2 c3 = vec2(sin(t * 0.29 + 4.2) * 8.0,  2.2 + cos(t * 0.16 + 3.4) * 3.5);
 
-        // Slight secondary shimmer so it's not "binary"
-        float shimmer = 0.15 * (0.5 + 0.5 * sin(ph * 3.0 + 1.2));
+        float rip = 0.0;
+        rip = max(rip, ripple(vXY, c1, t));
+        rip = max(rip, ripple(vXY, c2, t));
+        rip = max(rip, ripple(vXY, c3, t));
 
-        float a = uBaseOpacity + (w + shimmer * w) * uWaveAmp;
+        // Combine: base + drifting intensity + ripple rings
+        float a = uBaseOpacity + drift * (uWaveAmp * 0.45) + rip * uWaveAmp;
         gl_FragColor = vec4(uColor, a);
       }
     `,
@@ -1248,16 +1268,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     latticeA.material.uniforms.uTime.value = t;
     latticeB.material.uniforms.uTime.value = t + 1.7;
 
-    latticeA.material.uniforms.uBaseOpacity.value = 0.038 + pulse * 0.010;
-    latticeB.material.uniforms.uBaseOpacity.value = 0.022 + pulse * 0.008;
+    // Keep lattice base low to avoid cyan flood; motion comes from ripples, not brightness.
+    latticeA.material.uniforms.uBaseOpacity.value = 0.020 + pulse * 0.006;
+    latticeB.material.uniforms.uBaseOpacity.value = 0.012 + pulse * 0.004;
 
     for (let i = 0; i < farVolumes.length; i++) {
       const v = farVolumes[i];
       v.la.material.uniforms.uTime.value = t + i * 0.55;
       v.lb.material.uniforms.uTime.value = t + i * 0.55 + 1.4;
 
-      v.la.material.uniforms.uBaseOpacity.value = Math.max(0.006, 0.020 - i * 0.0028) + pulse * 0.003;
-      v.lb.material.uniforms.uBaseOpacity.value = Math.max(0.004, 0.010 - i * 0.0018) + pulse * 0.002;
+      v.la.material.uniforms.uBaseOpacity.value = Math.max(0.004, 0.012 - i * 0.0018) + pulse * 0.002;
+      v.lb.material.uniforms.uBaseOpacity.value = Math.max(0.003, 0.006 - i * 0.0012) + pulse * 0.0016;
     }
 
     // Animate data rain
