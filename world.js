@@ -913,6 +913,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     focus: 0,
     focusTarget: 0,
     focusPos: new THREE.Vector3(0, 1.6, -30),
+
+    // selection focus helpers
+    focusMode: "point", // "point" | "plate"
+    focusPlateW: 0,
+    focusPlateH: 0,
+    focusPlateNormal: new THREE.Vector3(0, 0, 1),
   };
 
   // camera: neutral (no right bias)
@@ -927,6 +933,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     selected.material = selected.userData._matBase || selected.material;
     selected = null;
     state.focusTarget = 0;
+    state.focusMode = "point";
     if (onSelectRecord) onSelectRecord(null);
   }
 
@@ -948,7 +955,21 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       }
     }
 
+    // Store focus target position
     obj.getWorldPosition(state.focusPos);
+
+    // If it's an info plate, compute a camera framing target so the full plate fits on screen.
+    if (rec?.id?.startsWith("IP-") && obj.geometry?.parameters) {
+      state.focusMode = "plate";
+      state.focusPlateW = obj.geometry.parameters.width || 6.4;
+      state.focusPlateH = obj.geometry.parameters.height || 3.85;
+
+      const q = new THREE.Quaternion();
+      obj.getWorldQuaternion(q);
+      state.focusPlateNormal.set(0, 0, 1).applyQuaternion(q).normalize();
+    } else {
+      state.focusMode = "point";
+    }
   }
 
   function updateHover() {
@@ -1020,20 +1041,48 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     const baseX = 0.0;
     const baseY = 0.8 + py * 0.22 + Math.cos(state.rail * Math.PI * 1.3) * 0.08;
 
-    const focusZ = state.focusPos.z + 4.4;
-    const focusX = state.focusPos.x * 0.55;
-    const focusY = state.focusPos.y + 0.2;
+    // Focus handling
+    let focusX = state.focusPos.x * 0.55;
+    let focusY = state.focusPos.y + 0.2;
+    let focusZ = state.focusPos.z + 4.4;
+
+    // For info plates, frame the whole plate in view (avoid half-cut panels).
+    if (selected && state.focusMode === "plate") {
+      const vFov = (camera.fov * Math.PI) / 180;
+      const aspect = camera.aspect;
+      const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
+
+      const wHalf = state.focusPlateW * 0.5;
+      const hHalf = state.focusPlateH * 0.5;
+
+      // Distance required to fit width/height in view
+      const distH = hHalf / Math.tan(vFov / 2);
+      const distW = wHalf / Math.tan(hFov / 2);
+      const dist = Math.max(distH, distW) * 1.18; // margin
+
+      const pos = state.focusPos;
+      const n = state.focusPlateNormal;
+
+      // camera target in front of plate
+      focusX = pos.x + n.x * dist;
+      focusY = pos.y + n.y * dist;
+      focusZ = pos.z + n.z * dist;
+    }
 
     camera.position.x = lerp(baseX, focusX, state.focus);
     camera.position.y = lerp(baseY, focusY, state.focus);
     camera.position.z = lerp(baseZ, focusZ, state.focus);
 
-    const lookZ = lerp(camera.position.z - 18, state.focusPos.z, state.focus);
-    camera.lookAt(
-      lerp(0.0, state.focusPos.x, state.focus * 0.65),
-      lerp(1.6, state.focusPos.y, state.focus),
-      lookZ
-    );
+    if (selected && state.focusMode === "plate") {
+      camera.lookAt(state.focusPos);
+    } else {
+      const lookZ = lerp(camera.position.z - 18, state.focusPos.z, state.focus);
+      camera.lookAt(
+        lerp(0.0, state.focusPos.x, state.focus * 0.65),
+        lerp(1.6, state.focusPos.y, state.focus),
+        lookZ
+      );
+    }
 
     if (selected) {
       const a = new THREE.Vector3(); selected.getWorldPosition(a);
