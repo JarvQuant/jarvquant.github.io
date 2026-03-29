@@ -213,6 +213,47 @@ body{
   pointer-events:none;
 }
 
+/* Hero / front branding (fades on enter) */
+.hero{
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 22;
+  pointer-events: none;
+
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition: opacity .55s ease, transform .55s ease;
+}
+.hero.is-off{
+  opacity: 0;
+  transform: translate3d(0, -10px, 0);
+}
+.hero-inner{
+  text-align: center;
+  padding: 24px 18px;
+}
+.hero-logo{
+  width: 56px;
+  height: 56px;
+  opacity: 0.95;
+  filter: drop-shadow(0 18px 60px rgba(34,211,238,0.10));
+  margin-bottom: 14px;
+}
+.hero-word{
+  font: 900 clamp(44px, 6.4vw, 86px)/0.92 var(--mono);
+  letter-spacing: 0.06em;
+  color: rgba(245,247,255,0.90);
+  text-shadow: 0 0 80px rgba(34,211,238,0.10);
+}
+.hero-tag{
+  margin-top: 10px;
+  font: 700 13px/1.6 var(--mono);
+  letter-spacing: 0.2px;
+  color: rgba(245,247,255,0.62);
+}
+
 /* Chapters (CENTERED) */
 .chapter{
   position: absolute;
