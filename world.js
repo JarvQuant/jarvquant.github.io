@@ -140,10 +140,10 @@ function inGalleryClearZone(x, y, z) {
   return z > -16 && z < -4 && x > -14 && x < 14 && y > -6 && y < 4;
 }
 
-// Keep a clear lane for deep manifest plates.
+// (Legacy) deep clear zone was used to keep a lane free for old manifest plates.
+// Manifest plates are gone now, so we disable this to avoid starving mid/deep chapters of cards.
 function inDeepClearZone(x, y, z) {
-  if (z > -120 || z < -330) return false;
-  return x > -16 && x < 16 && y > -6 && y < 6;
+  return false;
 }
 
 // Canvas text -> texture
@@ -181,18 +181,26 @@ function makeTextTexture({ title, body, w = 1024, h = 640 }) {
   return tex;
 }
 
-// Mini record texture: tiny label + micro chart
-function makeMiniRecordTexture({ id, instrument, setup, r, w = 512, h = 320 }) {
+// Mini record texture: chapter-specific micro cards (same design language, different content)
+function makeMiniRecordTexture(rec) {
+  const { id, instrument, setup, r } = rec;
+  const chapter = rec.chapter || "memory";
+
+  const w = 512, h = 320;
   const c = document.createElement("canvas");
   c.width = w;
   c.height = h;
   const g = c.getContext("2d");
 
   g.clearRect(0, 0, w, h);
+
+  // Base glass
   g.fillStyle = "rgba(6, 7, 12, 0.45)";
   g.fillRect(0, 0, w, h);
 
-  g.fillStyle = "rgba(34,211,238,0.78)";
+  // Header
+  const accent = chapter === "structure" ? "rgba(109,40,217,0.82)" : "rgba(34,211,238,0.78)";
+  g.fillStyle = accent;
   g.font = "900 20px ui-monospace, Menlo, Consolas, monospace";
   g.fillText(id, 18, 34);
 
@@ -209,40 +217,112 @@ function makeMiniRecordTexture({ id, instrument, setup, r, w = 512, h = 320 }) {
     ww = w - 36,
     hh = h - 140;
 
+  // Frame
   g.strokeStyle = "rgba(245,247,255,0.08)";
   g.lineWidth = 1;
   g.strokeRect(x0, y0, ww, hh);
 
-  g.strokeStyle = "rgba(34,211,238,0.30)";
-  g.lineWidth = 2;
-  g.beginPath();
-  for (let i = 0; i < 22; i++) {
-    const t = i / 21;
-    const xx = x0 + t * ww;
-    const noise =
-      Math.sin((t * 6.0 + id.length) * 1.7) * 0.22 + Math.sin(t * 13.0) * 0.10;
-    const yy = y0 + hh * (0.55 - noise);
-    if (i === 0) g.moveTo(xx, yy);
-    else g.lineTo(xx, yy);
-  }
-  g.stroke();
+  if (chapter === "edge") {
+    // Typography card: one principle line, big whitespace.
+    g.fillStyle = "rgba(245,247,255,0.78)";
+    g.font = "900 20px ui-monospace, Menlo, Consolas, monospace";
+    const s = (rec.note || "").slice(0, 72);
+    g.fillText(s, x0, y0 + 40);
 
-  for (let k = 0; k < 8; k++) {
-    const t = (k + 1) / 9;
-    const xx = x0 + t * ww;
-    const base = y0 + hh * (0.55 + Math.sin(t * 8.0) * 0.08);
-    const wick = 18 + (k % 3) * 6;
-    const body = 10 + (k % 4) * 4;
+    g.fillStyle = "rgba(245,247,255,0.18)";
+    g.font = "800 12px ui-monospace, Menlo, Consolas, monospace";
+    g.fillText("JARVQUANT / EDGE", x0, y0 + hh - 18);
+  } else if (chapter === "structure") {
+    // Blueprint card: tiny node graph.
+    const nodes = [
+      { x: x0 + 54, y: y0 + 46 },
+      { x: x0 + ww * 0.42, y: y0 + hh * 0.38 },
+      { x: x0 + ww * 0.68, y: y0 + hh * 0.62 },
+      { x: x0 + ww - 58, y: y0 + hh * 0.42 },
+    ];
 
-    g.strokeStyle = "rgba(245,247,255,0.12)";
-    g.lineWidth = 1;
+    g.strokeStyle = "rgba(109,40,217,0.30)";
+    g.lineWidth = 2;
     g.beginPath();
-    g.moveTo(xx, base - wick);
-    g.lineTo(xx, base + wick);
+    g.moveTo(nodes[0].x, nodes[0].y);
+    for (let i = 1; i < nodes.length; i++) g.lineTo(nodes[i].x, nodes[i].y);
     g.stroke();
 
-    g.fillStyle = "rgba(109,40,217,0.18)";
-    g.fillRect(xx - 3, base - body, 6, body * 2);
+    for (let i = 0; i < nodes.length; i++) {
+      g.fillStyle = "rgba(109,40,217,0.22)";
+      g.beginPath();
+      g.arc(nodes[i].x, nodes[i].y, 10, 0, Math.PI * 2);
+      g.fill();
+
+      g.strokeStyle = "rgba(245,247,255,0.10)";
+      g.lineWidth = 1;
+      g.beginPath();
+      g.arc(nodes[i].x, nodes[i].y, 10, 0, Math.PI * 2);
+      g.stroke();
+    }
+
+    g.fillStyle = "rgba(245,247,255,0.52)";
+    g.font = "800 13px ui-monospace, Menlo, Consolas, monospace";
+    g.fillText((rec.note || "").slice(0, 46), x0, y0 + hh - 22);
+  } else if (chapter === "replay") {
+    // Test card: equity curve + KPIs row.
+    g.strokeStyle = "rgba(34,211,238,0.30)";
+    g.lineWidth = 2;
+    g.beginPath();
+    for (let i = 0; i < 28; i++) {
+      const t = i / 27;
+      const xx = x0 + t * ww;
+      const noise = Math.sin(t * 6.0 + id.length * 0.7) * 0.18 + Math.sin(t * 15.0) * 0.06;
+      const yy = y0 + hh * (0.72 - t * 0.34 - noise);
+      if (i === 0) g.moveTo(xx, yy);
+      else g.lineTo(xx, yy);
+    }
+    g.stroke();
+
+    g.fillStyle = "rgba(245,247,255,0.55)";
+    g.font = "900 12px ui-monospace, Menlo, Consolas, monospace";
+    g.fillText("E", x0, y0 + 16);
+    g.fillText("DD", x0 + 44, y0 + 16);
+    g.fillText("WR", x0 + 96, y0 + 16);
+
+    g.fillStyle = "rgba(245,247,255,0.40)";
+    g.font = "800 12px ui-monospace, Menlo, Consolas, monospace";
+    g.fillText(`${(rand(-12, 24)).toFixed(1)}R`, x0 + 14, y0 + 16);
+    g.fillText(`${(rand(1, 9)).toFixed(1)}R`, x0 + 72, y0 + 16);
+    g.fillText(`${(rand(34, 62) | 0)}%`, x0 + 126, y0 + 16);
+  } else {
+    // Memory default: micro chart + candles (original look)
+    g.strokeStyle = "rgba(34,211,238,0.30)";
+    g.lineWidth = 2;
+    g.beginPath();
+    for (let i = 0; i < 22; i++) {
+      const t = i / 21;
+      const xx = x0 + t * ww;
+      const noise =
+        Math.sin((t * 6.0 + id.length) * 1.7) * 0.22 + Math.sin(t * 13.0) * 0.10;
+      const yy = y0 + hh * (0.55 - noise);
+      if (i === 0) g.moveTo(xx, yy);
+      else g.lineTo(xx, yy);
+    }
+    g.stroke();
+
+    for (let k = 0; k < 8; k++) {
+      const t = (k + 1) / 9;
+      const xx = x0 + t * ww;
+      const base = y0 + hh * (0.55 + Math.sin(t * 8.0) * 0.08);
+      const wick = 18 + (k % 3) * 6;
+      const body = 10 + (k % 4) * 4;
+
+      g.strokeStyle = "rgba(245,247,255,0.12)";
+      g.lineWidth = 1;
+      g.beginPath();
+      g.moveTo(xx, base - wick);
+      g.lineTo(xx, base + wick);
+      g.stroke();
+
+      g.fillStyle = "rgba(109,40,217,0.18)";
+      g.fillRect(xx - 3, base - body, 6, body * 2);
+    }
   }
 
   const tex = new THREE.CanvasTexture(c);
@@ -551,7 +631,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       const tex = makeMiniRecordTexture(rec);
       const inner = new THREE.Mesh(
         makeFrameGeometry(w * 0.95, h * 0.95),
-        new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.78, depthWrite: false })
+        new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.82, depthWrite: false })
       );
       inner.position.z = 0.001;
       border.add(inner);
