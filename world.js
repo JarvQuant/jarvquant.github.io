@@ -62,14 +62,48 @@ function buildLattice({ size = 240, step = 6, color = 0x22d3ee, opacity = 0.08 }
   const geom = new THREE.BufferGeometry();
   geom.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
 
-  const mat = new THREE.LineBasicMaterial({
-    color,
+  // Shader wave material: real travelling wave across the lattice using world-space Z.
+  const mat = new THREE.ShaderMaterial({
     transparent: true,
-    opacity,
+    depthWrite: false,
     blending: THREE.AdditiveBlending,
+    uniforms: {
+      uColor: { value: new THREE.Color(color) },
+      uBaseOpacity: { value: opacity },
+      uTime: { value: 0.0 },
+      uWaveAmp: { value: 0.045 },
+      uWaveFreq: { value: 0.85 },
+      uWaveSpeed: { value: 0.85 },
+    },
+    vertexShader: `
+      varying float vZ;
+      void main(){
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vZ = wp.z;
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uColor;
+      uniform float uBaseOpacity;
+      uniform float uTime;
+      uniform float uWaveAmp;
+      uniform float uWaveFreq;
+      uniform float uWaveSpeed;
+      varying float vZ;
+
+      void main(){
+        float ph = (vZ * uWaveFreq) + (uTime * uWaveSpeed);
+        float w = 0.5 + 0.5 * sin(ph);
+        float a = uBaseOpacity + w * uWaveAmp;
+        gl_FragColor = vec4(uColor, a);
+      }
+    `,
   });
 
-  return new THREE.LineSegments(geom, mat);
+  const line = new THREE.LineSegments(geom, mat);
+  line.frustumCulled = false;
+  return line;
 }
 
 function makeFrameGeometry(w, h) {
@@ -1199,26 +1233,23 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00025);
 
-    // Lattice wave: travelling scan that creates subtle depth motion.
-    // We can't modulate per-vertex alpha with LineBasicMaterial, but layered lattices + phase offsets still read as waves.
-    const t = now * 0.00055;
-    const waveA = 0.5 + 0.5 * Math.sin(t);
-    const waveB = 0.5 + 0.5 * Math.sin(t + 1.8);
+    // Lattice wave: shader-driven (real wave per segment via world-space Z)
+    // Update shader uniforms; keep a gentle global pulse on top.
+    const t = now * 0.001;
 
-    latticeA.material.opacity = 0.10 + pulse * 0.03 + waveA * 0.018;
-    latticeB.material.opacity = 0.05 + pulse * 0.02 + waveB * 0.012;
+    latticeA.material.uniforms.uTime.value = t;
+    latticeB.material.uniforms.uTime.value = t + 1.7;
+
+    latticeA.material.uniforms.uBaseOpacity.value = 0.10 + pulse * 0.02;
+    latticeB.material.uniforms.uBaseOpacity.value = 0.05 + pulse * 0.015;
 
     for (let i = 0; i < farVolumes.length; i++) {
       const v = farVolumes[i];
-      const aBase = Math.max(0.008, 0.045 - i * 0.006);
-      const bBase = Math.max(0.006, 0.022 - i * 0.004);
+      v.la.material.uniforms.uTime.value = t + i * 0.55;
+      v.lb.material.uniforms.uTime.value = t + i * 0.55 + 1.4;
 
-      // phase shifts down the corridor; back volumes move slower/smoother
-      const ph = t * (0.85 - i * 0.07) + i * 0.9;
-      const w = 0.5 + 0.5 * Math.sin(ph);
-
-      v.la.material.opacity = aBase + pulse * 0.008 + w * (0.010 - i * 0.0012);
-      v.lb.material.opacity = bBase + pulse * 0.006 + w * (0.006 - i * 0.0008);
+      v.la.material.uniforms.uBaseOpacity.value = Math.max(0.010, 0.045 - i * 0.006) + pulse * 0.006;
+      v.lb.material.uniforms.uBaseOpacity.value = Math.max(0.008, 0.022 - i * 0.004) + pulse * 0.004;
     }
 
     // Animate data rain
