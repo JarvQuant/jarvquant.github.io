@@ -146,33 +146,68 @@ function inDeepClearZone(x, y, z) {
   return false;
 }
 
-// Canvas text -> texture
-function makeTextTexture({ title, body, w = 1024, h = 640 }) {
+// Canvas text -> texture (supports basic wrapping + paragraphs)
+function makeTextTexture({ title, body, w = 1200, h = 760 }) {
   const c = document.createElement("canvas");
   c.width = w;
   c.height = h;
   const g = c.getContext("2d");
   g.clearRect(0, 0, w, h);
 
-  g.fillStyle = "rgba(34,211,238,0.88)";
-  g.font = "900 44px ui-monospace, Menlo, Consolas, monospace";
-  g.fillText(title, 56, 96);
+  const padX = 62;
+  const maxX = w - padX;
+
+  // Title
+  g.fillStyle = "rgba(34,211,238,0.90)";
+  g.font = "900 46px ui-monospace, Menlo, Consolas, monospace";
+  g.fillText(title, padX, 104);
 
   g.strokeStyle = "rgba(34,211,238,0.18)";
   g.lineWidth = 2;
   g.beginPath();
-  g.moveTo(56, 116);
-  g.lineTo(w - 56, 116);
+  g.moveTo(padX, 126);
+  g.lineTo(w - padX, 126);
   g.stroke();
 
-  g.fillStyle = "rgba(245,247,255,0.82)";
-  g.font = "700 30px ui-monospace, Menlo, Consolas, monospace";
+  // Body
+  g.fillStyle = "rgba(245,247,255,0.80)";
+  g.font = "700 28px ui-monospace, Menlo, Consolas, monospace";
 
-  const lines = body.split("\n");
-  let yy = 160;
-  for (const line of lines) {
-    g.fillText(line, 56, yy);
-    yy += 44;
+  function wrapLine(text) {
+    const words = String(text || "").split(/\s+/).filter(Boolean);
+    const out = [];
+    let line = "";
+    for (const word of words) {
+      const test = line ? `${line} ${word}` : word;
+      if (g.measureText(test).width <= (maxX - padX)) {
+        line = test;
+      } else {
+        if (line) out.push(line);
+        line = word;
+      }
+    }
+    if (line) out.push(line);
+    return out;
+  }
+
+  const paras = String(body || "").split("\n");
+  let yy = 178;
+  const lineH = 42;
+
+  for (const raw of paras) {
+    const line = raw.trimEnd();
+    if (!line.trim()) {
+      yy += lineH * 0.65; // paragraph gap
+      continue;
+    }
+    const lines = wrapLine(line);
+    for (const l of lines) {
+      g.fillText(l, padX, yy);
+      yy += lineH;
+      if (yy > h - 42) break;
+    }
+    yy += 8;
+    if (yy > h - 42) break;
   }
 
   const tex = new THREE.CanvasTexture(c);
@@ -437,31 +472,161 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   }
 
   const info = [
-    // Threshold / intro
+    // Threshold / intro (brand)
     // Push the first plate further behind the exhibit wall so it doesn't get occluded by the 6 big exhibit frames.
-    { id: "IP-0A", title: "[JARVQUANT]", body: "Internal v0.3.0\n(not public)", x: XL, y: 1.65, z: -42, ry: 0.30, a: 0.00, b: 0.22 },
-    { id: "IP-0B", title: "[BETA]", body: "Planned at v0.5.0\n(limited invites)", x: XR, y: 1.45, z: -54, ry: -0.30, a: 0.00, b: 0.22 },
+    {
+      id: "IP-0A",
+      title: "[JARVQUANT]",
+      body:
+        "JarvQuant is a replay-first archive of market memory.\n\n" +
+        "It’s built for traders who want evidence — not vibes.\n" +
+        "You capture decisions, reconstruct conditions, and turn repetition into structure.\n\n" +
+        "The goal is simple: preserve the moment before hindsight, then learn from it on purpose.",
+      x: XL,
+      y: 1.75,
+      z: -44,
+      ry: 0.30,
+      a: 0.00,
+      b: 0.22,
+    },
+    {
+      id: "IP-0B",
+      title: "[WHY]",
+      body:
+        "Most trading logs store outcomes. JarvQuant stores context.\n\n" +
+        "Replay is the core: it lets you revisit price action, spreads, execution assumptions, and your own intent — as if it’s happening again.\n\n" +
+        "Over time, the archive becomes your personal dataset of what actually worked for you.",
+      x: XR,
+      y: 1.55,
+      z: -58,
+      ry: -0.30,
+      a: 0.00,
+      b: 0.22,
+    },
 
     // MEMORY
-    // Push this segment a bit deeper so it never visually collides with the BETA plate (see relay screenshot).
-    { id: "IP-1A", title: "[MEMORY]", body: "Capture context.\nRetrieve patterns.", x: XR, y: 1.55, z: -68, ry: -0.26, a: 0.10, b: 0.44 },
-    { id: "IP-1B", title: "[JOURNAL]", body: "Notes → evidence.\nExport-ready.", x: XL, y: 1.25, z: -84, ry: 0.26, a: 0.10, b: 0.44 },
+    {
+      id: "IP-1A",
+      title: "[MEMORY]",
+      body:
+        "Memory is not a folder — it’s a system.\n\n" +
+        "JarvQuant captures fragments: trades, screenshots, notes, and the subtle signals you noticed (or missed).\n" +
+        "Then it makes them searchable, revisit-able, and exportable — so learning compounds.",
+      x: XR,
+      y: 1.65,
+      z: -72,
+      ry: -0.26,
+      a: 0.10,
+      b: 0.44,
+    },
+    {
+      id: "IP-1B",
+      title: "[JOURNAL]",
+      body:
+        "Write the why — not just the what.\n\n" +
+        "A journal entry links your idea to evidence: context, execution, and post-trade reflection.\n" +
+        "Export turns memory into something you can share, review, and improve.",
+      x: XL,
+      y: 1.35,
+      z: -92,
+      ry: 0.26,
+      a: 0.10,
+      b: 0.44,
+    },
 
     // REPLAY
-    { id: "IP-2A", title: "[REPLAY]", body: "Reconstruct the moment.\nBefore hindsight.", x: XL, y: 1.45, z: -108, ry: 0.28, a: 0.36, b: 0.68 },
-    { id: "IP-2B", title: "[EXECUTION]", body: "Spread • fees • slippage\n(iterating)", x: XR, y: 1.65, z: -122, ry: -0.28, a: 0.36, b: 0.68 },
+    {
+      id: "IP-2A",
+      title: "[REPLAY]",
+      body:
+        "Replay is a controlled return to the past.\n\n" +
+        "You can step, scrub, and re-run the same scenario — while accounting for spread, slippage, and fees.\n" +
+        "The point is not entertainment. It’s to train decision-making under real constraints.",
+      x: XL,
+      y: 1.55,
+      z: -124,
+      ry: 0.28,
+      a: 0.36,
+      b: 0.68,
+    },
+    {
+      id: "IP-2B",
+      title: "[TESTS]",
+      body:
+        "Small tests beat big opinions.\n\n" +
+        "Try micro-variations: different entries, invalidations, risk models.\n" +
+        "Compare outcomes in the same market slice — then keep what survives costs.",
+      x: XR,
+      y: 1.75,
+      z: -144,
+      ry: -0.28,
+      a: 0.36,
+      b: 0.68,
+    },
 
     // STRUCTURE
-    { id: "IP-3A", title: "[STRUCTURE]", body: "Rules.\nConstraints.\nValidation.", x: XR, y: 1.65, z: -162, ry: -0.28, a: 0.62, b: 0.90 },
-    { id: "IP-3B", title: "[PRESETS]", body: "Repeat experiments.\nClean comparisons.", x: XL, y: 1.35, z: -178, ry: 0.28, a: 0.62, b: 0.90 },
+    {
+      id: "IP-3A",
+      title: "[STRUCTURE]",
+      body:
+        "Structure is what remains when motivation fades.\n\n" +
+        "JarvQuant helps you turn patterns into rules: entries, exits, filters, and constraints.\n" +
+        "Validation blocks bad runs early — so you iterate with clarity, not hope.",
+      x: XR,
+      y: 1.75,
+      z: -198,
+      ry: -0.28,
+      a: 0.62,
+      b: 0.90,
+    },
+    {
+      id: "IP-3B",
+      title: "[PRESETS]",
+      body:
+        "Presets are experiments you can repeat.\n\n" +
+        "Save assumptions, execution settings, and constraints — then re-run safely.\n" +
+        "The archive keeps comparisons clean: same inputs, clear deltas.",
+      x: XL,
+      y: 1.45,
+      z: -220,
+      ry: 0.28,
+      a: 0.62,
+      b: 0.90,
+    },
 
-    // ACCESS
-    { id: "IP-4A", title: "[ACCESS]", body: "Discord + socials\nfor drops.", x: XL, y: 1.55, z: -220, ry: 0.28, a: 0.84, b: 1.00 },
-    { id: "IP-4B", title: "[REQUEST]", body: "Email with your use-case\nfor invites.", x: XR, y: 1.35, z: -236, ry: -0.28, a: 0.84, b: 1.00 },
+    // EDGE
+    {
+      id: "IP-4A",
+      title: "[EDGE]",
+      body:
+        "Edge is not a secret indicator.\n\n" +
+        "It’s a disciplined loop: capture → replay → test → structure.\n" +
+        "When you can prove your process, confidence stops being a mood.",
+      x: XL,
+      y: 1.65,
+      z: -276,
+      ry: 0.28,
+      a: 0.84,
+      b: 1.00,
+    },
+    {
+      id: "IP-4B",
+      title: "[ACCESS]",
+      body:
+        "JarvQuant is currently internal.\n\n" +
+        "Public beta is planned at v0.5.0 (limited invites).\n" +
+        "Follow development via Discord + socials, or email to request access.",
+      x: XR,
+      y: 1.45,
+      z: -296,
+      ry: -0.28,
+      a: 0.84,
+      b: 1.00,
+    },
   ];
 
   for (const it of info) {
-    const tex = makeTextTexture({ title: it.title, body: it.body, w: 980, h: 560 });
+    const tex = makeTextTexture({ title: it.title, body: it.body });
     // Disable fog on text so plates stay readable deeper into the corridor.
     // depthWrite:false avoids flicker with other transparent surfaces.
     const innerMat = new THREE.MeshBasicMaterial({
@@ -475,7 +640,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       depthTest: false,
     });
 
-    const w = 4.9, h = 3.0;
+    const w = 6.4, h = 3.85;
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
     border.userData.rec = {
       id: it.id,
