@@ -430,11 +430,96 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     infoPlates.push(border);
   }
 
-  // --- Random record frames ---
-  const smallCount = 320;
+  // --- Random record frames (chapter-biased scatter) ---
+  // Idea: cards may appear anywhere, but density increases toward the center of each chapter segment.
+  // This keeps the corridor organic while still giving every chapter a recognizable "peak".
+  const chapterDefs = {
+    memory: { centerZ: -78, sigma: 34 },
+    replay: { centerZ: -138, sigma: 42 },
+    structure: { centerZ: -198, sigma: 46 },
+    edge: { centerZ: -260, sigma: 50 },
+  };
+
+  const edgeQuotes = [
+    "Evidence > vibes.",
+    "Replay until it’s boring.",
+    "Constraints create edge.",
+    "Measure the spread. Pay the tax.",
+    "If you can’t journal it, you can’t scale it.",
+  ];
+
+  const structureBlueprints = [
+    "Risk model: max loss / day, max concurrent risk.",
+    "Position sizing: instrument-aware constraints.",
+    "Filters: session, volatility, regime.",
+    "Workflow: import → normalize → validate → replay.",
+    "Rulesets: entry/exit, invalidation, cooldown.",
+  ];
+
+  const replayTests = [
+    "Micro-test: 20 trades / setup. Look for failure modes.",
+    "Parameter sweep: step size, slippage, fees.",
+    "A/B: rule tweak. Same market slice.",
+    "What breaks intrabar? Find it.",
+    "Edge check: does it survive spread + latency?",
+  ];
+
+  function chooseChapterTag() {
+    // Slight preference for MEMORY cards because they read as "trades" by default.
+    const r = Math.random();
+    if (r < 0.34) return "memory";
+    if (r < 0.58) return "replay";
+    if (r < 0.80) return "structure";
+    return "edge";
+  }
+
+  function chapterWeight(tag, z) {
+    const c = chapterDefs[tag];
+    const dz = (z - c.centerZ) / c.sigma;
+    return Math.exp(-0.5 * dz * dz);
+  }
+
+  // Sample a Z with global scatter + chapter bias.
+  function sampleBiasedZ(tag) {
+    const zMin = -360;
+    const zMax = 96;
+    // Rejection sampling: uniform Z, accept with probability shaped by the chapter bell curve.
+    for (let k = 0; k < 60; k++) {
+      const z = rand(zMin, zMax);
+      // baseline so cards can still appear outside their chapter
+      const p = 0.18 + 0.82 * chapterWeight(tag, z);
+      if (Math.random() < p) return z;
+    }
+    return rand(zMin, zMax);
+  }
+
+  function applyChapterFlavor(rec, tag) {
+    rec.chapter = tag;
+    if (tag === "replay") {
+      rec.instrument = "Replay";
+      rec.setup = "Strategy Test";
+      rec.note = replayTests[(Math.random() * replayTests.length) | 0];
+    } else if (tag === "structure") {
+      rec.instrument = "Structure";
+      rec.setup = "Blueprint";
+      rec.note = structureBlueprints[(Math.random() * structureBlueprints.length) | 0];
+    } else if (tag === "edge") {
+      rec.instrument = "Edge";
+      rec.setup = "Principle";
+      rec.note = edgeQuotes[(Math.random() * edgeQuotes.length) | 0];
+    } else {
+      // memory (default makeRecord content reads as trades/journals already)
+      rec.instrument = rec.instrument || "Memory";
+    }
+  }
+
+  const smallCount = 360;
   for (let i = 0; i < smallCount; i++) {
+    const tag = chooseChapterTag();
     const rec = makeRecord(i);
-    const w = rand(0.55, 1.35);
+    applyChapterFlavor(rec, tag);
+
+      const w = rand(0.55, 1.35);
     const h = w * rand(0.55, 0.80);
 
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
@@ -444,7 +529,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     plate.position.z = -0.001;
     border.add(plate);
 
-    const chance = 0.82;
+    const chance = 0.84;
     if (Math.random() < chance) {
       const tex = makeMiniRecordTexture(rec);
       const inner = new THREE.Mesh(
@@ -456,10 +541,10 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     }
 
     let x, y, z;
-    for (let tries = 0; tries < 40; tries++) {
+    for (let tries = 0; tries < 60; tries++) {
       x = rand(-12.5, 12.5);
       y = rand(-2.4, 5.6);
-      z = rand(-60, 90); // local space around gallery / mid-zone
+      z = sampleBiasedZ(tag);
       if (!inGalleryClearZone(x, y, z) && !inDeepClearZone(x, y, z) && !inReservedZone(x, y, z)) break;
     }
 
@@ -693,7 +778,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       const b = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z - 6.5);
       leash.geometry.setFromPoints([a, b]);
       leash.material.opacity = lerp(leash.material.opacity, 0.35, 0.12);
-    } else {
+
+        } else {
       leash.material.opacity = lerp(leash.material.opacity, 0.0, 0.10);
     }
 
