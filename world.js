@@ -437,7 +437,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
   // --- Data rain (orthogonal "circuit" drops) ---
   // Subtle, not Matrix: thin, right-angled lines with a small node at the bend.
-  const rainCount = 220;
+  const rainCount = 350;
   const rain = new Float32Array(rainCount * 6 * 3); // 3 segments -> 6 vertices
   const rainNodes = new Float32Array(rainCount * 3); // one node per drop
   const rainMeta = [];
@@ -469,7 +469,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   const rainMat = new THREE.LineBasicMaterial({
     color: 0x22d3ee,
     transparent: true,
-    opacity: 0.075,
+    opacity: 0.095,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
@@ -485,7 +485,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     size: 0.08,
     sizeAttenuation: true,
     transparent: true,
-    opacity: 0.16,
+    opacity: 0.22,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
@@ -1198,14 +1198,27 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     }
 
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00025);
-    latticeA.material.opacity = 0.10 + pulse * 0.03;
-    latticeB.material.opacity = 0.05 + pulse * 0.02;
+
+    // Lattice wave: travelling scan that creates subtle depth motion.
+    // We can't modulate per-vertex alpha with LineBasicMaterial, but layered lattices + phase offsets still read as waves.
+    const t = now * 0.00055;
+    const waveA = 0.5 + 0.5 * Math.sin(t);
+    const waveB = 0.5 + 0.5 * Math.sin(t + 1.8);
+
+    latticeA.material.opacity = 0.10 + pulse * 0.03 + waveA * 0.018;
+    latticeB.material.opacity = 0.05 + pulse * 0.02 + waveB * 0.012;
+
     for (let i = 0; i < farVolumes.length; i++) {
       const v = farVolumes[i];
-      const a = Math.max(0.008, 0.045 - i * 0.006);
-      const b = Math.max(0.006, 0.022 - i * 0.004);
-      v.la.material.opacity = a + pulse * 0.008;
-      v.lb.material.opacity = b + pulse * 0.006;
+      const aBase = Math.max(0.008, 0.045 - i * 0.006);
+      const bBase = Math.max(0.006, 0.022 - i * 0.004);
+
+      // phase shifts down the corridor; back volumes move slower/smoother
+      const ph = t * (0.85 - i * 0.07) + i * 0.9;
+      const w = 0.5 + 0.5 * Math.sin(ph);
+
+      v.la.material.opacity = aBase + pulse * 0.008 + w * (0.010 - i * 0.0012);
+      v.lb.material.opacity = bBase + pulse * 0.006 + w * (0.006 - i * 0.0008);
     }
 
     // Animate data rain
