@@ -435,6 +435,109 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     farVolumes.push({ la, lb });
   }
 
+  // --- Data rain (orthogonal "circuit" drops) ---
+  // Subtle, not Matrix: thin, right-angled lines with a small node at the bend.
+  const rainCount = 220;
+  const rain = new Float32Array(rainCount * 6 * 3); // 3 segments -> 6 vertices
+  const rainNodes = new Float32Array(rainCount * 3); // one node per drop
+  const rainMeta = [];
+
+  function spawnRain(i) {
+    // Keep center corridor relatively clean by biasing away from x≈0
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const x = side * rand(4.2, 14.0);
+    const z = rand(-420, 30);
+    const y = rand(-2.0, 9.0);
+
+    const vLen = rand(1.2, 5.8);
+    const hLen = rand(0.8, 4.6);
+    const dir = Math.random() < 0.5 ? -1 : 1;
+    const speed = rand(0.35, 1.15) * (Math.random() < 0.22 ? 1.8 : 1.0);
+
+    // Color tint: mix cyan/purple subtly per drop
+    const tint = Math.random();
+    const color = tint < 0.72 ? 0x22d3ee : 0x6d28d9;
+
+    rainMeta[i] = { x, y, z, vLen, hLen, dir, speed, color };
+  }
+
+  for (let i = 0; i < rainCount; i++) spawnRain(i);
+
+  const rainGeo = new THREE.BufferGeometry();
+  rainGeo.setAttribute("position", new THREE.BufferAttribute(rain, 3));
+
+  const rainMat = new THREE.LineBasicMaterial({
+    color: 0x22d3ee,
+    transparent: true,
+    opacity: 0.075,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  const rainLines = new THREE.LineSegments(rainGeo, rainMat);
+  scene.add(rainLines);
+
+  const nodeGeo = new THREE.BufferGeometry();
+  nodeGeo.setAttribute("position", new THREE.BufferAttribute(rainNodes, 3));
+
+  const nodeMat = new THREE.PointsMaterial({
+    color: 0x6d28d9,
+    size: 0.08,
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.16,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  const rainPoints = new THREE.Points(nodeGeo, nodeMat);
+  scene.add(rainPoints);
+
+  function rebuildRainGeometry() {
+    for (let i = 0; i < rainCount; i++) {
+      const m = rainMeta[i];
+      const base = i * 18;
+
+      const x0 = m.x;
+      const y0 = m.y;
+      const z0 = m.z;
+
+      // 3 segments: vertical down, horizontal, vertical down
+      const x1 = x0;
+      const y1 = y0 - m.vLen;
+      const z1 = z0;
+
+      const x2 = x1 + m.dir * m.hLen;
+      const y2 = y1;
+      const z2 = z1;
+
+      const x3 = x2;
+      const y3 = y2 - m.vLen * 0.55;
+      const z3 = z2;
+
+      // Segment 1
+      rain[base + 0] = x0; rain[base + 1] = y0; rain[base + 2] = z0;
+      rain[base + 3] = x1; rain[base + 4] = y1; rain[base + 5] = z1;
+      // Segment 2
+      rain[base + 6] = x1; rain[base + 7] = y1; rain[base + 8] = z1;
+      rain[base + 9] = x2; rain[base +10] = y2; rain[base +11] = z2;
+      // Segment 3
+      rain[base +12] = x2; rain[base +13] = y2; rain[base +14] = z2;
+      rain[base +15] = x3; rain[base +16] = y3; rain[base +17] = z3;
+
+      // Node at the bend
+      const nb = i * 3;
+      rainNodes[nb + 0] = x1;
+      rainNodes[nb + 1] = y1;
+      rainNodes[nb + 2] = z1;
+    }
+
+    rainGeo.attributes.position.needsUpdate = true;
+    nodeGeo.attributes.position.needsUpdate = true;
+  }
+
+  rebuildRainGeometry();
+
   // Frame group
   const frames = [];
   const frameGroup = new THREE.Group();
@@ -1104,6 +1207,21 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       v.la.material.opacity = a + pulse * 0.008;
       v.lb.material.opacity = b + pulse * 0.006;
     }
+
+    // Animate data rain
+    // Use time-based step (stable across frame rates)
+    const dt = 1 / 60;
+    for (let i = 0; i < rainMeta.length; i++) {
+      const m = rainMeta[i];
+      m.y -= m.speed * dt;
+
+      // Respawn once it drops past the floor band
+      if (m.y < -5.2) {
+        spawnRain(i);
+      }
+    }
+
+    rebuildRainGeometry();
 
     updateHover();
     renderer.render(scene, camera);
