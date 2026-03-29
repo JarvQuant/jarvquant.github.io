@@ -376,18 +376,19 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x05060a, 0.028);
+  // Slightly brighter / more JarvQuant-tinted atmosphere
+  scene.fog = new THREE.FogExp2(0x070a12, 0.022);
 
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 1200);
   camera.position.set(0, 0.9, 10.5);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-  const dir = new THREE.DirectionalLight(0x88ddff, 0.32);
+  scene.add(new THREE.AmbientLight(0xffffff, 1.05));
+  const dir = new THREE.DirectionalLight(0x88ddff, 0.48);
   dir.position.set(6, 10, 6);
   scene.add(dir);
 
   const floor = new THREE.GridHelper(900, 320, 0xffffff, 0xffffff);
-  floor.material.opacity = 0.03;
+  floor.material.opacity = 0.045;
   floor.material.transparent = true;
   floor.position.y = -1.25;
   scene.add(floor);
@@ -615,7 +616,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       body:
         "JarvQuant is currently internal.\n\n" +
         "Public beta is planned at v0.5.0 (limited invites).\n" +
-        "Follow development via Discord + socials, or email to request access.",
+        "Discord is the primary path to invites and drops.",
       x: XR,
       y: 1.45,
       z: -296,
