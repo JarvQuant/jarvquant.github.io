@@ -431,13 +431,16 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   }
 
   // --- Random record frames (chapter-biased scatter) ---
-  // Idea: cards may appear anywhere, but density increases toward the center of each chapter segment.
-  // This keeps the corridor organic while still giving every chapter a recognizable "peak".
+  // Goal: cards may appear anywhere, but each chapter has a visible "density peak" around its center.
+  // Implementation: mixture distribution (mostly chapter-centered normal samples + some global uniform scatter).
+  const zMin = -360;
+  const zMax = 96;
+
   const chapterDefs = {
-    memory: { centerZ: -78, sigma: 34 },
-    replay: { centerZ: -138, sigma: 42 },
-    structure: { centerZ: -198, sigma: 46 },
-    edge: { centerZ: -260, sigma: 50 },
+    memory: { centerZ: -78, sigma: 28 },
+    replay: { centerZ: -138, sigma: 34 },
+    structure: { centerZ: -198, sigma: 38 },
+    edge: { centerZ: -260, sigma: 42 },
   };
 
   const edgeQuotes = [
@@ -449,7 +452,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   ];
 
   const structureBlueprints = [
-    "Risk model: max loss / day, max concurrent risk.",
+    "Risk model: max loss/day, max concurrent risk.",
     "Position sizing: instrument-aware constraints.",
     "Filters: session, volatility, regime.",
     "Workflow: import → normalize → validate → replay.",
@@ -457,69 +460,83 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   ];
 
   const replayTests = [
-    "Micro-test: 20 trades / setup. Look for failure modes.",
-    "Parameter sweep: step size, slippage, fees.",
-    "A/B: rule tweak. Same market slice.",
-    "What breaks intrabar? Find it.",
-    "Edge check: does it survive spread + latency?",
+    "Micro-test: n=20 trades. Find failure modes.",
+    "Parameter sweep: slippage, fees, spread.",
+    "A/B run: one rule tweak, same slice.",
+    "Intrabar check: what breaks first?",
+    "Edge check: survives costs + latency?",
   ];
 
+  function randn() {
+    // Box–Muller
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  }
+
   function chooseChapterTag() {
-    // Slight preference for MEMORY cards because they read as "trades" by default.
+    // balanced-ish. tweak later if we want more of one type.
     const r = Math.random();
-    if (r < 0.34) return "memory";
-    if (r < 0.58) return "replay";
-    if (r < 0.80) return "structure";
+    if (r < 0.28) return "memory";
+    if (r < 0.54) return "replay";
+    if (r < 0.78) return "structure";
     return "edge";
   }
 
-  function chapterWeight(tag, z) {
+  function sampleChapterZ(tag) {
     const c = chapterDefs[tag];
-    const dz = (z - c.centerZ) / c.sigma;
-    return Math.exp(-0.5 * dz * dz);
-  }
-
-  // Sample a Z with global scatter + chapter bias.
-  function sampleBiasedZ(tag) {
-    const zMin = -360;
-    const zMax = 96;
-    // Rejection sampling: uniform Z, accept with probability shaped by the chapter bell curve.
-    for (let k = 0; k < 60; k++) {
-      const z = rand(zMin, zMax);
-      // baseline so cards can still appear outside their chapter
-      const p = 0.18 + 0.82 * chapterWeight(tag, z);
-      if (Math.random() < p) return z;
+    // Try a few times to stay within bounds; otherwise clamp.
+    for (let k = 0; k < 12; k++) {
+      const z = c.centerZ + randn() * c.sigma;
+      if (z >= zMin && z <= zMax) return z;
     }
-    return rand(zMin, zMax);
+    return clamp(c.centerZ + randn() * c.sigma, zMin, zMax);
   }
 
-  function applyChapterFlavor(rec, tag) {
+  function sampleZ(tag) {
+    // 22% global scatter, 78% chapter peak
+    if (Math.random() < 0.22) return rand(zMin, zMax);
+    return sampleChapterZ(tag);
+  }
+
+  function applyChapterFlavor(rec, tag, idx) {
     rec.chapter = tag;
+
     if (tag === "replay") {
+      rec.id = `RP-${String(idx + 1).padStart(4, "0")}`;
+      rec.ts = "TEST";
       rec.instrument = "Replay";
       rec.setup = "Strategy Test";
+      rec.r = "n=20";
       rec.note = replayTests[(Math.random() * replayTests.length) | 0];
     } else if (tag === "structure") {
+      rec.id = `ST-${String(idx + 1).padStart(4, "0")}`;
+      rec.ts = "BLUEPRINT";
       rec.instrument = "Structure";
       rec.setup = "Blueprint";
+      rec.r = "rules";
       rec.note = structureBlueprints[(Math.random() * structureBlueprints.length) | 0];
     } else if (tag === "edge") {
+      rec.id = `ED-${String(idx + 1).padStart(4, "0")}`;
+      rec.ts = "PRINCIPLE";
       rec.instrument = "Edge";
       rec.setup = "Principle";
+      rec.r = "—";
       rec.note = edgeQuotes[(Math.random() * edgeQuotes.length) | 0];
     } else {
-      // memory (default makeRecord content reads as trades/journals already)
+      // memory: keep as trade-like record
       rec.instrument = rec.instrument || "Memory";
     }
   }
 
-  const smallCount = 360;
+  const smallCount = 320;
   for (let i = 0; i < smallCount; i++) {
     const tag = chooseChapterTag();
     const rec = makeRecord(i);
-    applyChapterFlavor(rec, tag);
+    applyChapterFlavor(rec, tag, i);
 
-      const w = rand(0.55, 1.35);
+    const w = rand(0.55, 1.35);
     const h = w * rand(0.55, 0.80);
 
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
@@ -544,7 +561,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     for (let tries = 0; tries < 60; tries++) {
       x = rand(-12.5, 12.5);
       y = rand(-2.4, 5.6);
-      z = sampleBiasedZ(tag);
+      z = sampleZ(tag);
       if (!inGalleryClearZone(x, y, z) && !inDeepClearZone(x, y, z) && !inReservedZone(x, y, z)) break;
     }
 
@@ -778,8 +795,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       const b = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z - 6.5);
       leash.geometry.setFromPoints([a, b]);
       leash.material.opacity = lerp(leash.material.opacity, 0.35, 0.12);
-
-        } else {
+    } else {
       leash.material.opacity = lerp(leash.material.opacity, 0.0, 0.10);
     }
 
