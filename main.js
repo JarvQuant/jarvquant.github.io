@@ -313,12 +313,18 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   }
 
   let entered = false;
+  const hero = document.getElementById("hero");
+  function setHeroOff() {
+    if (hero) hero.classList.add("is-off");
+    if (hero) hero.setAttribute("aria-hidden", "true");
+  }
 
   function onWheel(e) {
     try {
       if (!entered) {
         world?.setEntered?.(true);
         entered = true;
+        setHeroOff();
       }
 
       if (isLightboxOpen()) return;
@@ -347,6 +353,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     enterBtn.addEventListener("click", async () => {
       entered = true;
       world?.setEntered?.(true);
+      setHeroOff();
 
       await audio.ensureRunning();
       await audio.setMuted(false);
@@ -382,6 +389,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
       if (!entered && target !== "threshold") {
         world?.setEntered?.(true);
         entered = true;
+        setHeroOff();
       }
 
       railTarget = jump[target];
@@ -416,4 +424,8 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   );
 
   setActiveChapter("threshold");
+
+  // On desktop, keep hero visible until first enter/scroll/nav.
+  // If you ever want to start "already entered" in the future, call setHeroOff() here.
+
 })();
