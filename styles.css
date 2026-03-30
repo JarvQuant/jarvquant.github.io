@@ -341,6 +341,11 @@ body{
   max-width: 60ch;
 }
 
+/* Desktop: keep center chapter cards minimal; show the real copy in the bottom-right panel */
+@media (min-width: 821px){
+  .chapter-sub, .micro{ display:none; }
+}
+
 .bullets{
   margin: 10px 0 14px;
   padding-left: 18px;
