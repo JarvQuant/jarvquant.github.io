@@ -820,6 +820,49 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       b: 0.44,
     },
 
+    // POSITIONING (in-corridor, split into 3 plates)
+    {
+      id: "IP-1C",
+      title: "[MODEL]",
+      body:
+        "Keine VC-Abhängigkeit, kein Preisdruck von außen.\n\n" +
+        "Kein ‚wir monetarisieren eure Daten‘ — strukturell unmöglich by design.",
+      x: XR,
+      y: 1.60,
+      z: -106,
+      ry: -0.26,
+      a: 0.18,
+      b: 0.52,
+    },
+    {
+      id: "IP-1D",
+      title: "[APPROACH]",
+      body:
+        "Gebaut von einem Entwickler + AI Agent — kein aufgeblasenes Team, kein Overhead.\n\n" +
+        "Community-first Beta — echtes Feedback vor public launch.\n\n" +
+        "Kurs-Verkäufer brauchen dich, um zu verkaufen. Du baust, was sie nie liefern können.",
+      x: XL,
+      y: 1.35,
+      z: -114,
+      ry: 0.26,
+      a: 0.18,
+      b: 0.52,
+    },
+    {
+      id: "IP-1E",
+      title: "[ANGLE]",
+      body:
+        "Trading Education ist kaputt — Kurse, Discords, Lifestyle-Content.\n\n" +
+        "JarvQuant gibt Tradern, was Institutionen seit Jahren haben.\n\n" +
+        "Schneller, schlanker, ehrlicher als alles, was gerade existiert.",
+      x: XR,
+      y: 1.45,
+      z: -132,
+      ry: -0.26,
+      a: 0.18,
+      b: 0.52,
+    },
+
     // REPLAY
     {
       id: "IP-2A",
