@@ -76,6 +76,9 @@ body{
 /* Mobile-only blocks (hidden by default; enabled in mobile media query) */
 .m-media, .m-footer{ display:none; }
 
+/* Desktop center "panels" (3-up) */
+.pgrid{ display:none; }
+
 /* Big branding words */
 .brandwords{
   position: fixed;
@@ -341,9 +344,36 @@ body{
   max-width: 60ch;
 }
 
-/* Desktop: keep center chapter cards minimal; show the real copy in the bottom-right panel */
+/* Desktop: split the positioning copy into 3 center panels (not the bottom-right record panel) */
 @media (min-width: 821px){
-  .chapter-sub, .micro{ display:none; }
+  .pgrid{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .pbox{
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 14px;
+    background: rgba(6, 7, 12, 0.18);
+    backdrop-filter: blur(var(--blur));
+    box-shadow: 0 18px 70px rgba(0,0,0,.45);
+    padding: 14px 14px 12px;
+  }
+  .pbox-title{
+    font: 900 11px/1 var(--mono);
+    letter-spacing: 1.0px;
+    text-transform: uppercase;
+    color: rgba(34,211,238,0.78);
+    margin-bottom: 10px;
+  }
+  .pbox-list{
+    margin: 0;
+    padding-left: 18px;
+    color: rgba(245,247,255,0.76);
+    font: 700 13px/1.65 var(--mono);
+  }
+  .pbox-list li{ margin: 6px 0; }
 }
 
 .bullets{
@@ -748,21 +778,8 @@ body{
   /* Mobile-only copy blocks */
   [data-desktop-only]{ display:none; }
 
-  .m-info{ margin: 12px 0 6px; }
-  .m-info-title{
-    margin: 12px 0 8px;
-    font: 900 12px/1 var(--mono);
-    letter-spacing: 1.0px;
-    text-transform: uppercase;
-    color: rgba(34,211,238,0.78);
-  }
-  .m-list{
-    margin: 0 0 8px;
-    padding-left: 18px;
-    color: rgba(245,247,255,0.76);
-    font: 700 13px/1.65 var(--mono);
-  }
-  .m-list li{ margin: 6px 0; }
+  /* hide desktop 3-up panels on mobile */
+  .pgrid{ display:none; }
 
   /* footer socials */
   .m-footer{
