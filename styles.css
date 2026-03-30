@@ -638,7 +638,12 @@ body{
 @media (max-width: 820px){
   body{
     overflow: auto;
+    overflow-x: hidden; /* prevent any accidental horizontal clipping/scroll */
     -webkit-overflow-scrolling: touch;
+
+    /* iOS safe-area (rounded corners / notch): keep content away from the left/right cutouts */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   /* kill heavy canvas on mobile */
@@ -681,16 +686,17 @@ body{
     position: relative;
     inset: auto;
     pointer-events: auto;
-    padding-top: 14px; /* topbar is sticky on mobile (in-flow) */
-    padding-bottom: 18px;
+
+    /* Use padding for horizontal gutters (safer than margins with safe-area + prevents clipping) */
+    padding: 14px max(12px, env(safe-area-inset-right)) 18px max(12px, env(safe-area-inset-left));
   }
 
   .chapter{
     position: relative;
     left: auto;
     bottom: auto;
-    width: auto;
-    margin: 12px;
+    width: 100%;
+    margin: 12px 0;
 
     opacity: 1;
     transform: none;
