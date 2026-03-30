@@ -373,6 +373,102 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     alpha: true,
     powerPreference: "high-performance",
   });
+
+  function makePlanetMaterial({ lineColor = 0x22d3ee, baseOpacity = 0.10, lineOpacity = 0.35 } = {}) {
+    return new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      depthTest: false, // Option A: always visible landmark
+      blending: THREE.AdditiveBlending,
+      uniforms: {
+        uTime: { value: 0.0 },
+        uLine: { value: new THREE.Color(lineColor) },
+        uBaseOpacity: { value: baseOpacity },
+        uLineOpacity: { value: lineOpacity },
+      },
+      vertexShader: `
+        varying vec3 vN;
+        varying vec3 vP;
+        void main(){
+          vN = normalize(normalMatrix * normal);
+          vec4 wp = modelMatrix * vec4(position, 1.0);
+          vP = wp.xyz;
+          gl_Position = projectionMatrix * viewMatrix * wp;
+        }
+      `,
+      fragmentShader: `
+        uniform float uTime;
+        uniform vec3 uLine;
+        uniform float uBaseOpacity;
+        uniform float uLineOpacity;
+        varying vec3 vN;
+        varying vec3 vP;
+
+        // Spherical grid using longitude/latitude bands.
+        float gridBands(float v, float freq, float width){
+          float x = abs(fract(v * freq) - 0.5);
+          return 1.0 - smoothstep(width, width * 1.8, x);
+        }
+
+        void main(){
+          // map normal to spherical coords
+          vec3 n = normalize(vN);
+          float lon = atan(n.z, n.x) / 6.2831853 + 0.5;
+          float lat = asin(clamp(n.y, -1.0, 1.0)) / 3.1415926 + 0.5;
+
+          // Rotate grid slowly by time (in lon space)
+          lon += uTime * 0.006;
+
+          float g1 = gridBands(lon, 24.0, 0.018);
+          float g2 = gridBands(lat, 14.0, 0.020);
+          float grid = max(g1, g2);
+
+          // subtle purple accents (very low)
+          float accent = 0.5 + 0.5 * sin((lon * 8.0 + lat * 6.0) * 6.283 + uTime * 0.25);
+          accent = smoothstep(0.92, 0.995, accent) * 0.22;
+
+          // rim fade so it feels like a distant object, not a sticker
+          float rim = pow(1.0 - max(0.0, dot(n, vec3(0.0, 0.0, 1.0))), 1.6);
+          float a = uBaseOpacity * (0.65 + rim * 0.55) + grid * uLineOpacity + accent * 0.06;
+
+          vec3 col = uLine;
+          // slight hue shift with accent (toward purple)
+          col = mix(col, vec3(0.43, 0.16, 0.85), accent);
+
+          gl_FragColor = vec4(col, a);
+        }
+      `,
+    });
+  }
+
+  function makeHaloMaterial() {
+    return new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      depthTest: false,
+      blending: THREE.NormalBlending,
+      uniforms: {
+        uOpacity: { value: 0.22 },
+      },
+      vertexShader: `
+        varying vec3 vN;
+        void main(){
+          vN = normalize(normalMatrix * normal);
+          vec4 wp = modelMatrix * vec4(position, 1.0);
+          gl_Position = projectionMatrix * viewMatrix * wp;
+        }
+      `,
+      fragmentShader: `
+        uniform float uOpacity;
+        varying vec3 vN;
+        void main(){
+          float rim = pow(1.0 - abs(vN.z), 2.2);
+          gl_FragColor = vec4(0.0, 0.0, 0.0, rim * uOpacity);
+        }
+      `,
+    });
+  }
+
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
   const scene = new THREE.Scene();
@@ -392,6 +488,80 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   floor.material.transparent = true;
   floor.position.y = -1.25;
   scene.add(floor);
+
+  // --- Distant planet landmark (Option A: always visible, outside corridor) ---
+  const planetGroup = new THREE.Group();
+  planetGroup.position.set(0.0, 10.0, -1200.0);
+  scene.add(planetGroup);
+
+  const planetR = 240;
+  const planetGeo = new THREE.SphereGeometry(planetR, 84, 58);
+  const planetMat = makePlanetMaterial({ lineColor: 0x22d3ee, baseOpacity: 0.055, lineOpacity: 0.22 });
+  const planet = new THREE.Mesh(planetGeo, planetMat);
+  planet.renderOrder = -20;
+  planetGroup.add(planet);
+
+  // Dark halo to keep it readable against dense lattice
+  const haloGeo = new THREE.SphereGeometry(planetR * 1.06, 54, 38);
+  const halo = new THREE.Mesh(haloGeo, makeHaloMaterial());
+  halo.renderOrder = -21;
+  planetGroup.add(halo);
+
+  // Saturn-style data ring
+  const ringGeo = new THREE.RingGeometry(planetR * 1.20, planetR * 1.55, 128, 1);
+  const ringMat = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.AdditiveBlending,
+    uniforms: {
+      uTime: { value: 0.0 },
+      uC1: { value: new THREE.Color(0x22d3ee) },
+      uC2: { value: new THREE.Color(0x6d28d9) },
+      uOpacity: { value: 0.12 },
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main(){
+        vUv = uv;
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      uniform vec3 uC1;
+      uniform vec3 uC2;
+      uniform float uOpacity;
+      varying vec2 vUv;
+
+      void main(){
+        // uv.x across ring thickness, uv.y around angle
+        float ang = vUv.y * 6.2831853;
+        float rad = vUv.x;
+
+        // data dashes
+        float dash = fract(ang * 18.0 + uTime * 0.35);
+        float gate = smoothstep(0.58, 0.95, sin(ang * 7.0 + uTime * 0.4));
+        float on = step(0.75, dash) * gate;
+
+        // subtle radial stripes
+        float stripes = 0.5 + 0.5 * sin(rad * 42.0);
+        stripes = smoothstep(0.35, 0.85, stripes);
+
+        vec3 col = mix(uC1, uC2, 0.5 + 0.5 * sin(ang * 2.0));
+        float a = uOpacity * (0.35 + stripes * 0.65) * (0.18 + on);
+        gl_FragColor = vec4(col, a);
+      }
+    `,
+    side: THREE.DoubleSide,
+  });
+
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI * 0.34;
+  ring.rotation.y = Math.PI * 0.12;
+  ring.renderOrder = -19;
+  planetGroup.add(ring);
 
   // Lattice (aligned to corridor)
   // Keep it centered + no yaw so the camera flight reads dead-straight.
@@ -1220,6 +1390,11 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       v.la.material.opacity = aBase + pulse * 0.008 + w * (0.010 - i * 0.0012);
       v.lb.material.opacity = bBase + pulse * 0.006 + w * (0.006 - i * 0.0008);
     }
+
+    // Planet landmark animation
+    planetGroup.rotation.y += 0.00035;
+    ringMat.uniforms.uTime.value = now * 0.001;
+    planetMat.uniforms.uTime.value = now * 0.001;
 
     // Animate data rain
     // Use time-based step (stable across frame rates)
