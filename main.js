@@ -16,12 +16,16 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   const lang = resolveLang();
   applyI18n(lang);
 
+  // World (desktop only)
+  let world = null;
+
   const langSelect = document.getElementById("langSelect");
   if (langSelect) {
     langSelect.value = lang;
     langSelect.addEventListener("change", () => {
       const next = setLang(langSelect.value);
       applyI18n(next);
+      world?.setLang?.(next);
     });
   }
 
@@ -177,9 +181,9 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   }
 
   // World (desktop only)
-  let world = null;
   if (!isMobile) {
     world = createWorld(document.getElementById("world"), {
+      lang: resolveLang(),
       onHoverFragment(fragment) {
         if (!hud || !hudTitle || !hudSub) return;
         if (!fragment) {
