@@ -366,7 +366,7 @@ function makeMiniRecordTexture(rec) {
   return tex;
 }
 
-export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
+export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "en" } = {}) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: true,
@@ -757,17 +757,33 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     return false;
   }
 
+  let currentLang = (lang === "de" ? "de" : "en");
+
+  function pickLang(obj) {
+    if (obj && typeof obj === "object" && ("en" in obj || "de" in obj)) {
+      return obj[currentLang] || obj.en || obj.de || "";
+    }
+    return obj;
+  }
+
   const info = [
     // Threshold / intro (brand)
     // Push the first plate further behind the exhibit wall so it doesn't get occluded by the 6 big exhibit frames.
     {
       id: "IP-0A",
-      title: "[JARVQUANT]",
-      body:
-        "JarvQuant is a replay-first archive of market memory.\n\n" +
-        "It’s built for traders who want evidence — not vibes.\n" +
-        "You capture decisions, reconstruct conditions, and turn repetition into structure.\n\n" +
-        "The goal is simple: preserve the moment before hindsight, then learn from it on purpose.",
+      title: { en: "[JARVQUANT]", de: "[JARVQUANT]" },
+      body: {
+        en:
+          "JarvQuant is a replay-first archive of market memory.\n\n" +
+          "It’s built for traders who want evidence — not vibes.\n" +
+          "You capture decisions, reconstruct conditions, and turn repetition into structure.\n\n" +
+          "The goal is simple: preserve the moment before hindsight, then learn from it on purpose.",
+        de:
+          "JarvQuant ist ein Replay-first Archiv für Market Memory.\n\n" +
+          "Für Trader, die Beweise wollen — nicht Vibes.\n" +
+          "Du hältst Entscheidungen fest, rekonstruierst Bedingungen und machst Wiederholung zu Struktur.\n\n" +
+          "Das Ziel ist simpel: den Moment vor Hindsight konservieren — und dann bewusst daraus lernen.",
+      },
       x: XL,
       y: 1.75,
       z: -44,
@@ -777,11 +793,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     },
     {
       id: "IP-0B",
-      title: "[WHY]",
-      body:
-        "Most trading logs store outcomes. JarvQuant stores context.\n\n" +
-        "Replay is the core: it lets you revisit price action, spreads, execution assumptions, and your own intent — as if it’s happening again.\n\n" +
-        "Over time, the archive becomes your personal dataset of what actually worked for you.",
+      title: { en: "[WHY]", de: "[WARUM]" },
+      body: {
+        en:
+          "Most trading logs store outcomes. JarvQuant stores context.\n\n" +
+          "Replay is the core: it lets you revisit price action, spreads, execution assumptions, and your own intent — as if it’s happening again.\n\n" +
+          "Over time, the archive becomes your personal dataset of what actually worked for you.",
+        de:
+          "Die meisten Trading-Logs speichern Outcomes. JarvQuant speichert Kontext.\n\n" +
+          "Replay ist der Kern: du siehst Price Action, Spreads, Execution-Annahmen und deine eigene Intention erneut — als würde es wieder passieren.\n\n" +
+          "Mit der Zeit wird das Archiv zu deinem persönlichen Dataset dessen, was für dich wirklich funktioniert hat.",
+      },
       x: XR,
       y: 1.55,
       z: -58,
@@ -793,11 +815,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     // MEMORY
     {
       id: "IP-1A",
-      title: "[MEMORY]",
-      body:
-        "Memory is not a folder — it’s a system.\n\n" +
-        "JarvQuant captures fragments: trades, screenshots, notes, and the subtle signals you noticed (or missed).\n" +
-        "Then it makes them searchable, revisit-able, and exportable — so learning compounds.",
+      title: { en: "[MEMORY]", de: "[MEMORY]" },
+      body: {
+        en:
+          "Memory is not a folder — it’s a system.\n\n" +
+          "JarvQuant captures fragments: trades, screenshots, notes, and the subtle signals you noticed (or missed).\n" +
+          "Then it makes them searchable, revisit-able, and exportable — so learning compounds.",
+        de:
+          "Memory ist kein Ordner — es ist ein System.\n\n" +
+          "JarvQuant hält Fragmente fest: Trades, Screenshots, Notizen und die subtilen Signale, die du gesehen (oder übersehen) hast.\n" +
+          "Dann macht es alles durchsuchbar, wiedererlebbar und exportierbar — damit Lernen sich aufschichtet.",
+      },
       x: XR,
       y: 1.65,
       z: -72,
@@ -807,11 +835,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     },
     {
       id: "IP-1B",
-      title: "[JOURNAL]",
-      body:
-        "Write the why — not just the what.\n\n" +
-        "A journal entry links your idea to evidence: context, execution, and post-trade reflection.\n" +
-        "Export turns memory into something you can share, review, and improve.",
+      title: { en: "[JOURNAL]", de: "[JOURNAL]" },
+      body: {
+        en:
+          "Write the why — not just the what.\n\n" +
+          "A journal entry links your idea to evidence: context, execution, and post-trade reflection.\n" +
+          "Export turns memory into something you can share, review, and improve.",
+        de:
+          "Schreib das Warum — nicht nur das Was.\n\n" +
+          "Ein Journal-Eintrag verbindet deine Idee mit Evidence: Kontext, Execution und Post-Trade-Reflexion.\n" +
+          "Export macht Memory zu etwas, das du teilen, reviewen und verbessern kannst.",
+      },
       x: XL,
       y: 1.35,
       z: -92,
@@ -824,10 +858,15 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     // Space them out to avoid visual clustering.
     {
       id: "IP-1C",
-      title: "[MODEL]",
-      body:
-        "No VC dependency. No external pricing pressure.\n\n" +
-        "No 'we monetize your data' — structurally impossible by design.",
+      title: { en: "[MODEL]", de: "[MODELL]" },
+      body: {
+        en:
+          "No VC dependency. No external pricing pressure.\n\n" +
+          "No 'we monetize your data' — structurally impossible by design.",
+        de:
+          "Keine VC-Abhängigkeit. Kein Preisdruck von außen.\n\n" +
+          "Kein ‚wir monetarisieren eure Daten‘ — strukturell unmöglich by design.",
+      },
       x: XR,
       y: 1.65,
       z: -112,
@@ -837,11 +876,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     },
     {
       id: "IP-1D",
-      title: "[APPROACH]",
-      body:
-        "Built by a solo developer + an AI agent — no bloated team, no overhead.\n\n" +
-        "Community-first beta: real feedback before public launch.\n\n" +
-        "Course-sellers need you to sell. You're building what they can’t deliver.",
+      title: { en: "[APPROACH]", de: "[ANSATZ]" },
+      body: {
+        en:
+          "Built by a solo developer + an AI agent — no bloated team, no overhead.\n\n" +
+          "Community-first beta: real feedback before public launch.\n\n" +
+          "Course-sellers need you to sell. You're building what they can’t deliver.",
+        de:
+          "Gebaut von einem Entwickler + AI Agent — kein aufgeblasenes Team, kein Overhead.\n\n" +
+          "Community-first Beta: echtes Feedback vor Public Launch.\n\n" +
+          "Kurs-Verkäufer brauchen dich, um zu verkaufen. Du baust, was sie nie liefern können.",
+      },
       x: XL,
       y: 1.45,
       z: -150,
@@ -851,11 +896,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     },
     {
       id: "IP-1E",
-      title: "[ANGLE]",
-      body:
-        "Trading education is broken: courses, Discords, lifestyle content.\n\n" +
-        "JarvQuant gives traders what institutions have had for years.\n\n" +
-        "Faster. Leaner. More honest than what exists right now.",
+      title: { en: "[ANGLE]", de: "[ANGLE]" },
+      body: {
+        en:
+          "Trading education is broken: courses, Discords, lifestyle content.\n\n" +
+          "JarvQuant gives traders what institutions have had for years.\n\n" +
+          "Faster. Leaner. More honest than what exists right now.",
+        de:
+          "Trading Education ist kaputt: Kurse, Discords, Lifestyle-Content.\n\n" +
+          "JarvQuant gibt Tradern, was Institutionen seit Jahren haben.\n\n" +
+          "Schneller. Schlanker. Ehrlicher als alles, was gerade existiert.",
+      },
       x: XR,
       y: 1.55,
       z: -188,
@@ -867,11 +918,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     // REPLAY
     {
       id: "IP-2A",
-      title: "[REPLAY]",
-      body:
-        "Replay is a controlled return to the past.\n\n" +
-        "You can step, scrub, and re-run the same scenario — while accounting for spread, slippage, and fees.\n" +
-        "The point is not entertainment. It’s to train decision-making under real constraints.",
+      title: { en: "[REPLAY]", de: "[REPLAY]" },
+      body: {
+        en:
+          "Replay is a controlled return to the past.\n\n" +
+          "You can step, scrub, and re-run the same scenario — while accounting for spread, slippage, and fees.\n" +
+          "The point is not entertainment. It’s to train decision-making under real constraints.",
+        de:
+          "Replay ist eine kontrollierte Rückkehr in die Vergangenheit.\n\n" +
+          "Du kannst step-by-step, scrubben und das gleiche Szenario erneut laufen lassen — inklusive Spread, Slippage und Fees.\n" +
+          "Der Punkt ist nicht Entertainment, sondern Entscheidungsfindung unter echten Constraints zu trainieren.",
+      },
       x: XL,
       y: 1.55,
       z: -124,
@@ -881,11 +938,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     },
     {
       id: "IP-2B",
-      title: "[TESTS]",
-      body:
-        "Small tests beat big opinions.\n\n" +
-        "Try micro-variations: different entries, invalidations, risk models.\n" +
-        "Compare outcomes in the same market slice — then keep what survives costs.",
+      title: { en: "[TESTS]", de: "[TESTS]" },
+      body: {
+        en:
+          "Small tests beat big opinions.\n\n" +
+          "Try micro-variations: different entries, invalidations, risk models.\n" +
+          "Compare outcomes in the same market slice — then keep what survives costs.",
+        de:
+          "Kleine Tests schlagen große Meinungen.\n\n" +
+          "Probier Micro-Variationen: andere Entries, Invalidations, Risk-Modelle.\n" +
+          "Vergleiche Outcomes im gleichen Market Slice — und behalte, was Kosten überlebt.",
+      },
       x: XR,
       y: 1.75,
       z: -144,
@@ -897,11 +960,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     // STRUCTURE
     {
       id: "IP-3A",
-      title: "[STRUCTURE]",
-      body:
-        "Structure is what remains when motivation fades.\n\n" +
-        "JarvQuant helps you turn patterns into rules: entries, exits, filters, and constraints.\n" +
-        "Validation blocks bad runs early — so you iterate with clarity, not hope.",
+      title: { en: "[STRUCTURE]", de: "[STRUKTUR]" },
+      body: {
+        en:
+          "Structure is what remains when motivation fades.\n\n" +
+          "JarvQuant helps you turn patterns into rules: entries, exits, filters, and constraints.\n" +
+          "Validation blocks bad runs early — so you iterate with clarity, not hope.",
+        de:
+          "Struktur ist das, was bleibt, wenn Motivation weg ist.\n\n" +
+          "JarvQuant hilft dir, Patterns in Regeln zu verwandeln: Entries, Exits, Filter und Constraints.\n" +
+          "Validation stoppt schlechte Runs früh — damit du mit Klarheit iterierst, nicht mit Hoffnung.",
+      },
       x: XR,
       y: 1.75,
       z: -198,
@@ -911,11 +980,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     },
     {
       id: "IP-3B",
-      title: "[PRESETS]",
-      body:
-        "Presets are experiments you can repeat.\n\n" +
-        "Save assumptions, execution settings, and constraints — then re-run safely.\n" +
-        "The archive keeps comparisons clean: same inputs, clear deltas.",
+      title: { en: "[PRESETS]", de: "[PRESETS]" },
+      body: {
+        en:
+          "Presets are experiments you can repeat.\n\n" +
+          "Save assumptions, execution settings, and constraints — then re-run safely.\n" +
+          "The archive keeps comparisons clean: same inputs, clear deltas.",
+        de:
+          "Presets sind Experimente, die du wiederholen kannst.\n\n" +
+          "Speichere Annahmen, Execution-Settings und Constraints — und rerun sicher.\n" +
+          "Das Archiv hält Vergleiche sauber: gleiche Inputs, klare Deltas.",
+      },
       x: XL,
       y: 1.45,
       z: -220,
@@ -927,11 +1002,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     // EDGE
     {
       id: "IP-4A",
-      title: "[EDGE]",
-      body:
-        "Edge is not a secret indicator.\n\n" +
-        "It’s a disciplined loop: capture → replay → test → structure.\n" +
-        "When you can prove your process, confidence stops being a mood.",
+      title: { en: "[EDGE]", de: "[EDGE]" },
+      body: {
+        en:
+          "Edge is not a secret indicator.\n\n" +
+          "It’s a disciplined loop: capture → replay → test → structure.\n" +
+          "When you can prove your process, confidence stops being a mood.",
+        de:
+          "Edge ist kein geheimer Indikator.\n\n" +
+          "Es ist ein disziplinierter Loop: capture → replay → test → structure.\n" +
+          "Wenn du deinen Prozess beweisen kannst, ist Confidence kein Mood mehr.",
+      },
       x: XL,
       y: 1.65,
       z: -276,
@@ -941,11 +1022,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     },
     {
       id: "IP-4B",
-      title: "[ACCESS]",
-      body:
-        "JarvQuant is currently internal.\n\n" +
-        "Public beta is planned at v0.5.0 (limited invites).\n" +
-        "Discord is the primary path to invites and drops.",
+      title: { en: "[ACCESS]", de: "[ZUGANG]" },
+      body: {
+        en:
+          "JarvQuant is currently internal.\n\n" +
+          "Public beta is planned at v0.5.0 (limited invites).\n" +
+          "Discord is the primary path to invites and drops.",
+        de:
+          "JarvQuant ist aktuell intern.\n\n" +
+          "Public Beta ist ab v0.5.0 geplant (limitierte Invites).\n" +
+          "Discord ist der primäre Weg zu Invites und Drops.",
+      },
       x: XR,
       y: 1.45,
       z: -296,
@@ -955,8 +1042,22 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     },
   ];
 
+  function applyInfoLang(it, border, inner) {
+    const t = pickLang(it.title);
+    const b = pickLang(it.body);
+    const tex = makeTextTexture({ title: t, body: b });
+    inner.material.map = tex;
+    inner.material.needsUpdate = true;
+
+    // Keep record text in sync (used by hover/panel)
+    if (border?.userData?.rec) {
+      border.userData.rec.setup = t;
+      border.userData.rec.note = b;
+    }
+  }
+
   for (const it of info) {
-    const tex = makeTextTexture({ title: it.title, body: it.body });
+    const tex = makeTextTexture({ title: pickLang(it.title), body: pickLang(it.body) });
     // Disable fog on text so plates stay readable deeper into the corridor.
     // depthWrite:false avoids flicker with other transparent surfaces.
     const innerMat = new THREE.MeshBasicMaterial({
@@ -976,9 +1077,9 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       id: it.id,
       ts: "info",
       instrument: "JarvQuant",
-      setup: it.title,
+      setup: pickLang(it.title),
       r: "—",
-      note: it.body,
+      note: pickLang(it.body),
     };
 
     // Larger Z separation + explicit renderOrder to avoid z-fighting / flicker.
@@ -995,6 +1096,10 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     border.position.set(it.x, it.y, it.z);
     border.rotation.y = it.ry;
+
+    // keep defs for live language switching
+    border.userData.infoDef = it;
+    border.userData.infoInner = inner;
 
     // Keep a clear bubble around big text plates so random frames never overlap them.
     // (Radius is generous to avoid the "double panel" overlap issue.)
@@ -1495,6 +1600,29 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     else { if (selected) clearSelection(); selectObject(obj); }
   }
 
+  function setLang(next) {
+    const nl = next === "de" ? "de" : "en";
+    if (nl === currentLang) return;
+    currentLang = nl;
+
+    // Rebuild textures + record copy for all info plates
+    for (const p of infoPlates) {
+      const def = p?.userData?.infoDef;
+      const inner = p?.userData?.infoInner;
+      if (!def || !inner) continue;
+      applyInfoLang(def, p, inner);
+    }
+
+    // If a plate is selected, refresh the record panel text instantly
+    if (selected?.userData?.rec && onSelectRecord) {
+      const rec = selected.userData.rec;
+      onSelectRecord({
+        title: `${rec.id} · ${rec.instrument} · ${rec.setup}`,
+        body: `${rec.ts} · ${rec.r}\n\n${rec.note}`,
+      });
+    }
+  }
+
   function onKeyDown(e) {
     if (e.key === "Escape") clearSelection();
   }
@@ -1511,6 +1639,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     setChapter,
     setEntered,
     setRail,
+    setLang,
     clearSelection,
     getBeaconScreenspace() { return []; },
     dispose() {
