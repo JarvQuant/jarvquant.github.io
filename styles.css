@@ -73,6 +73,9 @@ body{
   mix-blend-mode: overlay;
 }
 
+/* Mobile-only blocks (hidden by default; enabled in mobile media query) */
+.m-media, .m-footer{ display:none; }
+
 /* Big branding words */
 .brandwords{
   position: fixed;
@@ -259,10 +262,10 @@ body{
   padding: 24px 18px;
 }
 .hero-logo{
-  width: 92px;
-  height: 92px;
-  opacity: 0.95;
-  filter: drop-shadow(0 18px 60px rgba(34,211,238,0.10));
+  width: clamp(110px, 16vw, 150px);
+  height: clamp(110px, 16vw, 150px);
+  opacity: 0.96;
+  filter: drop-shadow(0 22px 70px rgba(34,211,238,0.12));
   margin-bottom: 14px;
 }
 .hero-word{
@@ -727,7 +730,7 @@ body{
   .hint{ display:none; }
 
   /* product media */
-  .m-media{ margin: 12px 0 10px; }
+  .m-media{ display:block; margin: 12px 0 10px; }
   .m-shot{
     width: 100%;
     height: auto;
@@ -739,10 +742,10 @@ body{
 
   /* footer socials */
   .m-footer{
+    display:flex;
     margin-top: 18px;
     padding-top: 14px;
     border-top: 1px solid rgba(255,255,255,0.08);
-    display:flex;
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
