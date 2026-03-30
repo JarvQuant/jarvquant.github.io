@@ -709,6 +709,10 @@ body{
     transform: none;
     pointer-events: auto;
   }
+  /* IMPORTANT: `.chapter.is-active` is more specific and still applies a -50% translate on desktop.
+     Override explicitly for mobile, otherwise the active chapter can slide left and get clipped. */
+  .chapter.is-active{ transform: none; }
+
   .chapter::before{ display:none; }
 
   .chapter-title{
