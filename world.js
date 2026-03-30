@@ -491,12 +491,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
   // --- Distant planet landmark (Option A: always visible, outside corridor) ---
   const planetGroup = new THREE.Group();
-  planetGroup.position.set(0.0, 10.0, -1200.0);
+  planetGroup.position.set(0.0, 18.0, -1200.0);
   scene.add(planetGroup);
 
   const planetR = 240;
   const planetGeo = new THREE.SphereGeometry(planetR, 84, 58);
-  const planetMat = makePlanetMaterial({ lineColor: 0x22d3ee, baseOpacity: 0.055, lineOpacity: 0.22 });
+  const planetMat = makePlanetMaterial({ lineColor: 0x22d3ee, baseOpacity: 0.040, lineOpacity: 0.34 });
   const planet = new THREE.Mesh(planetGeo, planetMat);
   planet.renderOrder = -20;
   planetGroup.add(planet);
@@ -518,7 +518,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       uTime: { value: 0.0 },
       uC1: { value: new THREE.Color(0x22d3ee) },
       uC2: { value: new THREE.Color(0x6d28d9) },
-      uOpacity: { value: 0.12 },
+      uOpacity: { value: 0.22 },
     },
     vertexShader: `
       varying vec2 vUv;
@@ -541,16 +541,19 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
         float rad = vUv.x;
 
         // data dashes
-        float dash = fract(ang * 18.0 + uTime * 0.35);
-        float gate = smoothstep(0.58, 0.95, sin(ang * 7.0 + uTime * 0.4));
-        float on = step(0.75, dash) * gate;
+        float dash = fract(ang * 22.0 + uTime * 0.45);
+        float gate = smoothstep(0.40, 0.98, sin(ang * 6.0 + uTime * 0.55));
+        float on = step(0.62, dash) * gate;
+
+        // radial density falloff (keeps inner ring clean)
+        float fall = smoothstep(0.05, 0.32, rad) * (1.0 - smoothstep(0.82, 0.98, rad));
 
         // subtle radial stripes
-        float stripes = 0.5 + 0.5 * sin(rad * 42.0);
-        stripes = smoothstep(0.35, 0.85, stripes);
+        float stripes = 0.5 + 0.5 * sin(rad * 56.0);
+        stripes = smoothstep(0.28, 0.86, stripes);
 
         vec3 col = mix(uC1, uC2, 0.5 + 0.5 * sin(ang * 2.0));
-        float a = uOpacity * (0.35 + stripes * 0.65) * (0.18 + on);
+        float a = uOpacity * fall * (0.28 + stripes * 0.72) * (0.30 + on);
         gl_FragColor = vec4(col, a);
       }
     `,
