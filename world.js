@@ -821,15 +821,16 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
     },
 
     // POSITIONING (in-corridor, split into 3 plates)
+    // Space them out to avoid visual clustering.
     {
       id: "IP-1C",
       title: "[MODEL]",
       body:
-        "Keine VC-Abhängigkeit, kein Preisdruck von außen.\n\n" +
-        "Kein ‚wir monetarisieren eure Daten‘ — strukturell unmöglich by design.",
+        "No VC dependency. No external pricing pressure.\n\n" +
+        "No 'we monetize your data' — structurally impossible by design.",
       x: XR,
-      y: 1.60,
-      z: -106,
+      y: 1.65,
+      z: -112,
       ry: -0.26,
       a: 0.18,
       b: 0.52,
@@ -838,12 +839,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       id: "IP-1D",
       title: "[APPROACH]",
       body:
-        "Gebaut von einem Entwickler + AI Agent — kein aufgeblasenes Team, kein Overhead.\n\n" +
-        "Community-first Beta — echtes Feedback vor public launch.\n\n" +
-        "Kurs-Verkäufer brauchen dich, um zu verkaufen. Du baust, was sie nie liefern können.",
+        "Built by a solo developer + an AI agent — no bloated team, no overhead.\n\n" +
+        "Community-first beta: real feedback before public launch.\n\n" +
+        "Course-sellers need you to sell. You're building what they can’t deliver.",
       x: XL,
-      y: 1.35,
-      z: -114,
+      y: 1.45,
+      z: -150,
       ry: 0.26,
       a: 0.18,
       b: 0.52,
@@ -852,12 +853,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       id: "IP-1E",
       title: "[ANGLE]",
       body:
-        "Trading Education ist kaputt — Kurse, Discords, Lifestyle-Content.\n\n" +
-        "JarvQuant gibt Tradern, was Institutionen seit Jahren haben.\n\n" +
-        "Schneller, schlanker, ehrlicher als alles, was gerade existiert.",
+        "Trading education is broken: courses, Discords, lifestyle content.\n\n" +
+        "JarvQuant gives traders what institutions have had for years.\n\n" +
+        "Faster. Leaner. More honest than what exists right now.",
       x: XR,
-      y: 1.45,
-      z: -132,
+      y: 1.55,
+      z: -188,
       ry: -0.26,
       a: 0.18,
       b: 0.52,
