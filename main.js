@@ -268,39 +268,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     return chapters.find((c) => c.getAttribute("data-chapter") === name);
   }
 
-  // Panel copy for desktop (so center cards can stay minimal)
-  const chapterPanelCopy = {
-    threshold: {
-      title: "THRESHOLD",
-      body:
-        "Every market leaves a trace. Precision begins where memory is organized.\n\n" +
-        "Enter to travel the archive.",
-    },
-    memory: {
-      title: "MEMORY FIELD",
-      body:
-        "Market decisions don’t disappear.\n\n" +
-        "Stored imprints. Retrieved patterns. Quiet, repeatable learning.",
-    },
-    replay: {
-      title: "REPLAY CHAMBER",
-      body:
-        "Revisit the moment before hindsight.\n\n" +
-        "Time as a surface you can move through — not a chart you scroll past.",
-    },
-    structure: {
-      title: "STRATEGY STRUCTURE",
-      body:
-        "Turn repetition into architecture.\n\n" +
-        "Rules. Constraints. Risk. Execution — wired into a system you can trust.",
-    },
-    edge: {
-      title: "ACCESS POINT",
-      body:
-        "Follow development.\n\n" +
-        "Private builds. Public beta starts at v0.5.0 (limited invites).",
-    },
-  };
+  // Desktop: keep chapter text in the center (cards / panels), not in the bottom-right record panel.
 
   let active = "threshold";
   async function setActiveChapter(name, { ritual = false } = {}) {
@@ -313,11 +281,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
     if (world?.setChapter) world.setChapter(name);
 
-    // Desktop-only: push chapter copy into the bottom-right panel
-    if (!isMobile) {
-      const copy = chapterPanelCopy[name];
-      if (copy) setPanel(copy);
-    }
+    // (desktop) chapter copy stays in the center UI; the bottom-right panel is for record selection.
 
     const el = getChapterEl(name);
     if (el) await revealSequence(el);
@@ -359,11 +323,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (hero) hero.setAttribute("aria-hidden", "true");
   }
 
-  // Ensure panel has something useful on first render (desktop)
-  if (!isMobile) {
-    const initial = chapterPanelCopy.threshold;
-    if (initial) setPanel(initial);
-  }
+  // Bottom-right panel is reserved for record selection (not for static chapter copy).
 
   function onWheel(e) {
     try {
