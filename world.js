@@ -489,82 +489,91 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   floor.position.y = -1.25;
   scene.add(floor);
 
-  // --- Distant planet landmark (Option A: always visible, outside corridor) ---
-  const planetGroup = new THREE.Group();
-  planetGroup.position.set(0.0, 18.0, -1200.0);
-  scene.add(planetGroup);
+  // --- Distant planet landmark (sphere + ring) ---
+  // Disabled for now: it reads a bit too "gimmicky" and competes with the UI.
+  const ENABLE_PLANET_LANDMARK = false;
 
-  const planetR = 240;
-  const planetGeo = new THREE.SphereGeometry(planetR, 84, 58);
-  const planetMat = makePlanetMaterial({ lineColor: 0x22d3ee, baseOpacity: 0.040, lineOpacity: 0.34 });
-  const planet = new THREE.Mesh(planetGeo, planetMat);
-  planet.renderOrder = -20;
-  planetGroup.add(planet);
+  let planetGroup = null;
+  let planetMat = null;
+  let ringMat = null;
 
-  // Dark halo to keep it readable against dense lattice
-  const haloGeo = new THREE.SphereGeometry(planetR * 1.06, 54, 38);
-  const halo = new THREE.Mesh(haloGeo, makeHaloMaterial());
-  halo.renderOrder = -21;
-  planetGroup.add(halo);
+  if (ENABLE_PLANET_LANDMARK) {
+    planetGroup = new THREE.Group();
+    planetGroup.position.set(0.0, 18.0, -1200.0);
+    scene.add(planetGroup);
 
-  // Saturn-style data ring
-  const ringGeo = new THREE.RingGeometry(planetR * 1.20, planetR * 1.55, 128, 1);
-  const ringMat = new THREE.ShaderMaterial({
-    transparent: true,
-    depthWrite: false,
-    depthTest: false,
-    blending: THREE.AdditiveBlending,
-    uniforms: {
-      uTime: { value: 0.0 },
-      uC1: { value: new THREE.Color(0x22d3ee) },
-      uC2: { value: new THREE.Color(0x6d28d9) },
-      uOpacity: { value: 0.22 },
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main(){
-        vUv = uv;
-        vec4 wp = modelMatrix * vec4(position, 1.0);
-        gl_Position = projectionMatrix * viewMatrix * wp;
-      }
-    `,
-    fragmentShader: `
-      uniform float uTime;
-      uniform vec3 uC1;
-      uniform vec3 uC2;
-      uniform float uOpacity;
-      varying vec2 vUv;
+    const planetR = 240;
+    const planetGeo = new THREE.SphereGeometry(planetR, 84, 58);
+    planetMat = makePlanetMaterial({ lineColor: 0x22d3ee, baseOpacity: 0.040, lineOpacity: 0.34 });
+    const planet = new THREE.Mesh(planetGeo, planetMat);
+    planet.renderOrder = -20;
+    planetGroup.add(planet);
 
-      void main(){
-        // uv.x across ring thickness, uv.y around angle
-        float ang = vUv.y * 6.2831853;
-        float rad = vUv.x;
+    // Dark halo to keep it readable against dense lattice
+    const haloGeo = new THREE.SphereGeometry(planetR * 1.06, 54, 38);
+    const halo = new THREE.Mesh(haloGeo, makeHaloMaterial());
+    halo.renderOrder = -21;
+    planetGroup.add(halo);
 
-        // data dashes
-        float dash = fract(ang * 22.0 + uTime * 0.45);
-        float gate = smoothstep(0.40, 0.98, sin(ang * 6.0 + uTime * 0.55));
-        float on = step(0.62, dash) * gate;
+    // Saturn-style data ring
+    const ringGeo = new THREE.RingGeometry(planetR * 1.20, planetR * 1.55, 128, 1);
+    ringMat = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      depthTest: false,
+      blending: THREE.AdditiveBlending,
+      uniforms: {
+        uTime: { value: 0.0 },
+        uC1: { value: new THREE.Color(0x22d3ee) },
+        uC2: { value: new THREE.Color(0x6d28d9) },
+        uOpacity: { value: 0.22 },
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main(){
+          vUv = uv;
+          vec4 wp = modelMatrix * vec4(position, 1.0);
+          gl_Position = projectionMatrix * viewMatrix * wp;
+        }
+      `,
+      fragmentShader: `
+        uniform float uTime;
+        uniform vec3 uC1;
+        uniform vec3 uC2;
+        uniform float uOpacity;
+        varying vec2 vUv;
 
-        // radial density falloff (keeps inner ring clean)
-        float fall = smoothstep(0.05, 0.32, rad) * (1.0 - smoothstep(0.82, 0.98, rad));
+        void main(){
+          // uv.x across ring thickness, uv.y around angle
+          float ang = vUv.y * 6.2831853;
+          float rad = vUv.x;
 
-        // subtle radial stripes
-        float stripes = 0.5 + 0.5 * sin(rad * 56.0);
-        stripes = smoothstep(0.28, 0.86, stripes);
+          // data dashes
+          float dash = fract(ang * 22.0 + uTime * 0.45);
+          float gate = smoothstep(0.40, 0.98, sin(ang * 6.0 + uTime * 0.55));
+          float on = step(0.62, dash) * gate;
 
-        vec3 col = mix(uC1, uC2, 0.5 + 0.5 * sin(ang * 2.0));
-        float a = uOpacity * fall * (0.28 + stripes * 0.72) * (0.30 + on);
-        gl_FragColor = vec4(col, a);
-      }
-    `,
-    side: THREE.DoubleSide,
-  });
+          // radial density falloff (keeps inner ring clean)
+          float fall = smoothstep(0.05, 0.32, rad) * (1.0 - smoothstep(0.82, 0.98, rad));
 
-  const ring = new THREE.Mesh(ringGeo, ringMat);
-  ring.rotation.x = Math.PI * 0.34;
-  ring.rotation.y = Math.PI * 0.12;
-  ring.renderOrder = -19;
-  planetGroup.add(ring);
+          // subtle radial stripes
+          float stripes = 0.5 + 0.5 * sin(rad * 56.0);
+          stripes = smoothstep(0.28, 0.86, stripes);
+
+          vec3 col = mix(uC1, uC2, 0.5 + 0.5 * sin(ang * 2.0));
+          float a = uOpacity * fall * (0.28 + stripes * 0.72) * (0.30 + on);
+          gl_FragColor = vec4(col, a);
+        }
+      `,
+      side: THREE.DoubleSide,
+    });
+
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = Math.PI * 0.34;
+    ring.rotation.y = Math.PI * 0.12;
+    ring.renderOrder = -19;
+    planetGroup.add(ring);
+  }
 
   // Lattice (aligned to corridor)
   // Keep it centered + no yaw so the camera flight reads dead-straight.
@@ -1394,10 +1403,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
       v.lb.material.opacity = bBase + pulse * 0.006 + w * (0.006 - i * 0.0008);
     }
 
-    // Planet landmark animation
-    planetGroup.rotation.y += 0.00035;
-    ringMat.uniforms.uTime.value = now * 0.001;
-    planetMat.uniforms.uTime.value = now * 0.001;
+    // Planet landmark animation (optional)
+    if (planetGroup && ringMat && planetMat) {
+      planetGroup.rotation.y += 0.00035;
+      ringMat.uniforms.uTime.value = now * 0.001;
+      planetMat.uniforms.uTime.value = now * 0.001;
+    }
 
     // Animate data rain
     // Use time-based step (stable across frame rates)
