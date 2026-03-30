@@ -645,12 +645,23 @@ body{
   #world{ display:none; }
 
   .topbar{
-    top: 12px;
-    left: 12px;
-    right: 12px;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 12px;
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-bottom: 10px;
     mix-blend-mode: normal;
     flex-wrap: wrap;
     gap: 10px;
+
+    /* Make it read like a proper mobile header bar */
+    background: rgba(5,6,10,0.88);
+    backdrop-filter: blur(var(--blur));
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0 0 14px 14px;
+    z-index: 100;
   }
 
   .controls{
@@ -670,7 +681,7 @@ body{
     position: relative;
     inset: auto;
     pointer-events: auto;
-    padding-top: 112px; /* space for fixed topbar (can wrap on small widths) */
+    padding-top: 14px; /* topbar is sticky on mobile (in-flow) */
     padding-bottom: 18px;
   }
 
