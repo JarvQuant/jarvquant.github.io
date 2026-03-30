@@ -268,8 +268,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     return chapters.find((c) => c.getAttribute("data-chapter") === name);
   }
 
-  // Desktop: keep chapter text in the center (cards / panels), not in the bottom-right record panel.
-
   let active = "threshold";
   async function setActiveChapter(name, { ritual = false } = {}) {
     if (active === name) return;
