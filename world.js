@@ -62,76 +62,14 @@ function buildLattice({ size = 240, step = 6, color = 0x22d3ee, opacity = 0.08 }
   const geom = new THREE.BufferGeometry();
   geom.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
 
-  // Shader wave material: real travelling wave across the lattice using world-space Z.
-  const mat = new THREE.ShaderMaterial({
+  const mat = new THREE.LineBasicMaterial({
+    color,
     transparent: true,
-    depthWrite: false,
+    opacity,
     blending: THREE.AdditiveBlending,
-    uniforms: {
-      uColor: { value: new THREE.Color(color) },
-      uBaseOpacity: { value: opacity },
-      uTime: { value: 0.0 },
-      // Ripple/wave amount (kept low; lattice is dense)
-      uWaveAmp: { value: 0.040 },
-      uWaveFreq: { value: 0.055 },
-      uWaveSpeed: { value: 0.45 },
-    },
-    vertexShader: `
-      varying float vZ;
-      varying vec2 vXY;
-      void main(){
-        vec4 wp = modelMatrix * vec4(position, 1.0);
-        vZ = wp.z;
-        vXY = wp.xy;
-        gl_Position = projectionMatrix * viewMatrix * wp;
-      }
-    `,
-    fragmentShader: `
-      uniform vec3 uColor;
-      uniform float uBaseOpacity;
-      uniform float uTime;
-      uniform float uWaveAmp;
-      uniform float uWaveFreq;
-      uniform float uWaveSpeed;
-      varying float vZ;
-      varying vec2 vXY;
-
-      // Soft ripple rings (raindrop-on-water vibe), but in a technical / lattice way.
-      float ripple(vec2 p, vec2 c, float t){
-        float r = distance(p, c);
-        float env = exp(-r * 0.18);
-        float w = sin(r * 2.6 - t * 1.7);
-        // thin rings
-        float ring = smoothstep(0.75, 0.95, w);
-        return ring * env;
-      }
-
-      void main(){
-        // travelling wave down the corridor
-        float ph = (vZ * uWaveFreq) + (uTime * uWaveSpeed);
-        float drift = 0.35 + 0.65 * (0.5 + 0.5 * sin(ph));
-
-        // 3 procedural ripple centers, drifting slowly (no uniform arrays needed)
-        float t = uTime;
-        vec2 c1 = vec2(sin(t * 0.23) * 10.0, 1.8 + cos(t * 0.19) * 4.0);
-        vec2 c2 = vec2(sin(t * 0.17 + 2.1) * 12.0, 1.4 + cos(t * 0.21 + 1.7) * 5.0);
-        vec2 c3 = vec2(sin(t * 0.29 + 4.2) * 8.0,  2.2 + cos(t * 0.16 + 3.4) * 3.5);
-
-        float rip = 0.0;
-        rip = max(rip, ripple(vXY, c1, t));
-        rip = max(rip, ripple(vXY, c2, t));
-        rip = max(rip, ripple(vXY, c3, t));
-
-        // Combine: base + drifting intensity + ripple rings
-        float a = uBaseOpacity + drift * (uWaveAmp * 0.45) + rip * uWaveAmp;
-        gl_FragColor = vec4(uColor, a);
-      }
-    `,
   });
 
-  const line = new THREE.LineSegments(geom, mat);
-  line.frustumCulled = false;
-  return line;
+  return new THREE.LineSegments(geom, mat);
 }
 
 function makeFrameGeometry(w, h) {
@@ -438,14 +376,14 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
   const scene = new THREE.Scene();
-  // Atmosphere (avoid cyan flood; keep depth)
-  scene.fog = new THREE.FogExp2(0x05060a, 0.028);
+  // Slightly brighter / more JarvQuant-tinted atmosphere
+  scene.fog = new THREE.FogExp2(0x070a12, 0.022);
 
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 1200);
   camera.position.set(0, 0.9, 10.5);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.82));
-  const dir = new THREE.DirectionalLight(0x88ddff, 0.34);
+  scene.add(new THREE.AmbientLight(0xffffff, 1.05));
+  const dir = new THREE.DirectionalLight(0x88ddff, 0.48);
   dir.position.set(6, 10, 6);
   scene.add(dir);
 
@@ -1261,24 +1199,26 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord } = {}) {
 
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00025);
 
-    // Lattice wave: shader-driven (real wave per segment via world-space Z)
-    // Update shader uniforms; keep a gentle global pulse on top.
-    const t = now * 0.001;
+    // Lattice wave: travelling scan that creates subtle depth motion.
+    // We can't modulate per-vertex alpha with LineBasicMaterial, but layered lattices + phase offsets still read as waves.
+    const t = now * 0.00055;
+    const waveA = 0.5 + 0.5 * Math.sin(t);
+    const waveB = 0.5 + 0.5 * Math.sin(t + 1.8);
 
-    latticeA.material.uniforms.uTime.value = t;
-    latticeB.material.uniforms.uTime.value = t + 1.7;
-
-    // Keep lattice base low to avoid cyan flood; motion comes from ripples, not brightness.
-    latticeA.material.uniforms.uBaseOpacity.value = 0.020 + pulse * 0.006;
-    latticeB.material.uniforms.uBaseOpacity.value = 0.012 + pulse * 0.004;
+    latticeA.material.opacity = 0.10 + pulse * 0.03 + waveA * 0.018;
+    latticeB.material.opacity = 0.05 + pulse * 0.02 + waveB * 0.012;
 
     for (let i = 0; i < farVolumes.length; i++) {
       const v = farVolumes[i];
-      v.la.material.uniforms.uTime.value = t + i * 0.55;
-      v.lb.material.uniforms.uTime.value = t + i * 0.55 + 1.4;
+      const aBase = Math.max(0.008, 0.045 - i * 0.006);
+      const bBase = Math.max(0.006, 0.022 - i * 0.004);
 
-      v.la.material.uniforms.uBaseOpacity.value = Math.max(0.004, 0.012 - i * 0.0018) + pulse * 0.002;
-      v.lb.material.uniforms.uBaseOpacity.value = Math.max(0.003, 0.006 - i * 0.0012) + pulse * 0.0016;
+      // phase shifts down the corridor; back volumes move slower/smoother
+      const ph = t * (0.85 - i * 0.07) + i * 0.9;
+      const w = 0.5 + 0.5 * Math.sin(ph);
+
+      v.la.material.opacity = aBase + pulse * 0.008 + w * (0.010 - i * 0.0012);
+      v.lb.material.opacity = bBase + pulse * 0.006 + w * (0.006 - i * 0.0008);
     }
 
     // Animate data rain
