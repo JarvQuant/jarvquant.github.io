@@ -405,6 +405,39 @@ body{
   letter-spacing: .2px;
 }
 
+/* Threshold value prop (above-the-fold) */
+.threshold-points{
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  max-width: 720px;
+}
+.threshold-points li{
+  position: relative;
+  padding-left: 16px;
+  color: rgba(245,247,255,0.78);
+  font: 650 13px/1.45 var(--sans);
+}
+.threshold-points li::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(34,211,238,0.9);
+  box-shadow: 0 0 0 3px rgba(34,211,238,0.14);
+}
+.threshold-why{
+  margin: 12px 0 0;
+  max-width: 720px;
+  color: rgba(245,247,255,0.68);
+  font: 650 13px/1.55 var(--sans);
+}
+
 /* Access CTA is Discord; no mailto gating needed */
 
 /* Navigation hint */
