@@ -37,6 +37,21 @@ export const I18N = {
     "edge.sub": "Private builds. Public beta starts at v0.5.0 (limited invites).",
     "edge.cta": "Email to request access",
     "edge.micro": "Discord + socials above for drops and short updates.",
+
+    // Mobile positioning copy
+    "pos.model.title": "The Model",
+    "pos.model.1": "No VC dependency. No external pricing pressure.",
+    "pos.model.2": "No 'we monetize your data' — structurally impossible by design.",
+
+    "pos.approach.title": "Approach",
+    "pos.approach.1": "Built by a solo developer + an AI agent — no bloated team, no overhead.",
+    "pos.approach.2": "Community-first beta: real feedback before public launch.",
+    "pos.approach.3": "Course-sellers need you to sell. You're building what they can’t deliver.",
+
+    "pos.angle.title": "Angle",
+    "pos.angle.1": "Trading education is broken: courses, Discords, lifestyle content.",
+    "pos.angle.2": "JarvQuant gives traders what institutions have had for years.",
+    "pos.angle.3": "Faster. Leaner. More honest than what exists right now.",
   },
 
   de: {
@@ -77,6 +92,21 @@ export const I18N = {
     "edge.sub": "Private Builds. Public Beta ab v0.5.0 (limitierte Invites).",
     "edge.cta": "Email für Zugang",
     "edge.micro": "Discord + Socials oben für Drops und kurze Updates.",
+
+    // Mobile positioning copy
+    "pos.model.title": "Das Modell",
+    "pos.model.1": "Keine VC-Abhängigkeit. Kein Preisdruck von außen.",
+    "pos.model.2": "Kein ‚wir monetarisieren eure Daten‘ — strukturell unmöglich by design.",
+
+    "pos.approach.title": "Der Ansatz",
+    "pos.approach.1": "Gebaut von einem Entwickler + AI Agent — kein aufgeblasenes Team, kein Overhead.",
+    "pos.approach.2": "Community-first Beta: echtes Feedback vor Public Launch.",
+    "pos.approach.3": "Kurs-Verkäufer brauchen dich, um zu verkaufen. Du baust, was sie nie liefern können.",
+
+    "pos.angle.title": "Der Angle",
+    "pos.angle.1": "Trading Education ist kaputt: Kurse, Discords, Lifestyle-Content.",
+    "pos.angle.2": "JarvQuant gibt Tradern, was Institutionen seit Jahren haben.",
+    "pos.angle.3": "Schneller. Schlanker. Ehrlicher als alles, was gerade existiert.",
   }
 };
 
