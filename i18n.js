@@ -14,6 +14,10 @@ export const I18N = {
     "threshold.kicker": "THRESHOLD",
     "threshold.title": "Enter the archive.",
     "threshold.sub": "Every market leaves a trace. Precision begins where memory is organized.",
+    "threshold.point1": "Replay-first training: revisit your decisions before hindsight.",
+    "threshold.point2": "Journaling that stays searchable — patterns don’t get lost in screenshots.",
+    "threshold.point3": "Structure and constraints: turn repetition into a system you can trust.",
+    "threshold.why": "This is how you stop guessing — and start getting better on purpose.",
     "threshold.cta": "Enter",
     "threshold.micro": "Tip: move your mouse gently. Click a record to focus.",
 
@@ -69,6 +73,10 @@ export const I18N = {
     "threshold.kicker": "SCHWELLE",
     "threshold.title": "Betritt das Archiv.",
     "threshold.sub": "Jeder Markt hinterlässt Spuren. Präzision beginnt dort, wo Erinnerung geordnet wird.",
+    "threshold.point1": "Replay-first Training: Erlebe deine Entscheidungen vor der Gewissheit erneut.",
+    "threshold.point2": "Journaling, das durchsuchbar bleibt — Muster verschwinden nicht in Screenshots.",
+    "threshold.point3": "Struktur und Constraints: Mach Wiederholung zu einem System, dem du vertrauen kannst.",
+    "threshold.why": "So hörst du auf zu raten — und wirst absichtlich besser.",
     "threshold.cta": "Eintreten",
     "threshold.micro": "Tipp: Maus langsam bewegen. Klicke ein Record zum Fokussieren.",
 
