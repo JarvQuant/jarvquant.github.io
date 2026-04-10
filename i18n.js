@@ -39,7 +39,7 @@ export const I18N = {
     "edge.kicker": "ACCESS POINT",
     "edge.title": "Follow development.",
     "edge.sub": "Private builds. Public beta starts at v0.5.0 (limited invites).",
-    "edge.cta": "Email to request access",
+    "edge.cta": "Join the Community",
     "edge.micro": "Discord + socials above for drops and short updates.",
 
     // Mobile positioning copy
@@ -98,7 +98,7 @@ export const I18N = {
     "edge.kicker": "ZUGANGSPUNKT",
     "edge.title": "Folge der Entwicklung.",
     "edge.sub": "Private Builds. Public Beta ab v0.5.0 (limitierte Invites).",
-    "edge.cta": "Email für Zugang",
+    "edge.cta": "Community zugang",
     "edge.micro": "Discord + Socials oben für Drops und kurze Updates.",
 
     // Mobile positioning copy
