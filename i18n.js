@@ -37,10 +37,11 @@ export const I18N = {
     "structure.micro": "(Next: module graph + path tracing.)",
 
     "edge.kicker": "ACCESS POINT",
-    "edge.title": "Follow development.",
-    "edge.sub": "Private builds. Public beta starts at v0.5.0 (limited invites).",
-    "edge.cta": "Join the Community",
-    "edge.micro": "Discord + socials above for drops and short updates.",
+    "edge.title": "Download the beta build.",
+    "edge.sub": "Windows-only. Private beta — key required.",
+    "edge.cta": "Download for Windows",
+    "edge.cta2": "Join the Community (get a key)",
+    "edge.micro": "If your key was revoked or you switched devices: open JarvQuant → Login → Clear saved key & cache.",
 
     // Mobile positioning copy
     "pos.model.title": "The Model",
@@ -96,10 +97,11 @@ export const I18N = {
     "structure.micro": "(Als nächstes: Modul-Graph + Path-Tracing.)",
 
     "edge.kicker": "ZUGANGSPUNKT",
-    "edge.title": "Folge der Entwicklung.",
-    "edge.sub": "Private Builds. Public Beta ab v0.5.0 (limitierte Invites).",
-    "edge.cta": "Community zugang",
-    "edge.micro": "Discord + Socials oben für Drops und kurze Updates.",
+    "edge.title": "Beta herunterladen.",
+    "edge.sub": "Nur Windows. Private Beta — Key erforderlich.",
+    "edge.cta": "Download für Windows",
+    "edge.cta2": "Community (Key anfordern)",
+    "edge.micro": "Wenn dein Key revoked wurde oder du das Gerät gewechselt hast: JarvQuant → Login → Clear saved key & cache.",
 
     // Mobile positioning copy
     "pos.model.title": "Das Modell",
