@@ -1403,6 +1403,138 @@ body.ch-edge      .chapter.is-active .chapter-title{ text-shadow: 0 0 26px rgba(
   white-space: pre-line;
 }
 
+/* ============================================================
+   Beta-gate modal — opens from any Download CTA
+   (installer isn't public yet, so we explain the flow honestly
+   instead of silently redirecting to Discord)
+   ============================================================ */
+.beta-gate{
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+}
+.beta-gate.is-on{ opacity: 1; pointer-events: auto; }
+.beta-gate-backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(3,4,8,0.74);
+  backdrop-filter: blur(10px);
+}
+.beta-gate-inner{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  width: min(540px, calc(100vw - 28px));
+  padding: 28px 28px 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(34,211,238,0.35);
+  background:
+    radial-gradient(120% 90% at 0% 0%,
+      rgba(109,40,217,0.24) 0%,
+      rgba(10,14,26,0.96) 60%,
+      rgba(8,12,22,0.98) 100%);
+  box-shadow:
+    0 0 0 1px rgba(34,211,238,0.12),
+    0 30px 120px rgba(0,0,0,0.65),
+    0 0 80px rgba(34,211,238,0.15);
+}
+.beta-gate-x{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  color: rgba(245,247,255,0.82);
+  cursor: pointer;
+  font: 900 18px/1 var(--sans);
+}
+.beta-gate-x:hover{ background: rgba(255,255,255,0.10); }
+.beta-gate-kicker{
+  font: 900 10.5px/1 var(--mono);
+  letter-spacing: 2.4px;
+  color: rgba(34,211,238,0.92);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.beta-gate-title{
+  font: 800 24px/1.2 var(--sans);
+  letter-spacing: -0.5px;
+  color: var(--fg);
+  margin-bottom: 12px;
+  max-width: 22ch;
+}
+.beta-gate-body{
+  font: 500 14px/1.55 var(--sans);
+  color: var(--fg-body);
+  margin: 0 0 18px;
+}
+.beta-gate-steps{
+  display: grid;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 14px 14px;
+  border-radius: 12px;
+  background: rgba(5,8,14,0.55);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.gate-step{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: 600 13.5px/1.4 var(--sans);
+  color: var(--fg-body);
+}
+.gate-num{
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 22px; height: 22px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, rgba(109,40,217,0.85), rgba(34,211,238,0.85));
+  color: #06080f;
+  font: 900 11px/1 var(--mono);
+}
+.beta-gate-actions{
+  display: flex;
+  justify-content: flex-end;
+}
+.beta-gate-cta{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(34,211,238,0.55);
+  background: linear-gradient(90deg,
+    rgba(109,40,217,0.68),
+    rgba(34,211,238,0.62));
+  color: #06080f;
+  text-decoration: none;
+  font: 900 12.5px/1 var(--mono);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  box-shadow: 0 14px 40px rgba(34,211,238,0.28);
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+}
+.beta-gate-cta:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: 0 20px 54px rgba(34,211,238,0.40);
+}
+
+@media (max-width: 820px){
+  .beta-gate-inner{ padding: 22px 20px 20px; }
+  .beta-gate-title{ font-size: 20px; }
+  .beta-gate-actions{ justify-content: stretch; }
+  .beta-gate-cta{ width: 100%; justify-content: center; }
+}
+
 /* Lightbox */
 .lightbox{
   position: fixed;

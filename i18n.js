@@ -49,6 +49,15 @@ export const I18N = {
     "edge.download.note": "Private beta · request a key on Discord",
     "edge.micro": "Pricing locks at v1.0. Founders rate stays grandfathered for life.",
 
+    // Beta gate modal
+    "gate.kicker": "PRIVATE BETA",
+    "gate.title": "The installer isn't public yet.",
+    "gate.body": "JarvQuant is in private beta. Jump into the Discord, grab a key, and the Windows installer lands in your DMs. No card, no waitlist — just real users giving feedback before v1.0.",
+    "gate.step1": "Join the Discord",
+    "gate.step2": "Request a beta key in #access",
+    "gate.step3": "Receive the installer via DM",
+    "gate.cta": "Join Discord & get a key",
+
     // Pricing
     "plan.free.name": "Starter",
     "plan.pro.name": "Operator",
@@ -170,6 +179,15 @@ export const I18N = {
     "edge.cta2": "Community (Key anfordern)",
     "edge.download.note": "Private Beta · Key anfordern auf Discord",
     "edge.micro": "Preise gelten ab v1.0. Founders-Rate bleibt lebenslang grandfathered.",
+
+    // Beta gate modal
+    "gate.kicker": "PRIVATE BETA",
+    "gate.title": "Der Installer ist noch nicht public.",
+    "gate.body": "JarvQuant ist in Private Beta. Komm auf Discord, hol dir einen Key und du bekommst den Windows-Installer per DM. Keine Karte, keine Warteliste — nur echte Tester die Feedback geben bevor v1.0 released wird.",
+    "gate.step1": "Discord beitreten",
+    "gate.step2": "Beta-Key in #access anfragen",
+    "gate.step3": "Installer per DM bekommen",
+    "gate.cta": "Discord · Key holen",
 
     // Pricing
     "plan.free.name": "Starter",

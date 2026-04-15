@@ -138,6 +138,32 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   if (imgBoxClose) imgBoxClose.addEventListener("click", closeImgBox);
   if (imgBoxX) imgBoxX.addEventListener("click", closeImgBox);
 
+  // Beta-gate modal (honest replacement for a raw Download redirect)
+  const betaGate = document.getElementById("betaGate");
+  const betaGateX = document.getElementById("betaGateX");
+  const betaGateBackdrop = document.getElementById("betaGateBackdrop");
+  function openBetaGate() {
+    if (!betaGate) return;
+    betaGate.classList.add("is-on");
+    betaGate.setAttribute("aria-hidden", "false");
+  }
+  function closeBetaGate() {
+    if (!betaGate) return;
+    betaGate.classList.remove("is-on");
+    betaGate.setAttribute("aria-hidden", "true");
+  }
+  function isBetaGateOpen() {
+    return !!betaGate?.classList.contains("is-on");
+  }
+  if (betaGateX) betaGateX.addEventListener("click", closeBetaGate);
+  if (betaGateBackdrop) betaGateBackdrop.addEventListener("click", closeBetaGate);
+  document.querySelectorAll("[data-action='download-gate']").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      openBetaGate();
+    });
+  });
+
   // Audio
   const audio = createAmbientEngine();
   const muteToggle = document.getElementById("muteToggle");
@@ -271,6 +297,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeImgBox();
+      closeBetaGate();
       setPanel(null);
       if (world?.clearSelection) world.clearSelection();
     }
@@ -375,7 +402,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     try {
       if (!entered) enterArchive();
 
-      if (isLightboxOpen()) return;
+      if (isLightboxOpen() || isBetaGateOpen()) return;
 
       // When the rail is at the end AND the edge chapter is active,
       // hand the wheel over so the user can scroll the pricing section.
