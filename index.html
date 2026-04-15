@@ -205,9 +205,39 @@
         Free starts the loop. Pro builds the system. Elite shows you yourself.
       </p>
 
-      <figure class="m-media" aria-hidden="true">
-        <img class="m-shot" src="assets/strategy-trades.jpg" alt="" loading="lazy" />
-      </figure>
+      <!-- Exhibition carousel — rotating 3D ring of product shots -->
+      <section class="exhibit" aria-label="Product exhibition">
+        <div class="exhibit-stage" id="exhibitStage">
+          <div class="exhibit-ring" id="exhibitRing">
+            <button type="button" class="exhibit-card" data-index="0" data-title="Trade Autopsy — Overtrade Zone" data-cap="Dein Limit als Linie. Grün solange du drin bist, rot wenn du's brichst." style="--i:0">
+              <img src="assets/autopsy-overtrade.jpg" alt="Trade Autopsy overtrade zone" loading="lazy" />
+            </button>
+            <button type="button" class="exhibit-card" data-index="1" data-title="Trade Autopsy — Daily Breakdown" data-cap="PnL, Trades, Sessions, Within-Day-Drift. Vier Winkel auf denselben Tag." style="--i:1">
+              <img src="assets/autopsy-grid.jpg" alt="Trade Autopsy multi-panel grid" loading="lazy" />
+            </button>
+            <button type="button" class="exhibit-card" data-index="2" data-title="Trade Autopsy — Equity + Metrics" data-cap="Winrate, Avg Win/Loss, Avg R, Drawdown. Kein Wunschdenken mehr." style="--i:2">
+              <img src="assets/autopsy-equity.jpg" alt="Trade Autopsy equity curve and metrics" loading="lazy" />
+            </button>
+            <button type="button" class="exhibit-card" data-index="3" data-title="Grand Archive — Style Test" data-cap="Beantworte den Quiz, bekomme die Strategien die zu dir passen." style="--i:3">
+              <img src="assets/archive-style.jpg" alt="Grand Archive style test" loading="lazy" />
+            </button>
+            <button type="button" class="exhibit-card" data-index="4" data-title="Data Import — MT5 Bridge" data-cap="CSV, Parquet oder direkt aus MT5. Dein Broker, deine Daten." style="--i:4">
+              <img src="assets/import-mt5.jpg" alt="MT5 data import" loading="lazy" />
+            </button>
+          </div>
+        </div>
+
+        <div class="exhibit-caption" id="exhibitCaption" aria-live="polite">
+          <div class="exhibit-counter"><span id="exhibitIdx">1</span><span class="exhibit-sep">/</span><span id="exhibitTotal">5</span></div>
+          <div class="exhibit-title" id="exhibitTitle">Trade Autopsy — Overtrade Zone</div>
+          <div class="exhibit-cap" id="exhibitCap">Dein Limit als Linie. Grün solange du drin bist, rot wenn du's brichst.</div>
+        </div>
+
+        <div class="exhibit-controls" role="group" aria-label="Carousel controls">
+          <button type="button" class="exhibit-arrow exhibit-prev" id="exhibitPrev" aria-label="Previous">‹</button>
+          <button type="button" class="exhibit-arrow exhibit-next" id="exhibitNext" aria-label="Next">›</button>
+        </div>
+      </section>
 
       <!-- Pricing grid -->
       <div class="pricing-grid" role="list">

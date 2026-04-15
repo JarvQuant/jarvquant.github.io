@@ -438,6 +438,101 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     { once: true, passive: true }
   );
 
+  // Exhibition — 3D rotating ring carousel
+  (function initExhibit() {
+    const ring = document.getElementById("exhibitRing");
+    const stage = document.getElementById("exhibitStage");
+    if (!ring || !stage) return;
+
+    const cards = Array.from(ring.querySelectorAll(".exhibit-card"));
+    const total = cards.length;
+    if (!total) return;
+
+    const titleEl = document.getElementById("exhibitTitle");
+    const capEl = document.getElementById("exhibitCap");
+    const idxEl = document.getElementById("exhibitIdx");
+    const totalEl = document.getElementById("exhibitTotal");
+    const prevBtn = document.getElementById("exhibitPrev");
+    const nextBtn = document.getElementById("exhibitNext");
+
+    if (totalEl) totalEl.textContent = String(total);
+
+    const step = 360 / total;
+    let current = 0;
+    let angle = 0; // accumulated rotation (can go negative/positive)
+
+    function render() {
+      ring.style.setProperty("--ex-angle", `${angle}deg`);
+      cards.forEach((c, i) => c.classList.toggle("is-active", i === current));
+      const active = cards[current];
+      if (active) {
+        if (titleEl) titleEl.textContent = active.dataset.title || "";
+        if (capEl) capEl.textContent = active.dataset.cap || "";
+      }
+      if (idxEl) idxEl.textContent = String(current + 1);
+    }
+
+    function go(delta) {
+      current = (current + delta + total) % total;
+      // Rotate the ring in the opposite direction so the selected card faces the camera
+      angle -= delta * step;
+      render();
+    }
+
+    function goTo(target) {
+      let delta = target - current;
+      // pick shortest path around the ring
+      if (delta > total / 2) delta -= total;
+      if (delta < -total / 2) delta += total;
+      go(delta);
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", () => go(-1));
+    if (nextBtn) nextBtn.addEventListener("click", () => go(1));
+
+    cards.forEach((c, i) => {
+      c.addEventListener("click", (e) => {
+        if (i !== current) {
+          e.preventDefault();
+          goTo(i);
+        }
+        // If it IS current, let the default click do nothing (no lightbox yet)
+      });
+    });
+
+    // Keyboard when focused within the exhibit
+    const exhibitSection = stage.closest(".exhibit");
+    if (exhibitSection) {
+      exhibitSection.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); }
+        if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
+      });
+    }
+
+    // Touch/drag to rotate
+    let dragStartX = null;
+    let dragMoved = false;
+    stage.addEventListener("pointerdown", (e) => {
+      dragStartX = e.clientX;
+      dragMoved = false;
+    });
+    stage.addEventListener("pointermove", (e) => {
+      if (dragStartX == null) return;
+      if (Math.abs(e.clientX - dragStartX) > 8) dragMoved = true;
+    });
+    stage.addEventListener("pointerup", (e) => {
+      if (dragStartX == null) return;
+      const dx = e.clientX - dragStartX;
+      dragStartX = null;
+      if (!dragMoved) return;
+      if (dx < -40) go(1);
+      else if (dx > 40) go(-1);
+    });
+    stage.addEventListener("pointercancel", () => { dragStartX = null; });
+
+    render();
+  })();
+
   // Read-mode auto-dim — after ~3.5s without input, dim non-essential chrome
   // so the user's focus goes to the dossier copy. Any input wakes it instantly.
   if (!isMobile) {
