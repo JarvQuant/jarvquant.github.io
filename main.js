@@ -296,6 +296,8 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (world?.setChapter) world.setChapter(name);
 
     const el = getChapterEl(name);
+    // Fresh entry into Edge → scroll back to top so exhibit is seen first
+    if (el && name === "edge") el.scrollTop = 0;
     if (el) await revealSequence(el);
 
     if (ritual) ritualScan();
@@ -362,6 +364,24 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
       if (!entered) enterArchive();
 
       if (isLightboxOpen()) return;
+
+      // When the rail is at the end AND the edge chapter is active,
+      // hand the wheel over so the user can scroll the pricing section.
+      if (active === "edge" && railTarget >= 0.999) {
+        const edgeEl = getChapterEl("edge");
+        if (edgeEl) {
+          const atTop = edgeEl.scrollTop <= 0;
+          const atBottom =
+            edgeEl.scrollTop + edgeEl.clientHeight >= edgeEl.scrollHeight - 1;
+          // Scroll-down inside edge, OR scroll-up while edge still has content above
+          if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) {
+            edgeEl.scrollTop += e.deltaY;
+            e.preventDefault();
+            return;
+          }
+          // If at top and scrolling up, fall through to rail (go back to Structure)
+        }
+      }
 
       const sensitivity = 0.00024;
       const distToMemory = Math.abs(railTarget - 0.32);
@@ -492,11 +512,18 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
     cards.forEach((c, i) => {
       c.addEventListener("click", (e) => {
+        e.preventDefault();
         if (i !== current) {
-          e.preventDefault();
           goTo(i);
+          return;
         }
-        // If it IS current, let the default click do nothing (no lightbox yet)
+        // Active card → open lightbox (zoomed view)
+        const img = c.querySelector("img");
+        openBox({
+          src: img ? img.getAttribute("src") : null,
+          title: c.dataset.title || "",
+          cap: c.dataset.cap || "",
+        });
       });
     });
 

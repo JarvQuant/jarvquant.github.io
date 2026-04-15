@@ -712,6 +712,25 @@ body:not(.is-entered) .chapter.is-active{
 }
 .chapter.chapter-wide .chapter-title{ max-width: 22ch; }
 
+/* Edge chapter can outgrow the viewport (exhibit + pricing + extras + beta strip).
+   When active, turn it into its own scroll container. onWheel hands wheel events
+   over once the rail reaches 1.0 so the user can scroll the pricing into view. */
+.chapter.chapter-wide.is-active{
+  max-height: calc(100vh - clamp(100px, 14vh, 160px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34,211,238,0.35) transparent;
+}
+.chapter.chapter-wide.is-active::-webkit-scrollbar{ width: 8px; }
+.chapter.chapter-wide.is-active::-webkit-scrollbar-track{ background: transparent; }
+.chapter.chapter-wide.is-active::-webkit-scrollbar-thumb{
+  background: rgba(34,211,238,0.28);
+  border-radius: 99px;
+}
+.chapter.chapter-wide.is-active::-webkit-scrollbar-thumb:hover{ background: rgba(34,211,238,0.50); }
+
 .pricing-grid{
   margin: 24px 0 0;
   display: grid;
