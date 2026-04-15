@@ -8,6 +8,7 @@ export const I18N = {
     "ui.mute": "Muted",
     "ui.unmute": "Audio",
     "ui.access": "Get Access",
+    "ui.download": "Download",
 
     "hero.tag": "Replay-first archive of market memory.",
     "hero.scroll": "Scroll to enter the archive",
@@ -45,6 +46,7 @@ export const I18N = {
     "edge.sub": "Free starts the loop. Pro builds the system. Elite shows you yourself.",
     "edge.cta": "Download for Windows",
     "edge.cta2": "Join the Community (get a key)",
+    "edge.download.note": "Private beta · request a key on Discord",
     "edge.micro": "Pricing locks at v1.0. Founders rate stays grandfathered for life.",
 
     // Pricing
@@ -128,6 +130,7 @@ export const I18N = {
     "ui.mute": "Stumm",
     "ui.unmute": "Audio",
     "ui.access": "Zugang",
+    "ui.download": "Download",
 
     "hero.tag": "Replay-first Archiv des Market Memory.",
     "hero.scroll": "Scroll zum Betreten",
@@ -165,6 +168,7 @@ export const I18N = {
     "edge.sub": "Free startet den Loop. Pro baut das System. Elite zeigt dir dich selbst.",
     "edge.cta": "Download für Windows",
     "edge.cta2": "Community (Key anfordern)",
+    "edge.download.note": "Private Beta · Key anfordern auf Discord",
     "edge.micro": "Preise gelten ab v1.0. Founders-Rate bleibt lebenslang grandfathered.",
 
     // Pricing

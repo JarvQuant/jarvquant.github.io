@@ -541,6 +541,72 @@ body:not(.is-entered) .chapter.is-active{
 }
 
 /* ============================================================
+   Primary Download CTA — top of Edge chapter, high-discoverability
+   ============================================================ */
+.download-row{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 14px 0 8px;
+  flex-wrap: wrap;
+}
+.download-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px;
+  border-radius: 12px;
+  border: 1px solid rgba(34,211,238,0.55);
+  background: linear-gradient(90deg,
+    rgba(109,40,217,0.68),
+    rgba(34,211,238,0.62));
+  color: #06080f;
+  text-decoration: none;
+  font: 900 13.5px/1 var(--mono);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  box-shadow:
+    0 14px 40px rgba(34,211,238,0.26),
+    0 0 0 1px rgba(34,211,238,0.22);
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+  cursor: pointer;
+}
+.download-btn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow:
+    0 20px 54px rgba(34,211,238,0.36),
+    0 0 0 1px rgba(34,211,238,0.45);
+}
+.download-btn:active{ transform: translateY(0); }
+.download-icon{
+  display: grid;
+  place-items: center;
+  width: 22px; height: 22px;
+  border-radius: 99px;
+  background: rgba(6,8,14,0.35);
+  color: #f5f7ff;
+  font: 900 12px/1 var(--sans);
+  animation: dlBob 2.8s ease-in-out infinite;
+}
+@keyframes dlBob{
+  0%,100%{ transform: translateY(0); }
+  50%    { transform: translateY(2px); }
+}
+.download-note{
+  font: 600 12px/1.4 var(--mono);
+  color: var(--fg-dim);
+  letter-spacing: 0.3px;
+}
+
+/* Mobile: download row stacks cleanly */
+@media (max-width: 820px){
+  .download-row{ gap: 10px; }
+  .download-btn{ width: 100%; justify-content: center; padding: 14px 18px; }
+  .download-note{ width: 100%; text-align: center; }
+}
+
+/* ============================================================
    Exhibition — 3D rotating ring of product shots
    ============================================================ */
 .exhibit{
@@ -714,14 +780,17 @@ body:not(.is-entered) .chapter.is-active{
 
 /* Edge chapter can outgrow the viewport (exhibit + pricing + extras + beta strip).
    When active, turn it into its own scroll container. onWheel hands wheel events
-   over once the rail reaches 1.0 so the user can scroll the pricing into view. */
-.chapter.chapter-wide.is-active{
-  max-height: calc(100vh - clamp(100px, 14vh, 160px));
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding-right: 16px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(34,211,238,0.35) transparent;
+   over once the rail reaches 1.0 so the user can scroll the pricing into view.
+   Desktop only — on mobile the whole body scrolls naturally. */
+@media (min-width: 821px){
+  .chapter.chapter-wide.is-active{
+    max-height: calc(100vh - clamp(100px, 14vh, 160px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(34,211,238,0.35) transparent;
+  }
 }
 .chapter.chapter-wide.is-active::-webkit-scrollbar{ width: 8px; }
 .chapter.chapter-wide.is-active::-webkit-scrollbar-track{ background: transparent; }

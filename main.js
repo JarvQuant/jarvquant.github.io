@@ -16,6 +16,18 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   const lang = resolveLang();
   applyI18n(lang);
 
+  // On mobile we never run the hero→enter transition (no wheel corridor),
+  // so the `is-entered` gate that reveals chapter copy stays off forever.
+  // Force it on immediately so content is visible on phones.
+  if (isMobile) {
+    document.body.classList.add("is-entered");
+    const heroEl = document.getElementById("hero");
+    if (heroEl) {
+      heroEl.classList.add("is-off");
+      heroEl.setAttribute("aria-hidden", "true");
+    }
+  }
+
   // World (desktop only)
   let world = null;
 
