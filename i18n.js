@@ -7,11 +7,15 @@ export const I18N = {
 
     "ui.mute": "Muted",
     "ui.unmute": "Audio",
+    "ui.access": "Get Access",
+
+    "hero.tag": "Replay-first archive of market memory.",
+    "hero.scroll": "Scroll to enter the archive",
 
     "hint.title": "Navigation",
     "hint.body": "Scroll to travel • Click a chapter above • Click records to open",
 
-    "threshold.kicker": "THRESHOLD",
+    "threshold.kicker": "THRESHOLD · BOOK I",
     "threshold.title": "Enter the archive.",
     "threshold.sub": "Every market leaves a trace. Precision begins where memory is organized.",
     "threshold.point1": "Replay-first training: revisit your decisions before hindsight.",
@@ -36,12 +40,52 @@ export const I18N = {
     "structure.sub": "Rules. Constraints. Risk. Execution — wired into a system you can trust.",
     "structure.micro": "(Next: module graph + path tracing.)",
 
-    "edge.kicker": "ACCESS POINT",
-    "edge.title": "Download the beta build.",
-    "edge.sub": "Windows-only. Private beta — key required.",
+    "edge.kicker": "ACCESS · BOOK V",
+    "edge.title": "Choose how you train.",
+    "edge.sub": "Free starts the loop. Pro builds the system. Elite shows you yourself.",
     "edge.cta": "Download for Windows",
     "edge.cta2": "Join the Community (get a key)",
-    "edge.micro": "If your key was revoked or you switched devices: open JarvQuant → Login → Clear saved key & cache.",
+    "edge.micro": "Pricing locks at v1.0. Founders rate stays grandfathered for life.",
+
+    // Pricing
+    "plan.free.tag": "FREE",
+    "plan.free.period": "Forever — no card.",
+    "plan.free.f1": "Replay-first chart environment",
+    "plan.free.f2": "Data imports",
+    "plan.free.f3": "Journal Lite — 10 entries rolling",
+    "plan.free.f4": "1 active strategy slot",
+    "plan.free.cta": "Get a key",
+
+    "plan.pro.tag": "PRO",
+    "plan.pro.flag": "MOST POPULAR",
+    "plan.pro.period": "or €349 / year — saves ~€131",
+    "plan.pro.f1": "Everything in Free, unlimited",
+    "plan.pro.f2": "Strategy Builder Sandbox",
+    "plan.pro.f3": "Prop Sim with rule presets",
+    "plan.pro.f4": "Backtesting",
+    "plan.pro.f5": "Full Journal — unlimited entries",
+    "plan.pro.cta": "Start with Pro",
+
+    "plan.elite.tag": "ELITE",
+    "plan.elite.period": "or €699 / year — saves ~€261",
+    "plan.elite.f1": "Everything in Pro",
+    "plan.elite.f2": "Trade Autopsy — algorithmic post-trade review",
+    "plan.elite.f3": "NOX AI Coach (beta)",
+    "plan.elite.f4": "Grand Archive — 300 curated strategies",
+    "plan.elite.f5": "Cloud sync + priority support",
+    "plan.elite.cta": "Go Elite",
+
+    "addon.tag": "ADD-ON · UNIQUE",
+    "addon.name": "Options Sim",
+    "addon.body": "Synthetic options market with 97% purity. Train spreads, IV, theta — without risking capital. Stack on any paid tier.",
+
+    "lifetime.tag": "FOUNDERS · LIMITED 200",
+    "lifetime.name": "Lifetime Access",
+    "lifetime.body": "Elite + Options Sim forever. All future tiers and add-ons included. One payment, never charged again. Capped at 200 seats.",
+    "lifetime.note": "one-time",
+
+    "beta.status": "Currently in private beta · Discord for invites & v1.0 launch alerts",
+    "beta.cta": "Join Discord ↗",
 
     // Mobile positioning copy
     "pos.model.title": "The Model",
@@ -67,11 +111,15 @@ export const I18N = {
 
     "ui.mute": "Stumm",
     "ui.unmute": "Audio",
+    "ui.access": "Zugang",
+
+    "hero.tag": "Replay-first Archiv des Market Memory.",
+    "hero.scroll": "Scroll zum Betreten",
 
     "hint.title": "Navigation",
     "hint.body": "Scroll zum Navigieren • Kapitel oben anklicken • Records öffnen",
 
-    "threshold.kicker": "SCHWELLE",
+    "threshold.kicker": "SCHWELLE · BUCH I",
     "threshold.title": "Betritt das Archiv.",
     "threshold.sub": "Jeder Markt hinterlässt Spuren. Präzision beginnt dort, wo Erinnerung geordnet wird.",
     "threshold.point1": "Replay-first Training: Erlebe deine Entscheidungen vor der Gewissheit erneut.",
@@ -96,12 +144,52 @@ export const I18N = {
     "structure.sub": "Regeln. Constraints. Risiko. Execution — verdrahtet in einem System, dem du vertrauen kannst.",
     "structure.micro": "(Als nächstes: Modul-Graph + Path-Tracing.)",
 
-    "edge.kicker": "ZUGANGSPUNKT",
-    "edge.title": "Beta herunterladen.",
-    "edge.sub": "Nur Windows. Private Beta — Key erforderlich.",
+    "edge.kicker": "ZUGANG · BUCH V",
+    "edge.title": "Wähle wie du trainierst.",
+    "edge.sub": "Free startet den Loop. Pro baut das System. Elite zeigt dir dich selbst.",
     "edge.cta": "Download für Windows",
     "edge.cta2": "Community (Key anfordern)",
-    "edge.micro": "Wenn dein Key revoked wurde oder du das Gerät gewechselt hast: JarvQuant → Login → Clear saved key & cache.",
+    "edge.micro": "Preise gelten ab v1.0. Founders-Rate bleibt lebenslang grandfathered.",
+
+    // Pricing
+    "plan.free.tag": "FREE",
+    "plan.free.period": "Für immer — keine Karte.",
+    "plan.free.f1": "Replay-first Chart-Environment",
+    "plan.free.f2": "Daten-Imports",
+    "plan.free.f3": "Journal Lite — 10 Einträge rolling",
+    "plan.free.f4": "1 aktiver Strategy-Slot",
+    "plan.free.cta": "Key anfordern",
+
+    "plan.pro.tag": "PRO",
+    "plan.pro.flag": "MEISTGEWÄHLT",
+    "plan.pro.period": "oder €349 / Jahr — spart ~€131",
+    "plan.pro.f1": "Alles aus Free, unbegrenzt",
+    "plan.pro.f2": "Strategy Builder Sandbox",
+    "plan.pro.f3": "Prop Sim mit Rule-Presets",
+    "plan.pro.f4": "Backtesting",
+    "plan.pro.f5": "Volles Journal — unbegrenzte Einträge",
+    "plan.pro.cta": "Mit Pro starten",
+
+    "plan.elite.tag": "ELITE",
+    "plan.elite.period": "oder €699 / Jahr — spart ~€261",
+    "plan.elite.f1": "Alles aus Pro",
+    "plan.elite.f2": "Trade Autopsy — algorithmisches Post-Trade Review",
+    "plan.elite.f3": "NOX AI Coach (Beta)",
+    "plan.elite.f4": "Grand Archive — 300 kuratierte Strategien",
+    "plan.elite.f5": "Cloud Sync + Priority Support",
+    "plan.elite.cta": "Elite holen",
+
+    "addon.tag": "ADD-ON · UNIQUE",
+    "addon.name": "Options Sim",
+    "addon.body": "Synthetischer Options-Market mit 97% Purität. Trainiere Spreads, IV, Theta — ohne Kapital zu riskieren. Auf jedem Paid-Tier dazubuchbar.",
+
+    "lifetime.tag": "FOUNDERS · LIMITIERT 200",
+    "lifetime.name": "Lifetime Access",
+    "lifetime.body": "Elite + Options Sim für immer. Alle zukünftigen Tiers und Add-Ons inklusive. Eine Zahlung, nie wieder abgerechnet. Limitiert auf 200 Plätze.",
+    "lifetime.note": "einmalig",
+
+    "beta.status": "Aktuell Private Beta · Discord für Invites & v1.0 Launch-Alerts",
+    "beta.cta": "Discord beitreten ↗",
 
     // Mobile positioning copy
     "pos.model.title": "Das Modell",

@@ -29,11 +29,9 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     });
   }
 
-  // Mobile: Enter button is meaningless in fallback mode
-  if (isMobile) {
-    const enterBtn = document.getElementById("enterBtn");
-    if (enterBtn) enterBtn.remove();
-  }
+  // Enter button has been removed in the Ghost Cathedral redesign —
+  // scroll now handles the transition (hero dismisses on first wheel).
+  // (Left intentionally empty — kept for diff clarity.)
 
   // Mini navigation tutorial (desktop only)
   const navHint = document.getElementById("navHint");
@@ -272,6 +270,11 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     return chapters.find((c) => c.getAttribute("data-chapter") === name);
   }
 
+  // Progress rail elements
+  const progDots = Array.from(document.querySelectorAll(".prog-dot"));
+  const progFill = document.getElementById("progFill");
+  const chapterOrder = ["threshold", "memory", "replay", "structure", "edge"];
+
   let active = "threshold";
   async function setActiveChapter(name, { ritual = false } = {}) {
     if (active === name) return;
@@ -281,9 +284,16 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
       c.classList.toggle("is-active", c.getAttribute("data-chapter") === name)
     );
 
-    if (world?.setChapter) world.setChapter(name);
+    // Body class for per-chapter accent recoloring (CSS hooks)
+    document.body.classList.remove("ch-threshold","ch-memory","ch-replay","ch-structure","ch-edge");
+    document.body.classList.add("ch-" + name);
 
-    // (desktop) chapter copy stays in the center UI; the bottom-right panel is for record selection.
+    // Progress rail dot active state
+    progDots.forEach((d) =>
+      d.classList.toggle("is-active", d.getAttribute("data-chapter") === name)
+    );
+
+    if (world?.setChapter) world.setChapter(name);
 
     const el = getChapterEl(name);
     if (el) await revealSequence(el);
@@ -315,6 +325,11 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     setWord(bwStructure, ch === "structure");
     setWord(bwEdge, ch === "edge");
 
+    // Progress rail fill — smooth bar that tracks rail position
+    if (progFill) {
+      progFill.style.height = (rail * 100).toFixed(2) + "%";
+    }
+
     requestAnimationFrame(tickRail);
   }
 
@@ -323,17 +338,28 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   function setHeroOff() {
     if (hero) hero.classList.add("is-off");
     if (hero) hero.setAttribute("aria-hidden", "true");
+    // Reveal chapter field-notes (CSS gates them on body.is-entered)
+    document.body.classList.add("is-entered");
+  }
+
+  // Dismiss hero on first wheel/pointer without requiring scroll delta — smoother UX.
+  async function enterArchive() {
+    if (entered) return;
+    entered = true;
+    world?.setEntered?.(true);
+    setHeroOff();
+    try {
+      await audio.ensureRunning();
+      await audio.setMuted(false);
+      setMutedUI(false);
+    } catch {}
   }
 
   // Bottom-right panel is reserved for record selection (not for static chapter copy).
 
   function onWheel(e) {
     try {
-      if (!entered) {
-        world?.setEntered?.(true);
-        entered = true;
-        setHeroOff();
-      }
+      if (!entered) enterArchive();
 
       if (isLightboxOpen()) return;
 
@@ -355,22 +381,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     window.addEventListener("wheel", onWheel, { passive: false });
   }
 
-  // Enter starts journey (desktop only; button removed on mobile)
-  const enterBtn = document.getElementById("enterBtn");
-  if (enterBtn) {
-    enterBtn.addEventListener("click", async () => {
-      entered = true;
-      world?.setEntered?.(true);
-      setHeroOff();
-
-      await audio.ensureRunning();
-      await audio.setMuted(false);
-      setMutedUI(false);
-
-      railTarget = 0.02;
-      await setActiveChapter("threshold", { ritual: true });
-    });
-  }
+  // Enter button removed — hero now dismisses on the first scroll (see onWheel).
 
   // Nav jumps
   const jump = {
@@ -394,11 +405,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
       if (!(target in jump)) return;
 
-      if (!entered && target !== "threshold") {
-        world?.setEntered?.(true);
-        entered = true;
-        setHeroOff();
-      }
+      if (!entered) await enterArchive();
 
       railTarget = jump[target];
       await setActiveChapter(target, { ritual: true });
@@ -431,6 +438,13 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     { once: true, passive: true }
   );
 
+  // Prime body class + first dot + world planet highlight before the chapter
+  // actually changes (since setActiveChapter early-exits if active === name).
+  document.body.classList.add("ch-threshold");
+  progDots.forEach((d) =>
+    d.classList.toggle("is-active", d.getAttribute("data-chapter") === "threshold")
+  );
+  if (world?.setChapter) world.setChapter("threshold");
   setActiveChapter("threshold");
 
   // On desktop, keep hero visible until first enter/scroll/nav.

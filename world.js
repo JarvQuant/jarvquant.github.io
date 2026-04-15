@@ -229,23 +229,33 @@ function makeMiniRecordTexture(rec) {
 
   g.clearRect(0, 0, w, h);
 
-  // Base glass
-  g.fillStyle = "rgba(6, 7, 12, 0.45)";
+  // Base glass — much more opaque so text reads at distance
+  const bgGrad = g.createLinearGradient(0, 0, 0, h);
+  bgGrad.addColorStop(0, "rgba(8, 12, 22, 0.92)");
+  bgGrad.addColorStop(1, "rgba(4, 6, 14, 0.88)");
+  g.fillStyle = bgGrad;
   g.fillRect(0, 0, w, h);
 
-  // Header
-  const accent = chapter === "structure" ? "rgba(109,40,217,0.82)" : "rgba(34,211,238,0.78)";
+  // Top accent strip — chapter color tag
+  const accent = chapter === "structure" ? "rgba(255,200,120,0.92)"
+              : chapter === "replay"    ? "rgba(255,158,212,0.92)"
+              : chapter === "edge"      ? "rgba(255,210,138,0.95)"
+              :                            "rgba(120,238,255,0.92)";
   g.fillStyle = accent;
-  g.font = "900 20px ui-monospace, Menlo, Consolas, monospace";
-  g.fillText(id, 18, 34);
+  g.fillRect(0, 0, w, 4);
 
-  g.fillStyle = "rgba(245,247,255,0.60)";
-  g.font = "800 18px ui-monospace, Menlo, Consolas, monospace";
-  g.fillText(`${instrument}  ·  ${r}`, 18, 62);
+  // Header — bigger, brighter
+  g.fillStyle = accent;
+  g.font = "900 24px ui-monospace, Menlo, Consolas, monospace";
+  g.fillText(id, 20, 42);
 
-  g.fillStyle = "rgba(245,247,255,0.74)";
-  g.font = "800 18px ui-monospace, Menlo, Consolas, monospace";
-  g.fillText((setup || "").slice(0, 26), 18, 92);
+  g.fillStyle = "rgba(220,232,255,0.85)";
+  g.font = "800 20px ui-monospace, Menlo, Consolas, monospace";
+  g.fillText(`${instrument}  ·  ${r}`, 20, 72);
+
+  g.fillStyle = "rgba(245,247,255,0.96)";
+  g.font = "800 20px ui-monospace, Menlo, Consolas, monospace";
+  g.fillText((setup || "").slice(0, 26), 20, 104);
 
   const x0 = 18,
     y0 = 118,
@@ -253,20 +263,20 @@ function makeMiniRecordTexture(rec) {
     hh = h - 140;
 
   // Frame
-  g.strokeStyle = "rgba(245,247,255,0.08)";
+  g.strokeStyle = "rgba(245,247,255,0.16)";
   g.lineWidth = 1;
   g.strokeRect(x0, y0, ww, hh);
 
   if (chapter === "edge") {
     // Typography card: one principle line, big whitespace.
-    g.fillStyle = "rgba(245,247,255,0.78)";
-    g.font = "900 20px ui-monospace, Menlo, Consolas, monospace";
+    g.fillStyle = "rgba(255,238,210,0.95)";
+    g.font = "900 22px ui-monospace, Menlo, Consolas, monospace";
     const s = (rec.note || "").slice(0, 72);
-    g.fillText(s, x0, y0 + 40);
+    g.fillText(s, x0 + 6, y0 + 44);
 
-    g.fillStyle = "rgba(245,247,255,0.18)";
-    g.font = "800 12px ui-monospace, Menlo, Consolas, monospace";
-    g.fillText("JARVQUANT / EDGE", x0, y0 + hh - 18);
+    g.fillStyle = "rgba(255,210,138,0.55)";
+    g.font = "800 13px ui-monospace, Menlo, Consolas, monospace";
+    g.fillText("JARVQUANT / EDGE", x0 + 6, y0 + hh - 18);
   } else if (chapter === "structure") {
     // Blueprint card: tiny node graph.
     const nodes = [
@@ -296,9 +306,9 @@ function makeMiniRecordTexture(rec) {
       g.stroke();
     }
 
-    g.fillStyle = "rgba(245,247,255,0.52)";
-    g.font = "800 13px ui-monospace, Menlo, Consolas, monospace";
-    g.fillText((rec.note || "").slice(0, 46), x0, y0 + hh - 22);
+    g.fillStyle = "rgba(245,247,255,0.85)";
+    g.font = "800 14px ui-monospace, Menlo, Consolas, monospace";
+    g.fillText((rec.note || "").slice(0, 46), x0 + 6, y0 + hh - 22);
   } else if (chapter === "replay") {
     // Test card: equity curve + KPIs row.
     g.strokeStyle = "rgba(34,211,238,0.30)";
@@ -472,8 +482,9 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
   const scene = new THREE.Scene();
-  // Slightly brighter / more JarvQuant-tinted atmosphere
-  scene.fog = new THREE.FogExp2(0x070a12, 0.022);
+  /* Ghost Cathedral fog: slightly warmer indigo, ~20% brighter; less density so cards
+     stay legible deeper down the nave. */
+  scene.fog = new THREE.FogExp2(0x0a0d18, 0.0185);
 
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 1200);
   camera.position.set(0, 0.9, 10.5);
@@ -575,47 +586,676 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     planetGroup.add(ring);
   }
 
-  // Lattice (aligned to corridor)
-  // Keep it centered + no yaw so the camera flight reads dead-straight.
+  /* --------------------------------------------------------------------
+     JarvQuant Universe (replaces Lattice)
+
+     The corridor is now a path through a cyber-universe. Lattice removed;
+     instead we scatter a layered starfield and position thematic planets
+     along the flight path. Each planet embodies one chapter.
+     -------------------------------------------------------------------- */
+
+  // Kept for legacy references (unused after lattice removal; the camera
+  // flight path doesn't need a lattice origin anymore).
   const origin = new THREE.Vector3(0.0, 2.2, -72);
   const yaw = 0.0;
 
-  const latticeA = buildLattice({ size: 260, step: 6, color: 0x22d3ee, opacity: 0.12 });
-  latticeA.position.copy(origin);
-  latticeA.rotation.y = yaw;
-  scene.add(latticeA);
-
-  const latticeB = buildLattice({ size: 260, step: 12, color: 0x6d28d9, opacity: 0.06 });
-  latticeB.position.copy(origin);
-  latticeB.position.x += 0.35; // seam fix
-  latticeB.rotation.y = yaw;
-  scene.add(latticeB);
-
-  const farVolumes = [];
-  for (let k = 0; k < 6; k++) {
-    const la = buildLattice({
-      size: 320 + k * 70,
-      step: 6,
-      color: 0x22d3ee,
-      opacity: 0.060 - k * 0.006,
+  // --- Starfield (3 parallax layers) ---
+  const starfields = [];
+  function makeStarLayer({ count, spread, depth, size, opacity, color = 0xffffff }) {
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      positions[i * 3 + 0] = rand(-spread, spread);
+      positions[i * 3 + 1] = rand(-spread * 0.55, spread * 0.55);
+      positions[i * 3 + 2] = rand(depth[0], depth[1]);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const m = new THREE.PointsMaterial({
+      color,
+      size,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
     });
-    const lb = buildLattice({
-      size: 320 + k * 70,
-      step: 12,
-      color: 0x6d28d9,
-      opacity: 0.032 - k * 0.004,
-    });
-
-    la.position.set(origin.x, origin.y, origin.z - (k + 1) * 110);
-    lb.position.copy(la.position);
-
-    la.rotation.y = yaw + k * 0.01;
-    lb.rotation.y = la.rotation.y;
-
-    scene.add(la);
-    scene.add(lb);
-    farVolumes.push({ la, lb });
+    const pts = new THREE.Points(g, m);
+    scene.add(pts);
+    starfields.push({ pts, baseOpacity: opacity });
+    return pts;
   }
+
+  // Near layer — small bright stars, slight parallax
+  makeStarLayer({ count: 260, spread: 180, depth: [-40, -200], size: 0.14, opacity: 0.85 });
+  // Mid layer — main starfield
+  makeStarLayer({ count: 520, spread: 360, depth: [-200, -640], size: 0.10, opacity: 0.65 });
+  // Far layer — deep dusty haze, subtle cyan tint
+  makeStarLayer({ count: 380, spread: 540, depth: [-640, -1100], size: 0.075, opacity: 0.35, color: 0xaad8ee });
+
+  // --------------------------------------------------------------
+  // PLANETS — each chapter has a thematic planet floating off-axis.
+  // Prototype (Step 1): Mnemora (Memory). Others cloned in Step 2.
+  // --------------------------------------------------------------
+
+  const planets = [];
+
+  // Canvas texture generators per surface theme.
+  // All are 2048x1024 (2:1) so spherical UV wraps cleanly.
+  function makeMemorySurfaceTexture() {
+    const w = 2048, h = 1024;
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    const g = c.getContext("2d");
+
+    // Deep indigo base with subtle vertical gradient
+    const grad = g.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, "#0a1022");
+    grad.addColorStop(0.5, "#0c1832");
+    grad.addColorStop(1, "#080e1e");
+    g.fillStyle = grad;
+    g.fillRect(0, 0, w, h);
+
+    // Scattered candle streaks (journal fragments of past trades)
+    const candles = 320;
+    for (let i = 0; i < candles; i++) {
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      const bullish = Math.random() > 0.48;
+      const col = bullish ? "rgba(120,238,255,0.92)" : "rgba(170,140,255,0.85)";
+      const bodyH = 6 + Math.random() * 38;
+      const wickH = bodyH + 8 + Math.random() * 30;
+      // wick
+      g.strokeStyle = col;
+      g.lineWidth = 1.2;
+      g.beginPath();
+      g.moveTo(x, y - wickH / 2);
+      g.lineTo(x, y + wickH / 2);
+      g.stroke();
+      // body
+      g.fillStyle = col;
+      g.fillRect(x - 2.0, y - bodyH / 2, 4.0, bodyH);
+    }
+
+    // Journal text fragments, mono — denser & a bit brighter
+    g.fillStyle = "rgba(200,225,255,0.42)";
+    g.font = "600 13px ui-monospace, Menlo, Consolas, monospace";
+    const fragments = [
+      "T-42d 14:30 NAS100 L", "entry clean", "hesitated",
+      "volatility high", "structure intact", "context > outcome",
+      "BOS retest", "FVG fill", "EQH swept", "journal #0214",
+      "R=1.75", "SL tight", "context noted", "scaled out partial",
+      "revisit this one", "pattern recurs", "session AM",
+    ];
+    for (let i = 0; i < 380; i++) {
+      const s = fragments[(Math.random() * fragments.length) | 0];
+      g.fillText(s, Math.random() * w, Math.random() * h);
+    }
+
+    // A few bright "hot zones" — density clusters like memory peaks
+    for (let i = 0; i < 14; i++) {
+      const cx = Math.random() * w;
+      const cy = Math.random() * h;
+      const r = 70 + Math.random() * 180;
+      const rg = g.createRadialGradient(cx, cy, 0, cx, cy, r);
+      rg.addColorStop(0, "rgba(79,228,240,0.32)");
+      rg.addColorStop(0.6, "rgba(150,120,255,0.10)");
+      rg.addColorStop(1, "rgba(79,228,240,0)");
+      g.fillStyle = rg;
+      g.fillRect(cx - r, cy - r, r * 2, r * 2);
+    }
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    tex.wrapS = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  // Composite planet-surface shader: textured base + animated lat/lon grid + rim glow.
+  function makePlanetSurfaceMaterial({ texture, accent = 0x4fe4f0, gridOpacity = 0.22 }) {
+    return new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      uniforms: {
+        uMap:         { value: texture },
+        uTime:        { value: 0.0 },
+        uAccent:      { value: new THREE.Color(accent) },
+        uGridOpacity: { value: gridOpacity },
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        varying vec3 vN;
+        void main(){
+          vUv = uv;
+          vN = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D uMap;
+        uniform float uTime;
+        uniform vec3 uAccent;
+        uniform float uGridOpacity;
+        varying vec2 vUv;
+        varying vec3 vN;
+
+        float gridBands(float v, float freq, float width){
+          float x = abs(fract(v * freq) - 0.5);
+          return 1.0 - smoothstep(width, width * 1.8, x);
+        }
+
+        void main(){
+          // Scrolling the texture horizontally gives the planet its rotation look
+          vec2 uv = vec2(fract(vUv.x + uTime * 0.008), vUv.y);
+          vec4 tex = texture2D(uMap, uv);
+
+          // Lat/lon grid overlay (animated)
+          float g1 = gridBands(uv.x + uTime * 0.003, 28.0, 0.014);
+          float g2 = gridBands(vUv.y, 16.0, 0.016);
+          float grid = max(g1, g2) * uGridOpacity;
+
+          // Rim light — stronger at silhouette, fades facing camera
+          float rim = pow(1.0 - max(0.0, dot(normalize(vN), vec3(0.0, 0.0, 1.0))), 1.8);
+
+          // Boost texture contrast so the canvas detail reads through
+          vec3 base = tex.rgb * 1.65 + pow(tex.rgb, vec3(0.55)) * 0.18;
+          vec3 col = base + uAccent * grid * 0.85 + uAccent * rim * 0.45;
+          float a = max(tex.a, grid * 0.5) + rim * 0.18;
+          gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+        }
+      `,
+    });
+  }
+
+  // Outer halo sphere — slight cyan/accent rim bloom, draws behind the planet.
+  function makePlanetHaloMaterial({ accent = 0x4fe4f0, opacity = 0.35 }) {
+    return new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide,
+      uniforms: {
+        uAccent:  { value: new THREE.Color(accent) },
+        uOpacity: { value: opacity },
+      },
+      vertexShader: `
+        varying vec3 vN;
+        void main(){
+          vN = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uAccent;
+        uniform float uOpacity;
+        varying vec3 vN;
+        void main(){
+          float rim = pow(1.0 - abs(normalize(vN).z), 2.2);
+          gl_FragColor = vec4(uAccent, rim * uOpacity);
+        }
+      `,
+    });
+  }
+
+  // Saturn-style ring material — animated dash pattern, accent-colored.
+  function makePlanetRingMaterial({ accent1 = 0x4fe4f0, accent2 = 0x6d28d9, opacity = 0.55, dashes = 22 }) {
+    return new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      uniforms: {
+        uTime:    { value: 0.0 },
+        uC1:      { value: new THREE.Color(accent1) },
+        uC2:      { value: new THREE.Color(accent2) },
+        uOpacity: { value: opacity },
+        uDashes:  { value: dashes },
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main(){
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform float uTime;
+        uniform vec3 uC1;
+        uniform vec3 uC2;
+        uniform float uOpacity;
+        uniform float uDashes;
+        varying vec2 vUv;
+        void main(){
+          float ang = vUv.y * 6.2831853;
+          float rad = vUv.x;
+
+          // animated dashes travelling around the ring
+          float dash = fract(ang * uDashes + uTime * 0.35);
+          float on = smoothstep(0.52, 0.96, dash);
+
+          // radial density — softer at edges, dense in middle
+          float fall = smoothstep(0.0, 0.24, rad) * (1.0 - smoothstep(0.78, 1.0, rad));
+
+          // mix colors around the ring
+          vec3 col = mix(uC1, uC2, 0.5 + 0.5 * sin(ang * 2.0 + uTime * 0.2));
+          float a = uOpacity * fall * (0.25 + on * 0.9);
+          gl_FragColor = vec4(col, a);
+        }
+      `,
+    });
+  }
+
+  // Reusable planet builder. Returns a {group, ...refs} for animation.
+  function makePlanet({
+    name,
+    position,          // {x,y,z}
+    radius = 14,
+    surfaceTexture,    // THREE.Texture
+    accent = 0x4fe4f0,
+    haloAccent = null,
+    haloOpacity = 0.38,
+    gridOpacity = 0.22,
+    rings = [],        // array of {inner, outer, tiltX, tiltY, dashes, accent1, accent2, opacity}
+    spin = 0.00045,
+    chapterKey = "memory",
+  }) {
+    const group = new THREE.Group();
+    group.position.set(position.x, position.y, position.z);
+    scene.add(group);
+
+    // Core surface
+    const surfaceMat = makePlanetSurfaceMaterial({ texture: surfaceTexture, accent, gridOpacity });
+    const surfaceGeo = new THREE.SphereGeometry(radius, 96, 64);
+    const surface = new THREE.Mesh(surfaceGeo, surfaceMat);
+    surface.renderOrder = -10;
+    group.add(surface);
+
+    // Halo (outer rim glow)
+    const haloMat = makePlanetHaloMaterial({ accent: haloAccent ?? accent, opacity: haloOpacity });
+    const haloGeo = new THREE.SphereGeometry(radius * 1.18, 64, 44);
+    const halo = new THREE.Mesh(haloGeo, haloMat);
+    halo.renderOrder = -11;
+    group.add(halo);
+
+    // Rings
+    let ringMat = null;
+    for (const r of rings) {
+      const mat = makePlanetRingMaterial({
+        accent1: r.accent1 ?? accent,
+        accent2: r.accent2 ?? 0x6d28d9,
+        opacity: r.opacity ?? 0.55,
+        dashes: r.dashes ?? 22,
+      });
+      const geo = new THREE.RingGeometry(radius * r.inner, radius * r.outer, 180, 1);
+      const ring = new THREE.Mesh(geo, mat);
+      ring.rotation.x = r.tiltX ?? Math.PI * 0.32;
+      ring.rotation.y = r.tiltY ?? Math.PI * 0.10;
+      ring.renderOrder = -9;
+      group.add(ring);
+      if (!ringMat) ringMat = mat; // keep first for tick animation
+    }
+
+    const planetRec = { name, chapterKey, group, surfaceMat, haloMat, ringMat, spin };
+    planets.push(planetRec);
+    return planetRec;
+  }
+
+  // -------- Surface textures for the remaining 4 planets --------
+
+  // Praelum (Threshold) — gateway / portal vibe.
+  // Vertical "doorway" bands + glyph rows + a few bright thresholds.
+  function makeThresholdSurfaceTexture() {
+    const w = 2048, h = 1024;
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    const g = c.getContext("2d");
+
+    const grad = g.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, "#0b0a1e");
+    grad.addColorStop(0.5, "#140a2a");
+    grad.addColorStop(1, "#080716");
+    g.fillStyle = grad;
+    g.fillRect(0, 0, w, h);
+
+    // Vertical doorway columns
+    g.strokeStyle = "rgba(150,120,255,0.35)";
+    g.lineWidth = 1;
+    for (let i = 0; i < 64; i++) {
+      const x = (i / 64) * w + (Math.random() * 8 - 4);
+      const top = Math.random() * h * 0.3;
+      const bot = h - Math.random() * h * 0.3;
+      g.globalAlpha = 0.2 + Math.random() * 0.6;
+      g.beginPath();
+      g.moveTo(x, top);
+      g.lineTo(x, bot);
+      g.stroke();
+    }
+    g.globalAlpha = 1;
+
+    // Glyph rows — square ticks
+    g.fillStyle = "rgba(120,200,255,0.45)";
+    for (let row = 0; row < 14; row++) {
+      const y = (row / 14) * h + 28;
+      for (let i = 0; i < 240; i++) {
+        if (Math.random() < 0.55) continue;
+        const x = (i / 240) * w;
+        const sz = 1 + Math.random() * 2.4;
+        g.fillRect(x, y, sz, sz);
+      }
+    }
+
+    // Threshold arches — a few bright radial gateways
+    for (let i = 0; i < 6; i++) {
+      const cx = Math.random() * w;
+      const cy = Math.random() * h;
+      const r = 90 + Math.random() * 180;
+      const rg = g.createRadialGradient(cx, cy, 0, cx, cy, r);
+      rg.addColorStop(0, "rgba(170,140,255,0.30)");
+      rg.addColorStop(0.6, "rgba(80,160,240,0.10)");
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = rg;
+      g.fillRect(cx - r, cy - r, r * 2, r * 2);
+    }
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    tex.wrapS = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  // Revena (Replay) — time / scrubber vibe.
+  // Horizontal timelines + scrub markers + waveform pulses.
+  function makeReplaySurfaceTexture() {
+    const w = 2048, h = 1024;
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    const g = c.getContext("2d");
+
+    const grad = g.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, "#071a22");
+    grad.addColorStop(0.5, "#0a2030");
+    grad.addColorStop(1, "#06121c");
+    g.fillStyle = grad;
+    g.fillRect(0, 0, w, h);
+
+    // Horizontal timeline lanes
+    g.strokeStyle = "rgba(120,220,240,0.32)";
+    g.lineWidth = 1;
+    for (let row = 0; row < 28; row++) {
+      const y = (row / 28) * h + 12;
+      g.globalAlpha = 0.22 + (row % 4 === 0 ? 0.45 : 0.15);
+      g.beginPath();
+      g.moveTo(0, y);
+      g.lineTo(w, y);
+      g.stroke();
+    }
+    g.globalAlpha = 1;
+
+    // Scrub markers
+    g.fillStyle = "rgba(255,180,220,0.55)";
+    for (let i = 0; i < 320; i++) {
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      g.fillRect(x, y - 4, 1.6, 8);
+    }
+
+    // Waveform pulses
+    g.strokeStyle = "rgba(120,220,240,0.55)";
+    g.lineWidth = 1.2;
+    for (let row = 0; row < 6; row++) {
+      const baseY = (row + 0.5) * (h / 6);
+      g.beginPath();
+      for (let x = 0; x < w; x += 4) {
+        const amp = 18 + Math.sin(x * 0.005 + row) * 14;
+        const y = baseY + Math.sin(x * 0.02 + row * 1.7) * amp;
+        if (x === 0) g.moveTo(x, y); else g.lineTo(x, y);
+      }
+      g.globalAlpha = 0.18 + Math.random() * 0.25;
+      g.stroke();
+    }
+    g.globalAlpha = 1;
+
+    // A few playback heads — bright vertical bars
+    for (let i = 0; i < 4; i++) {
+      const x = Math.random() * w;
+      const rg = g.createLinearGradient(x - 30, 0, x + 30, 0);
+      rg.addColorStop(0, "rgba(255,180,220,0)");
+      rg.addColorStop(0.5, "rgba(255,180,220,0.45)");
+      rg.addColorStop(1, "rgba(255,180,220,0)");
+      g.fillStyle = rg;
+      g.fillRect(x - 30, 0, 60, h);
+    }
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    tex.wrapS = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  // Structra (Structure) — architectural / blueprint vibe.
+  // Orthogonal grid blocks + wiring + module nodes.
+  function makeStructureSurfaceTexture() {
+    const w = 2048, h = 1024;
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    const g = c.getContext("2d");
+
+    const grad = g.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, "#0a1410");
+    grad.addColorStop(0.5, "#101a18");
+    grad.addColorStop(1, "#080e0c");
+    g.fillStyle = grad;
+    g.fillRect(0, 0, w, h);
+
+    // Blueprint grid
+    g.strokeStyle = "rgba(255,200,120,0.18)";
+    g.lineWidth = 1;
+    const gs = 64;
+    for (let x = 0; x <= w; x += gs) {
+      g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke();
+    }
+    for (let y = 0; y <= h; y += gs) {
+      g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke();
+    }
+
+    // Module blocks
+    g.strokeStyle = "rgba(255,200,120,0.65)";
+    g.lineWidth = 1.4;
+    g.fillStyle = "rgba(80,40,20,0.4)";
+    for (let i = 0; i < 90; i++) {
+      const bw = (1 + Math.floor(Math.random() * 4)) * gs;
+      const bh = (1 + Math.floor(Math.random() * 3)) * gs;
+      const x = Math.floor(Math.random() * (w - bw) / gs) * gs;
+      const y = Math.floor(Math.random() * (h - bh) / gs) * gs;
+      g.fillRect(x, y, bw, bh);
+      g.strokeRect(x, y, bw, bh);
+      // small port node
+      g.fillStyle = "rgba(120,255,200,0.85)";
+      g.fillRect(x + bw - 6, y + 4, 4, 4);
+      g.fillStyle = "rgba(80,40,20,0.4)";
+    }
+
+    // Wire traces
+    g.strokeStyle = "rgba(120,255,200,0.32)";
+    g.lineWidth = 1;
+    for (let i = 0; i < 60; i++) {
+      const x1 = Math.floor(Math.random() * w / gs) * gs;
+      const y1 = Math.floor(Math.random() * h / gs) * gs;
+      const x2 = x1 + (Math.random() < 0.5 ? -1 : 1) * gs * (1 + Math.floor(Math.random() * 5));
+      const y2 = y1 + (Math.random() < 0.5 ? -1 : 1) * gs * (1 + Math.floor(Math.random() * 4));
+      g.beginPath();
+      g.moveTo(x1, y1);
+      g.lineTo(x2, y1);
+      g.lineTo(x2, y2);
+      g.stroke();
+    }
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    tex.wrapS = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  // Acumen (Edge) — sharp / solar vibe.
+  // Bright core gradients + blade arcs + a small key shape.
+  function makeEdgeSurfaceTexture() {
+    const w = 2048, h = 1024;
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    const g = c.getContext("2d");
+
+    const grad = g.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, "#1a1208");
+    grad.addColorStop(0.5, "#241608");
+    grad.addColorStop(1, "#100a04");
+    g.fillStyle = grad;
+    g.fillRect(0, 0, w, h);
+
+    // Solar core blooms
+    for (let i = 0; i < 18; i++) {
+      const cx = Math.random() * w;
+      const cy = Math.random() * h;
+      const r = 80 + Math.random() * 220;
+      const rg = g.createRadialGradient(cx, cy, 0, cx, cy, r);
+      rg.addColorStop(0, "rgba(255,210,120,0.45)");
+      rg.addColorStop(0.5, "rgba(255,160,60,0.18)");
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = rg;
+      g.fillRect(cx - r, cy - r, r * 2, r * 2);
+    }
+
+    // Blade arcs — thin bright curves
+    g.strokeStyle = "rgba(255,230,180,0.55)";
+    g.lineWidth = 1.2;
+    for (let i = 0; i < 70; i++) {
+      const cx = Math.random() * w;
+      const cy = Math.random() * h;
+      const r = 30 + Math.random() * 160;
+      const a0 = Math.random() * Math.PI * 2;
+      const a1 = a0 + Math.random() * Math.PI * 0.6;
+      g.globalAlpha = 0.2 + Math.random() * 0.6;
+      g.beginPath();
+      g.arc(cx, cy, r, a0, a1);
+      g.stroke();
+    }
+    g.globalAlpha = 1;
+
+    // Key glyphs — small vertical "key teeth"
+    g.fillStyle = "rgba(120,220,255,0.55)";
+    for (let i = 0; i < 80; i++) {
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      g.fillRect(x, y, 2, 8);
+      g.fillRect(x - 1, y + 8, 4, 2);
+    }
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    tex.wrapS = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  // --- Instantiate the 5 planets along the corridor ---
+  // Corridor depth roughly z=0 (near) → z=-1100 (far). Each chapter gets one.
+  // Positions alternate sides (-x / +x) so the camera path feels populated.
+
+  // Praelum — Threshold (entry chapter, closest)
+  makePlanet({
+    name: "Praelum",
+    chapterKey: "threshold",
+    position: { x: -28, y: 9.5, z: -36 },
+    radius: 11,
+    surfaceTexture: makeThresholdSurfaceTexture(),
+    accent: 0x9c8cff,
+    haloAccent: 0x6d28d9,
+    haloOpacity: 0.46,
+    gridOpacity: 0.22,
+    spin: 0.00026,
+    rings: [
+      { inner: 1.36, outer: 1.62, tiltX: Math.PI * 0.42, tiltY: Math.PI * 0.05,
+        dashes: 18, accent1: 0x9c8cff, accent2: 0x4fe4f0, opacity: 0.50 },
+    ],
+  });
+
+  // Mnemora — Memory (already designed)
+  makePlanet({
+    name: "Mnemora",
+    chapterKey: "memory",
+    position: { x: 24, y: -6.0, z: -150 },
+    radius: 16,
+    surfaceTexture: makeMemorySurfaceTexture(),
+    accent: 0x4fe4f0,
+    haloAccent: 0x22d3ee,
+    haloOpacity: 0.42,
+    gridOpacity: 0.28,
+    spin: 0.00038,
+    rings: [
+      { inner: 1.32, outer: 1.58, tiltX: Math.PI * 0.30, tiltY: Math.PI * 0.08,
+        dashes: 28, accent1: 0x4fe4f0, accent2: 0x6d28d9, opacity: 0.58 },
+      { inner: 1.68, outer: 1.82, tiltX: Math.PI * 0.34, tiltY: Math.PI * 0.14,
+        dashes: 42, accent1: 0x6d28d9, accent2: 0x4fe4f0, opacity: 0.38 },
+    ],
+  });
+
+  // Revena — Replay (mid corridor, opposite side)
+  makePlanet({
+    name: "Revena",
+    chapterKey: "replay",
+    position: { x: -34, y: 7.5, z: -260 },
+    radius: 14,
+    surfaceTexture: makeReplaySurfaceTexture(),
+    accent: 0x78dcf0,
+    haloAccent: 0xff9ed4,
+    haloOpacity: 0.40,
+    gridOpacity: 0.20,
+    spin: 0.00052,
+    rings: [
+      { inner: 1.30, outer: 1.50, tiltX: Math.PI * 0.18, tiltY: Math.PI * 0.22,
+        dashes: 60, accent1: 0xff9ed4, accent2: 0x78dcf0, opacity: 0.55 },
+    ],
+  });
+
+  // Structra — Structure (deeper, right side)
+  makePlanet({
+    name: "Structra",
+    chapterKey: "structure",
+    position: { x: 20, y: -9.5, z: -360 },
+    radius: 13,
+    surfaceTexture: makeStructureSurfaceTexture(),
+    accent: 0xffc878,
+    haloAccent: 0x78ffc8,
+    haloOpacity: 0.36,
+    gridOpacity: 0.18,
+    spin: 0.00022,
+    rings: [
+      { inner: 1.28, outer: 1.44, tiltX: Math.PI * 0.50, tiltY: Math.PI * 0.02,
+        dashes: 14, accent1: 0xffc878, accent2: 0x78ffc8, opacity: 0.52 },
+      { inner: 1.52, outer: 1.62, tiltX: Math.PI * 0.50, tiltY: Math.PI * 0.02,
+        dashes: 36, accent1: 0x78ffc8, accent2: 0xffc878, opacity: 0.30 },
+    ],
+  });
+
+  // Acumen — Edge / Access (deepest, off-axis bright sun)
+  makePlanet({
+    name: "Acumen",
+    chapterKey: "edge",
+    position: { x: -12, y: 13.0, z: -455 },
+    radius: 18,
+    surfaceTexture: makeEdgeSurfaceTexture(),
+    accent: 0xffd28a,
+    haloAccent: 0xffae5a,
+    haloOpacity: 0.58,
+    gridOpacity: 0.14,
+    spin: 0.00018,
+    rings: [
+      { inner: 1.34, outer: 1.70, tiltX: Math.PI * 0.36, tiltY: Math.PI * 0.18,
+        dashes: 22, accent1: 0xffd28a, accent2: 0x4fe4f0, opacity: 0.62 },
+    ],
+  });
 
   // --- Data rain (orthogonal "circuit" drops) ---
   // Subtle, not Matrix: thin, right-angled lines with a small node at the bend.
@@ -1042,6 +1682,52 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     },
   ];
 
+  // Curate the corridor: keep only one "field caption" per chapter (4 total).
+  // Each plate is now a single sculpted line — sculpture label, not paragraph.
+  const KEEP_INFO_IDS = new Set(["IP-1A", "IP-2A", "IP-3A", "IP-4A"]);
+  const captionRewrite = {
+    "IP-1A": {
+      title: { en: "MNEMORA", de: "MNEMORA" },
+      body:  { en: "Captured. Searchable. Yours.",
+               de: "Festgehalten. Durchsuchbar. Deins." },
+    },
+    "IP-2A": {
+      title: { en: "REVENA", de: "REVENA" },
+      body:  { en: "Time as a surface — not a chart.",
+               de: "Zeit als Fläche — kein Chart." },
+    },
+    "IP-3A": {
+      title: { en: "STRUCTRA", de: "STRUCTRA" },
+      body:  { en: "Patterns become rules.",
+               de: "Aus Mustern werden Regeln." },
+    },
+    "IP-4A": {
+      title: { en: "ACUMEN", de: "ACUMEN" },
+      body:  { en: "Process, proven.",
+               de: "Prozess, bewiesen." },
+    },
+  };
+  const _infoFiltered = info.filter((it) => KEEP_INFO_IDS.has(it.id));
+  info.length = 0;
+  for (const it of _infoFiltered) {
+    const r = captionRewrite[it.id];
+    if (r) { it.title = r.title; it.body = r.body; }
+    info.push(it);
+  }
+
+  // Re-anchor remaining plates next to their planet (opposite side, slight offset)
+  // so they read like a side-caption rather than blocking the path.
+  const anchorPos = {
+    "IP-1A": { x: -22, y: 6.5,  z: -126, ry:  0.32 }, // Memory  (Mnemora at +24,-6,-150)
+    "IP-2A": { x:  26, y: -3.5, z: -236, ry: -0.32 }, // Replay  (Revena  at -34,7.5,-260)
+    "IP-3A": { x: -24, y: 6.0,  z: -332, ry:  0.32 }, // Structure (Structra at +20,-9.5,-360)
+    "IP-4A": { x:  22, y: -2.5, z: -432, ry: -0.32 }, // Edge    (Acumen  at -12,13,-455)
+  };
+  for (const it of info) {
+    const a = anchorPos[it.id];
+    if (a) { it.x = a.x; it.y = a.y; it.z = a.z; it.ry = a.ry; }
+  }
+
   function applyInfoLang(it, border, inner) {
     const t = pickLang(it.title);
     const b = pickLang(it.body);
@@ -1210,14 +1896,15 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     }
   }
 
-  const smallCount = 320;
+  const smallCount = 80;
   for (let i = 0; i < smallCount; i++) {
     const tag = chooseChapterTag();
     const rec = makeRecord(i);
     applyChapterFlavor(rec, tag, i);
 
-    const w = rand(0.55, 1.35);
-    const h = w * rand(0.55, 0.80);
+    /* Curated scatter: fewer, larger cards so the texture reads at distance. */
+    const w = rand(1.15, 1.65);
+    const h = w * rand(0.62, 0.74);
 
     const border = new THREE.Mesh(makeFrameGeometry(w, h), baseBorder.clone());
     border.userData.rec = rec;
@@ -1226,16 +1913,14 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     plate.position.z = -0.001;
     border.add(plate);
 
-    const chance = 0.84;
-    if (Math.random() < chance) {
-      const tex = makeMiniRecordTexture(rec);
-      const inner = new THREE.Mesh(
-        makeFrameGeometry(w * 0.95, h * 0.95),
-        new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.82, depthWrite: false })
-      );
-      inner.position.z = 0.001;
-      border.add(inner);
-    }
+    // Always show inner texture now — fewer cards means each must carry weight.
+    const tex = makeMiniRecordTexture(rec);
+    const inner = new THREE.Mesh(
+      makeFrameGeometry(w * 0.95, h * 0.95),
+      new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96, depthWrite: false })
+    );
+    inner.position.z = 0.001;
+    border.add(inner);
 
     let x, y, z;
     for (let tries = 0; tries < 60; tries++) {
@@ -1246,7 +1931,8 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     }
 
     border.position.set(x, y, z);
-    border.rotation.y = rand(-0.75, 0.75);
+    /* Ghost Cathedral: smaller yaw range (±0.22 ≈ ±13°) — subtle irregularity, not chaos. */
+    border.rotation.y = rand(-0.22, 0.22);
 
     frameGroup.add(border);
     frames.push(border);
@@ -1360,7 +2046,28 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
   const biasX = 0.0;
 
   function setEntered(v) { state.entered = !!v; }
-  function setChapter(name) { state.chapter = name; }
+  function setChapter(name) {
+    state.chapter = name;
+    // Planet emphasis: active chapter's planet → full halo + grid; others dimmed.
+    for (const p of planets) {
+      const isActive = p.chapterKey === name;
+      // Cache base values once
+      if (p._baseHalo == null && p.haloMat?.uniforms?.uOpacity) {
+        p._baseHalo = p.haloMat.uniforms.uOpacity.value;
+      }
+      if (p._baseGrid == null && p.surfaceMat?.uniforms?.uGridOpacity) {
+        p._baseGrid = p.surfaceMat.uniforms.uGridOpacity.value;
+      }
+      if (p.haloMat?.uniforms?.uOpacity && p._baseHalo != null) {
+        p.haloMat.uniforms.uOpacity.value = isActive ? p._baseHalo * 1.55 : p._baseHalo * 0.42;
+      }
+      if (p.surfaceMat?.uniforms?.uGridOpacity && p._baseGrid != null) {
+        p.surfaceMat.uniforms.uGridOpacity.value = isActive ? p._baseGrid * 1.35 : p._baseGrid * 0.55;
+      }
+      // Mark active for tick() pulse animation
+      p._active = isActive;
+    }
+  }
   function setRail(t) { state.railTarget = clamp(t, 0, 1); }
 
   function clearSelection() {
@@ -1429,11 +2136,17 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
       }
 
       if (hovered !== obj) {
-        if (hovered && hovered !== selected) hovered.material = hovered.userData._matBase || hovered.material;
+        if (hovered && hovered !== selected) {
+          hovered.material = hovered.userData._matBase || hovered.material;
+          hovered.scale.set(1, 1, 1);
+        }
         hovered = obj;
 
         if (!obj.userData._matBase) obj.userData._matBase = obj.material;
         if (obj !== selected) obj.material = hoverBorder.clone();
+        // Visual affordance: gentle scale-up tells the eye "this is interactive"
+        obj.scale.set(1.08, 1.08, 1.08);
+        canvas.style.cursor = "pointer";
 
         if (onHoverFragment) {
           if (rec.id.startsWith("EX-")) onHoverFragment({ title: `${rec.id} · EXHIBIT`, sub: `${rec.setup}\nClick to open.` });
@@ -1443,8 +2156,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
         }
       }
     } else {
-      if (hovered && hovered !== selected) hovered.material = hovered.userData._matBase || hovered.material;
+      if (hovered && hovered !== selected) {
+        hovered.material = hovered.userData._matBase || hovered.material;
+        hovered.scale.set(1, 1, 1);
+      }
       hovered = null;
+      canvas.style.cursor = "";
       if (onHoverFragment) onHoverFragment(null);
     }
   }
@@ -1529,27 +2246,27 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     }
 
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00025);
-
-    // Lattice wave: travelling scan that creates subtle depth motion.
-    // We can't modulate per-vertex alpha with LineBasicMaterial, but layered lattices + phase offsets still read as waves.
     const t = now * 0.00055;
-    const waveA = 0.5 + 0.5 * Math.sin(t);
-    const waveB = 0.5 + 0.5 * Math.sin(t + 1.8);
 
-    latticeA.material.opacity = 0.10 + pulse * 0.03 + waveA * 0.018;
-    latticeB.material.opacity = 0.05 + pulse * 0.02 + waveB * 0.012;
+    // Starfield twinkle — very subtle pulse so layers don't feel dead.
+    for (let i = 0; i < starfields.length; i++) {
+      const s = starfields[i];
+      const phase = 0.5 + 0.5 * Math.sin(t * (0.6 + i * 0.25) + i * 1.3);
+      s.pts.material.opacity = s.baseOpacity * (0.82 + phase * 0.20);
+    }
 
-    for (let i = 0; i < farVolumes.length; i++) {
-      const v = farVolumes[i];
-      const aBase = Math.max(0.008, 0.045 - i * 0.006);
-      const bBase = Math.max(0.006, 0.022 - i * 0.004);
+    // Planet rotations + shader time uniforms + active-pulse on halo
+    for (const p of planets) {
+      if (!p.group) continue;
+      p.group.rotation.y += p.spin;
+      if (p.surfaceMat?.uniforms?.uTime) p.surfaceMat.uniforms.uTime.value = now * 0.001;
+      if (p.ringMat?.uniforms?.uTime) p.ringMat.uniforms.uTime.value = now * 0.001;
 
-      // phase shifts down the corridor; back volumes move slower/smoother
-      const ph = t * (0.85 - i * 0.07) + i * 0.9;
-      const w = 0.5 + 0.5 * Math.sin(ph);
-
-      v.la.material.opacity = aBase + pulse * 0.008 + w * (0.010 - i * 0.0012);
-      v.lb.material.opacity = bBase + pulse * 0.006 + w * (0.006 - i * 0.0008);
+      // Active planet: gentle breath on halo so the eye knows where to land.
+      if (p._active && p._baseHalo != null && p.haloMat?.uniforms?.uOpacity) {
+        const breath = 1.55 + Math.sin(now * 0.0014) * 0.18;
+        p.haloMat.uniforms.uOpacity.value = p._baseHalo * breath;
+      }
     }
 
     // Planet landmark animation (optional)

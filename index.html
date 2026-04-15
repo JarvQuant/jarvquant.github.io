@@ -77,6 +77,11 @@
         <a class="social" href="https://www.tiktok.com/@jarvquant?_r=1&_t=ZN-93yVKmzLK0U" target="_blank" rel="noreferrer">TikTok</a>
       </div>
 
+      <button class="pill cta-pill" id="getAccess" data-action="goto" data-target="edge" title="Get access">
+        <span class="cta-arrow" aria-hidden="true">↗</span>
+        <span class="pill-text" data-i18n="ui.access">Get Access</span>
+      </button>
+
       <button class="pill" id="muteToggle" aria-pressed="true" title="Mute">
         <span class="pill-dot" aria-hidden="true"></span>
         <span class="pill-text" data-i18n="ui.mute">Muted</span>
@@ -97,11 +102,12 @@
       <div class="hero-inner">
         <img class="hero-logo" src="assets/logo.png" alt="" aria-hidden="true" />
         <div class="hero-word">JarvQuant</div>
-        <div class="hero-tag">Replay-first archive of market memory.</div>
+        <div class="hero-tag" data-i18n="hero.tag">Replay-first archive of market memory.</div>
+        <div class="hero-scroll-hint" data-i18n="hero.scroll">Scroll to enter the archive</div>
       </div>
     </div>
     <section class="chapter is-active" id="chapter-threshold" data-chapter="threshold">
-      <div class="chapter-kicker" data-i18n="threshold.kicker">THRESHOLD</div>
+      <div class="chapter-kicker" data-i18n="threshold.kicker">THRESHOLD · BOOK I</div>
       <h1 class="chapter-title" data-i18n="threshold.title">Enter the archive.</h1>
       <p class="chapter-sub" data-i18n="threshold.sub">
         Every market leaves a trace. Precision begins where memory is organized.
@@ -117,12 +123,8 @@
         This is how you stop guessing — and start getting better on purpose.
       </p>
 
-      <div class="chapter-actions">
-        <button class="btn primary" id="enterBtn" type="button" data-i18n="threshold.cta">Enter</button>
-      </div>
-
       <div class="micro" data-i18n="threshold.micro" data-desktop-only>
-        Tip: move your mouse gently. Click a record to focus.
+        Scroll to travel · Click a record to focus.
       </div>
     </section>
 
@@ -196,32 +198,119 @@
       </div>
     </section>
 
-    <section class="chapter" id="chapter-edge" data-chapter="edge">
-      <div class="chapter-kicker" data-i18n="edge.kicker">ACCESS POINT</div>
-      <h2 class="chapter-title" data-i18n="edge.title">Download the beta build.</h2>
+    <section class="chapter chapter-wide" id="chapter-edge" data-chapter="edge">
+      <div class="chapter-kicker" data-i18n="edge.kicker">ACCESS · BOOK V</div>
+      <h2 class="chapter-title" data-i18n="edge.title">Choose how you train.</h2>
       <p class="chapter-sub" data-i18n="edge.sub">
-        Windows-only. Private beta — key required.
+        Free starts the loop. Pro builds the system. Elite shows you yourself.
       </p>
 
       <figure class="m-media" aria-hidden="true">
         <img class="m-shot" src="assets/strategy-trades.jpg" alt="" loading="lazy" />
       </figure>
 
-      <div class="chapter-actions">
-        <a class="btn primary"
-           href="https://github.com/JarvQuant/jarvquant-releases/releases/download/beta-2026-04-12/JarvQuant-Beta.zip"
-           target="_blank" rel="noreferrer">
-          <span data-i18n="edge.cta">Download for Windows</span>
-        </a>
-        <a class="btn ghost"
-           href="https://discord.gg/fYWSz2NpaC"
-           target="_blank" rel="noreferrer">
-          <span data-i18n="edge.cta2">Join Discord (get a key)</span>
-        </a>
+      <!-- Pricing grid -->
+      <div class="pricing-grid" role="list">
+        <article class="plan plan-free" role="listitem">
+          <div class="plan-tag" data-i18n="plan.free.tag">FREE</div>
+          <div class="plan-name">Starter</div>
+          <div class="plan-price"><span class="plan-amount">€0</span></div>
+          <div class="plan-period" data-i18n="plan.free.period">Forever — no card.</div>
+          <ul class="plan-features">
+            <li data-i18n="plan.free.f1">Replay-first chart environment</li>
+            <li data-i18n="plan.free.f2">Data imports</li>
+            <li data-i18n="plan.free.f3">Journal Lite — 10 entries rolling</li>
+            <li data-i18n="plan.free.f4">1 active strategy slot</li>
+          </ul>
+          <a class="plan-cta plan-cta-ghost" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer">
+            <span data-i18n="plan.free.cta">Get a key</span>
+          </a>
+        </article>
+
+        <article class="plan plan-pro is-featured" role="listitem">
+          <div class="plan-flag" data-i18n="plan.pro.flag">MOST POPULAR</div>
+          <div class="plan-tag" data-i18n="plan.pro.tag">PRO</div>
+          <div class="plan-name">Operator</div>
+          <div class="plan-price">
+            <span class="plan-amount">€39<span class="plan-cents">.99</span></span>
+            <span class="plan-unit">/mo</span>
+          </div>
+          <div class="plan-period">
+            <span data-i18n="plan.pro.period">or €349 / year — saves ~€131</span>
+          </div>
+          <ul class="plan-features">
+            <li data-i18n="plan.pro.f1">Everything in Free, unlimited</li>
+            <li data-i18n="plan.pro.f2">Strategy Builder Sandbox</li>
+            <li data-i18n="plan.pro.f3">Prop Sim with rule presets</li>
+            <li data-i18n="plan.pro.f4">Backtesting</li>
+            <li data-i18n="plan.pro.f5">Full Journal — unlimited entries</li>
+          </ul>
+          <a class="plan-cta plan-cta-primary" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer">
+            <span data-i18n="plan.pro.cta">Start with Pro</span>
+          </a>
+        </article>
+
+        <article class="plan plan-elite" role="listitem">
+          <div class="plan-tag" data-i18n="plan.elite.tag">ELITE</div>
+          <div class="plan-name">Architect</div>
+          <div class="plan-price">
+            <span class="plan-amount">€79<span class="plan-cents">.99</span></span>
+            <span class="plan-unit">/mo</span>
+          </div>
+          <div class="plan-period">
+            <span data-i18n="plan.elite.period">or €699 / year — saves ~€261</span>
+          </div>
+          <ul class="plan-features">
+            <li data-i18n="plan.elite.f1">Everything in Pro</li>
+            <li data-i18n="plan.elite.f2">Trade Autopsy — algorithmic post-trade review</li>
+            <li data-i18n="plan.elite.f3">NOX AI Coach (beta)</li>
+            <li data-i18n="plan.elite.f4">Grand Archive — 300 curated strategies</li>
+            <li data-i18n="plan.elite.f5">Cloud sync + priority support</li>
+          </ul>
+          <a class="plan-cta plan-cta-ghost" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer">
+            <span data-i18n="plan.elite.cta">Go Elite</span>
+          </a>
+        </article>
+      </div>
+
+      <!-- Add-on + Lifetime row -->
+      <div class="pricing-extras">
+        <div class="extra extra-addon">
+          <div class="extra-tag" data-i18n="addon.tag">ADD-ON · UNIQUE</div>
+          <div class="extra-name" data-i18n="addon.name">Options Sim</div>
+          <div class="extra-body" data-i18n="addon.body">
+            Synthetic options market with 97% purity. Train spreads, IV, theta — without risking capital. Stack on any paid tier.
+          </div>
+          <div class="extra-price">
+            <span>€29 / mo</span>
+            <span class="extra-sep">·</span>
+            <span>€299 / year</span>
+          </div>
+        </div>
+
+        <div class="extra extra-lifetime">
+          <div class="extra-tag" data-i18n="lifetime.tag">FOUNDERS · LIMITED 200</div>
+          <div class="extra-name" data-i18n="lifetime.name">Lifetime Access</div>
+          <div class="extra-body" data-i18n="lifetime.body">
+            Elite + Options Sim forever. All future tiers and add-ons included. One payment, never charged again. Capped at 200 seats.
+          </div>
+          <div class="extra-price">
+            <span>€1499</span>
+            <span class="extra-sep">·</span>
+            <span data-i18n="lifetime.note">one-time</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Beta status note -->
+      <div class="beta-strip">
+        <span class="beta-dot" aria-hidden="true"></span>
+        <span data-i18n="beta.status">Currently in private beta · Discord for invites & v1.0 launch alerts</span>
+        <a class="beta-link" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer" data-i18n="beta.cta">Join Discord ↗</a>
       </div>
 
       <div class="micro" data-i18n="edge.micro" data-desktop-only>
-        Discord + socials above for drops and short updates.
+        Pricing locks at v1.0. Founders rate stays grandfathered for life.
       </div>
     </section>
 
@@ -238,6 +327,27 @@
         <button class="btn ghost" id="panelClose" type="button">Close</button>
       </div>
     </div>
+
+    <!-- Vertical chapter progress rail (desktop only) -->
+    <nav class="progress-rail" id="progressRail" aria-label="Chapter progress" data-desktop-only>
+      <button class="prog-dot" data-action="goto" data-target="threshold" data-chapter="threshold" aria-label="Threshold">
+        <span class="prog-tick"></span><span class="prog-label">Threshold</span>
+      </button>
+      <button class="prog-dot" data-action="goto" data-target="memory" data-chapter="memory" aria-label="Memory">
+        <span class="prog-tick"></span><span class="prog-label">Memory</span>
+      </button>
+      <button class="prog-dot" data-action="goto" data-target="replay" data-chapter="replay" aria-label="Replay">
+        <span class="prog-tick"></span><span class="prog-label">Replay</span>
+      </button>
+      <button class="prog-dot" data-action="goto" data-target="structure" data-chapter="structure" aria-label="Structure">
+        <span class="prog-tick"></span><span class="prog-label">Structure</span>
+      </button>
+      <button class="prog-dot" data-action="goto" data-target="edge" data-chapter="edge" aria-label="Access">
+        <span class="prog-tick"></span><span class="prog-label">Access</span>
+      </button>
+      <span class="prog-line" aria-hidden="true"></span>
+      <span class="prog-fill" id="progFill" aria-hidden="true"></span>
+    </nav>
 
     <!-- Mini navigation tutorial (shows briefly on desktop) -->
     <div class="hint" id="navHint" aria-hidden="true">
