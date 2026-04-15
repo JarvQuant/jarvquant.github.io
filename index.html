@@ -77,10 +77,10 @@
         <a class="social" href="https://www.tiktok.com/@jarvquant?_r=1&_t=ZN-93yVKmzLK0U" target="_blank" rel="noreferrer">TikTok</a>
       </div>
 
-      <button class="pill cta-pill" id="getAccess" data-action="download-gate" title="Download">
+      <a class="pill cta-pill" id="getAccess" href="https://github.com/JarvQuant/jarvquant-releases/releases/download/beta-2026-04-12/JarvQuant-Beta.zip" title="Download beta build">
         <span class="cta-arrow" aria-hidden="true">⬇</span>
         <span class="pill-text" data-i18n="ui.download">Download</span>
-      </button>
+      </a>
 
       <button class="pill" id="muteToggle" aria-pressed="true" title="Mute">
         <span class="pill-dot" aria-hidden="true"></span>
@@ -205,13 +205,13 @@
         Free starts the loop. Pro builds the system. Elite shows you yourself.
       </p>
 
-      <!-- Primary download CTA — opens the beta-gate modal (installer is not public yet) -->
+      <!-- Primary download CTA — direct .zip from the releases repo -->
       <div class="download-row">
-        <button type="button" class="download-btn" id="downloadBtn" data-action="download-gate">
+        <a class="download-btn" id="downloadBtn" href="https://github.com/JarvQuant/jarvquant-releases/releases/download/beta-2026-04-12/JarvQuant-Beta.zip">
           <span class="download-icon" aria-hidden="true">⬇</span>
           <span class="download-text" data-i18n="edge.cta">Download for Windows</span>
-        </button>
-        <span class="download-note" data-i18n="edge.download.note">Private beta · request a key on Discord</span>
+        </a>
+        <span class="download-note" data-i18n="edge.download.note">Private beta · .zip · no installer yet</span>
       </div>
 
       <!-- Exhibition carousel — rotating 3D ring of product shots -->
@@ -409,30 +409,6 @@
       <a class="m-social" href="https://www.tiktok.com/@jarvquant?_r=1&_t=ZN-93yVKmzLK0U" target="_blank" rel="noreferrer">TikTok</a>
     </footer>
   </main>
-
-  <!-- Beta-gate modal: shown when user clicks any Download CTA -->
-  <div class="beta-gate" id="betaGate" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="betaGateTitle">
-    <div class="beta-gate-backdrop" id="betaGateBackdrop"></div>
-    <div class="beta-gate-inner">
-      <button class="beta-gate-x" id="betaGateX" type="button" aria-label="Close">×</button>
-      <div class="beta-gate-kicker" data-i18n="gate.kicker">PRIVATE BETA</div>
-      <div class="beta-gate-title" id="betaGateTitle" data-i18n="gate.title">The installer isn't public yet.</div>
-      <p class="beta-gate-body" data-i18n="gate.body">
-        JarvQuant is in private beta. Jump into the Discord, grab a key, and the Windows installer lands in your DMs. No card, no waitlist — just real users giving feedback before v1.0.
-      </p>
-      <div class="beta-gate-steps">
-        <div class="gate-step"><span class="gate-num">1</span><span data-i18n="gate.step1">Join the Discord</span></div>
-        <div class="gate-step"><span class="gate-num">2</span><span data-i18n="gate.step2">Request a beta key in #access</span></div>
-        <div class="gate-step"><span class="gate-num">3</span><span data-i18n="gate.step3">Receive the installer via DM</span></div>
-      </div>
-      <div class="beta-gate-actions">
-        <a class="beta-gate-cta" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer" id="betaGateJoin">
-          <span data-i18n="gate.cta">Join Discord & get a key</span>
-          <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-    </div>
-  </div>
 
   <div class="lightbox" id="imgBox" aria-hidden="true">
     <div class="lightbox-backdrop" id="imgBoxClose"></div>
