@@ -510,6 +510,10 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     if (prevBtn) prevBtn.addEventListener("click", () => go(-1));
     if (nextBtn) nextBtn.addEventListener("click", () => go(1));
 
+    // Re-render caption when language changes (applyI18n writes new data-title/cap
+    // attributes; we need to pull them into the visible caption block)
+    document.addEventListener("i18n:applied", () => render());
+
     cards.forEach((c, i) => {
       c.addEventListener("click", (e) => {
         e.preventDefault();

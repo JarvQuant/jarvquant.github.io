@@ -48,6 +48,22 @@ export const I18N = {
     "edge.micro": "Pricing locks at v1.0. Founders rate stays grandfathered for life.",
 
     // Pricing
+    "plan.free.name": "Starter",
+    "plan.pro.name": "Operator",
+    "plan.elite.name": "Architect",
+
+    // Exhibition carousel
+    "ex.1.title": "Trade Autopsy — Overtrade Zone",
+    "ex.1.cap": "Your limit as a line. Green while you stay in, red when you break it.",
+    "ex.2.title": "Trade Autopsy — Daily Breakdown",
+    "ex.2.cap": "PnL, trades, sessions, within-day drift. Four angles on the same day.",
+    "ex.3.title": "Trade Autopsy — Equity + Metrics",
+    "ex.3.cap": "Winrate, avg win/loss, avg R, drawdown. No more wishful thinking.",
+    "ex.4.title": "Grand Archive — Style Test",
+    "ex.4.cap": "Answer the quiz, get the strategies that actually fit you.",
+    "ex.5.title": "Data Import — MT5 Bridge",
+    "ex.5.cap": "CSV, Parquet, or straight from MT5. Your broker, your data.",
+
     "plan.free.tag": "FREE",
     "plan.free.period": "Forever — no card.",
     "plan.free.f1": "Replay-first chart environment",
@@ -152,6 +168,22 @@ export const I18N = {
     "edge.micro": "Preise gelten ab v1.0. Founders-Rate bleibt lebenslang grandfathered.",
 
     // Pricing
+    "plan.free.name": "Starter",
+    "plan.pro.name": "Operator",
+    "plan.elite.name": "Architect",
+
+    // Exhibition carousel
+    "ex.1.title": "Trade Autopsy — Overtrade-Zone",
+    "ex.1.cap": "Dein Limit als Linie. Grün solange du drin bist, rot wenn du's brichst.",
+    "ex.2.title": "Trade Autopsy — Tages-Breakdown",
+    "ex.2.cap": "PnL, Trades, Sessions, Within-Day-Drift. Vier Winkel auf denselben Tag.",
+    "ex.3.title": "Trade Autopsy — Equity + Metriken",
+    "ex.3.cap": "Winrate, Avg Win/Loss, Avg R, Drawdown. Kein Wunschdenken mehr.",
+    "ex.4.title": "Grand Archive — Style-Test",
+    "ex.4.cap": "Beantworte den Quiz, bekomme die Strategien die wirklich zu dir passen.",
+    "ex.5.title": "Data Import — MT5-Bridge",
+    "ex.5.cap": "CSV, Parquet oder direkt aus MT5. Dein Broker, deine Daten.",
+
     "plan.free.tag": "FREE",
     "plan.free.period": "Für immer — keine Karte.",
     "plan.free.f1": "Replay-first Chart-Environment",
@@ -241,6 +273,21 @@ export function applyI18n(lang) {
     const val = dict[key];
     if (typeof val === "string") el.textContent = val;
   });
+
+  // data-attribute bindings (used by the exhibit carousel, etc.)
+  document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-title");
+    const val = dict[key];
+    if (typeof val === "string") el.setAttribute("data-title", val);
+  });
+  document.querySelectorAll("[data-i18n-cap]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-cap");
+    const val = dict[key];
+    if (typeof val === "string") el.setAttribute("data-cap", val);
+  });
+
+  // Let interested components re-render (carousel caption, etc.)
+  document.dispatchEvent(new CustomEvent("i18n:applied", { detail: { lang } }));
 
   const sel = document.getElementById("langSelect");
   if (sel && sel.value !== lang) sel.value = lang;
