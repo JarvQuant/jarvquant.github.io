@@ -438,6 +438,24 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     { once: true, passive: true }
   );
 
+  // Read-mode auto-dim — after ~3.5s without input, dim non-essential chrome
+  // so the user's focus goes to the dossier copy. Any input wakes it instantly.
+  if (!isMobile) {
+    let readTimer = null;
+    const WAKE_EVENTS = ["pointermove", "wheel", "keydown", "pointerdown"];
+    const wake = () => {
+      document.body.classList.remove("is-reading");
+      if (readTimer) clearTimeout(readTimer);
+      readTimer = setTimeout(() => {
+        if (!isLightboxOpen()) document.body.classList.add("is-reading");
+      }, 3500);
+    };
+    WAKE_EVENTS.forEach((ev) =>
+      window.addEventListener(ev, wake, { passive: true })
+    );
+    wake();
+  }
+
   // Prime body class + first dot + world planet highlight before the chapter
   // actually changes (since setActiveChapter early-exits if active === name).
   document.body.classList.add("ch-threshold");

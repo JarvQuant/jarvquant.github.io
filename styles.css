@@ -929,6 +929,53 @@ body:not(.is-entered) .chapter.is-active{
   transform: scale(1.2);
 }
 
+/* Archive stamp — bottom-left, always-on, very subtle */
+.arc-stamp{
+  position: fixed;
+  left: 18px;
+  bottom: 16px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 10px/1 var(--mono);
+  letter-spacing: 2.2px;
+  color: rgba(245,247,255,0.32);
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity .4s ease;
+  text-shadow: 0 0 10px rgba(8,12,22,0.85);
+}
+.arc-stamp .arc-dot{
+  width: 5px;
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(34,211,238,0.75);
+  box-shadow: 0 0 8px rgba(34,211,238,0.55);
+  animation: arcPulse 3.2s ease-in-out infinite;
+}
+@keyframes arcPulse{
+  0%,100%{ opacity: .45; transform: scale(1); }
+  50%    { opacity: 1;  transform: scale(1.15); }
+}
+
+/* Read-mode auto-dim — after idle, fade non-essential chrome so copy breathes */
+body.is-reading .topbar,
+body.is-reading .progress-rail,
+body.is-reading .brandwords,
+body.is-reading .arc-stamp{
+  opacity: 0.22;
+  transition: opacity .6s ease;
+}
+.topbar, .progress-rail, .brandwords, .arc-stamp{
+  transition: opacity .35s ease;
+}
+body.is-reading .topbar:hover,
+body.is-reading .progress-rail:hover{
+  opacity: 1;
+}
+
 /* Per-chapter accent recolor of the dossier title — body class is set by JS */
 body.ch-threshold .chapter.is-active .chapter-title,
 body.ch-threshold .chapter.is-active .chapter-kicker{ color: #c9b6ff; text-shadow: 0 0 26px rgba(8,12,22,0.85), 0 0 60px rgba(156,140,255,0.18); }
