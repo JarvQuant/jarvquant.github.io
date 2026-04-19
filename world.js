@@ -632,6 +632,16 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
   // Far layer — deep dusty haze, subtle cyan tint
   makeStarLayer({ count: 380, spread: 540, depth: [-640, -1100], size: 0.075, opacity: 0.35, color: 0xaad8ee });
 
+  // Coloured accent stars — low count, additive blending gives them a glow without overpowering
+  // Cyan highlights (like the brightest stars in the reference)
+  makeStarLayer({ count: 28, spread: 320, depth: [-40, -800], size: 0.22, opacity: 0.72, color: 0x22d3ee });
+  // Teal-green (the greenish dots scattered through the image)
+  makeStarLayer({ count: 18, spread: 360, depth: [-80, -700], size: 0.18, opacity: 0.58, color: 0x4fffb0 });
+  // Soft pink/rose (the warm dots in the reference)
+  makeStarLayer({ count: 14, spread: 300, depth: [-60, -600], size: 0.16, opacity: 0.50, color: 0xff9ed4 });
+  // Warm ivory — gives a few stars that "yellow-white" look of bright foreground stars
+  makeStarLayer({ count: 22, spread: 250, depth: [-30, -400], size: 0.20, opacity: 0.60, color: 0xfff5cc });
+
   // --------------------------------------------------------------
   // PLANETS — each chapter has a thematic planet floating off-axis.
   // Prototype (Step 1): Mnemora (Memory). Others cloned in Step 2.

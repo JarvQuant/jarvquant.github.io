@@ -45,14 +45,20 @@ body{
   position: fixed;
   inset: 0;
   pointer-events:none;
-  /* Ghost Cathedral: ~20% brighter radials; vignette softer so the nave reads taller */
   background:
-    radial-gradient(900px 520px at 50% 10%, rgba(34,211,238,0.15), transparent 62%),
-    radial-gradient(1100px 900px at 80% 35%, rgba(34,211,238,0.095), transparent 70%),
-    radial-gradient(1100px 900px at 20% 35%, rgba(109,40,217,0.085), transparent 70%),
-    radial-gradient(1200px 900px at 50% 70%, rgba(255,255,255,0.065), transparent 72%),
-    radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,0.00), rgba(0,0,0,0.54));
-  filter: saturate(1.04) contrast(1.02);
+    /* Nebula core — deep-blue cloud centre, like the reference */
+    radial-gradient(ellipse 72% 55% at 50% 42%, rgba(14,42,100,0.52), transparent 70%),
+    /* Cyan top-centre bloom */
+    radial-gradient(900px 520px at 50% 10%, rgba(34,211,238,0.13), transparent 62%),
+    /* Soft teal right */
+    radial-gradient(1100px 900px at 82% 38%, rgba(34,211,238,0.075), transparent 70%),
+    /* Violet left */
+    radial-gradient(1100px 900px at 18% 38%, rgba(109,40,217,0.080), transparent 70%),
+    /* Warm star-cluster glow bottom-centre */
+    radial-gradient(1200px 900px at 50% 72%, rgba(255,255,255,0.048), transparent 72%),
+    /* Edge vignette */
+    radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,0.00), rgba(0,0,0,0.58));
+  filter: saturate(1.06) contrast(1.02);
 }
 
 /* Background texture layers (subtle)
