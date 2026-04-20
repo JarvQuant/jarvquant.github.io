@@ -381,9 +381,10 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     canvas,
     antialias: true,
     alpha: true,
+    premultipliedAlpha: false,
     powerPreference: "high-performance",
   });
-  renderer.setClearColor(0x000000, 0); // fully transparent — nebula canvas below shows through
+  renderer.setClearColor(0x000000, 0);
 
   function makePlanetMaterial({ lineColor = 0x22d3ee, baseOpacity = 0.10, lineOpacity = 0.35 } = {}) {
     return new THREE.ShaderMaterial({
@@ -600,40 +601,11 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
   const origin = new THREE.Vector3(0.0, 2.2, -72);
   const yaw = 0.0;
 
-  // --- Starfield (3 parallax layers) ---
-  const starfields = [];
-  function makeStarLayer({ count, spread, depth, size, opacity, color = 0xffffff }) {
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      positions[i * 3 + 0] = rand(-spread, spread);
-      positions[i * 3 + 1] = rand(-spread * 0.55, spread * 0.55);
-      positions[i * 3 + 2] = rand(depth[0], depth[1]);
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const m = new THREE.PointsMaterial({
-      color,
-      size,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    });
-    const pts = new THREE.Points(g, m);
-    scene.add(pts);
-    starfields.push({ pts, baseOpacity: opacity });
-    return pts;
-  }
+  // Starfield is now on the 2D nebula canvas — no Three.js star layers needed.
 
-  // Near layer — small bright stars, slight parallax
-  makeStarLayer({ count: 260, spread: 180, depth: [-40, -200], size: 0.14, opacity: 0.85 });
-  // Mid layer — main starfield
-  makeStarLayer({ count: 520, spread: 360, depth: [-200, -640], size: 0.10, opacity: 0.65 });
-  // Far layer — deep dusty haze, subtle cyan tint
-  makeStarLayer({ count: 380, spread: 540, depth: [-640, -1100], size: 0.075, opacity: 0.35, color: 0xaad8ee });
-
-  // Coloured stars are now handled by the 2D nebula canvas (always-on, no 3D clipping).
+  // Starfield removed — all stars rendered on the 2D nebula canvas behind this scene.
+  // Three.js canvas is fully transparent (setClearColor alpha=0, premultipliedAlpha:false)
+  // so the nebula canvas shows through wherever no 3D geometry is drawn.
 
   // --------------------------------------------------------------
   // PLANETS — each chapter has a thematic planet floating off-axis.
@@ -2251,12 +2223,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00025);
     const t = now * 0.00055;
 
-    // Starfield twinkle — very subtle pulse so layers don't feel dead.
-    for (let i = 0; i < starfields.length; i++) {
-      const s = starfields[i];
-      const phase = 0.5 + 0.5 * Math.sin(t * (0.6 + i * 0.25) + i * 1.3);
-      s.pts.material.opacity = s.baseOpacity * (0.82 + phase * 0.20);
-    }
+    // Starfield twinkle removed — stars now on 2D canvas (static, no Three.js layers).
 
     // Planet rotations + shader time uniforms + active-pulse on halo
     for (const p of planets) {
