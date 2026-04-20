@@ -55,8 +55,8 @@ body{
   inset: 0;
   pointer-events:none;
   background:
-    /* Nebula core — deep-blue cloud centre, like the reference */
-    radial-gradient(ellipse 80% 60% at 50% 44%, rgba(10,38,110,0.75), transparent 68%),
+    /* Nebula core handled by 2D canvas — just a faint vignette hint here */
+    radial-gradient(ellipse 80% 60% at 50% 44%, rgba(10,38,110,0.12), transparent 68%),
     /* Cyan top-centre bloom */
     radial-gradient(900px 520px at 50% 10%, rgba(34,211,238,0.13), transparent 62%),
     /* Soft teal right */

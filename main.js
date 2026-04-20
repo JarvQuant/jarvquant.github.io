@@ -507,13 +507,13 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
         ctx.restore();
       }
 
-      // Nebula cloud layers
-      cloud(W*.50, H*.48, W*.55, H*.55,  12, 40,120, 0.72); // deep blue core
-      cloud(W*.52, H*.22, W*.35, H*.30,  20, 90,160, 0.45); // cyan top bloom
-      cloud(W*.22, H*.45, W*.30, H*.35,  60, 20,140, 0.35); // violet left arm
-      cloud(W*.78, H*.42, W*.28, H*.32,  10, 80,100, 0.30); // teal right arm
-      cloud(W*.50, H*.75, W*.45, H*.30,   8, 25, 80, 0.40); // lower cloud
-      cloud(W*.50, H*.44, W*.18, H*.18,  40,120,220, 0.28); // bright inner core
+      // Nebula cloud layers — subtle, just enough to feel like space
+      cloud(W*.50, H*.48, W*.55, H*.55,  12, 40,120, 0.28); // deep blue core
+      cloud(W*.52, H*.22, W*.35, H*.30,  20, 90,160, 0.18); // cyan top bloom
+      cloud(W*.22, H*.45, W*.30, H*.35,  60, 20,140, 0.14); // violet left arm
+      cloud(W*.78, H*.42, W*.28, H*.32,  10, 80,100, 0.12); // teal right arm
+      cloud(W*.50, H*.75, W*.45, H*.30,   8, 25, 80, 0.16); // lower cloud
+      cloud(W*.50, H*.44, W*.18, H*.18,  40,120,220, 0.10); // bright inner core
 
       // Stars — always-on, with halo glow
       const palette = [

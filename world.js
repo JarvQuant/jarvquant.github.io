@@ -383,6 +383,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     alpha: true,
     powerPreference: "high-performance",
   });
+  renderer.setClearColor(0x000000, 0); // fully transparent — nebula canvas below shows through
 
   function makePlanetMaterial({ lineColor = 0x22d3ee, baseOpacity = 0.10, lineOpacity = 0.35 } = {}) {
     return new THREE.ShaderMaterial({
