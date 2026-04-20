@@ -470,6 +470,79 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     { once: true, passive: true }
   );
 
+  // Nebula background — drawn once on a 2D canvas behind the Three.js scene.
+  // Always fully visible regardless of 3D camera position.
+  (function initNebula() {
+    const cv = document.getElementById("nebula");
+    if (!cv) return;
+    const ctx = cv.getContext("2d");
+    const rng = (a, b) => a + Math.random() * (b - a);
+
+    function draw() {
+      const W = cv.width  = window.innerWidth;
+      const H = cv.height = window.innerHeight;
+
+      // Base sky
+      const sky = ctx.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0,   "#05080f");
+      sky.addColorStop(0.4, "#070d1c");
+      sky.addColorStop(1,   "#040609");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, W, H);
+
+      // Nebula cloud blob helper (elliptical radial gradient)
+      function cloud(cx, cy, rx, ry, r, g, b, alpha) {
+        const mx = Math.max(rx, ry);
+        const rg = ctx.createRadialGradient(0, 0, 0, 0, 0, mx);
+        rg.addColorStop(0,    `rgba(${r},${g},${b},${alpha})`);
+        rg.addColorStop(0.45, `rgba(${r},${g},${b},${(alpha * 0.4).toFixed(2)})`);
+        rg.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.scale(rx / mx, ry / mx);
+        ctx.fillStyle = rg;
+        ctx.beginPath();
+        ctx.arc(0, 0, mx, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Nebula cloud layers
+      cloud(W*.50, H*.48, W*.55, H*.55,  12, 40,120, 0.72); // deep blue core
+      cloud(W*.52, H*.22, W*.35, H*.30,  20, 90,160, 0.45); // cyan top bloom
+      cloud(W*.22, H*.45, W*.30, H*.35,  60, 20,140, 0.35); // violet left arm
+      cloud(W*.78, H*.42, W*.28, H*.32,  10, 80,100, 0.30); // teal right arm
+      cloud(W*.50, H*.75, W*.45, H*.30,   8, 25, 80, 0.40); // lower cloud
+      cloud(W*.50, H*.44, W*.18, H*.18,  40,120,220, 0.28); // bright inner core
+
+      // Stars — always-on, with halo glow
+      const palette = [
+        ["255,255,255", 0.8, 2.2, 320, 0.55, 0.95],
+        ["34,211,238",  1.0, 2.8,  45, 0.65, 1.00],
+        ["79,255,176",  0.8, 2.2,  28, 0.55, 0.90],
+        ["255,158,212", 0.8, 2.0,  22, 0.50, 0.85],
+        ["255,245,180", 0.9, 2.4,  32, 0.55, 0.95],
+      ];
+      palette.forEach(([rgb, sMin, sMax, count, oMin, oMax]) => {
+        for (let i = 0; i < count; i++) {
+          const x  = rng(0, W), y = rng(0, H);
+          const r  = rng(sMin, sMax) / 2;
+          const op = rng(oMin, oMax);
+          const halo = ctx.createRadialGradient(x, y, 0, x, y, r * 3.5);
+          halo.addColorStop(0, `rgba(${rgb},${(op * 0.55).toFixed(2)})`);
+          halo.addColorStop(1, `rgba(${rgb},0)`);
+          ctx.fillStyle = halo;
+          ctx.beginPath(); ctx.arc(x, y, r * 3.5, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = `rgba(${rgb},${op.toFixed(2)})`;
+          ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+        }
+      });
+    }
+
+    draw();
+    window.addEventListener("resize", draw, { passive: true });
+  })();
+
   // Exhibition — 3D rotating ring carousel
   (function initExhibit() {
     const ring = document.getElementById("exhibitRing");

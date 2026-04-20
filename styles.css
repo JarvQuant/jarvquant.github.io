@@ -33,12 +33,21 @@ body{
   overflow:hidden;
 }
 
+#nebula{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 0;
+}
 #world{
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
-  display:block;
+  display: block;
+  z-index: 1;
 }
 
 .overlay{

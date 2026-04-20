@@ -632,11 +632,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
   // Far layer — deep dusty haze, subtle cyan tint
   makeStarLayer({ count: 380, spread: 540, depth: [-640, -1100], size: 0.075, opacity: 0.35, color: 0xaad8ee });
 
-  // Coloured accent stars — additive blending so they glow not paint
-  makeStarLayer({ count: 38, spread: 320, depth: [-40, -800],  size: 0.55, opacity: 0.92, color: 0x22d3ee }); // cyan
-  makeStarLayer({ count: 24, spread: 360, depth: [-80, -700],  size: 0.45, opacity: 0.78, color: 0x4fffb0 }); // teal-green
-  makeStarLayer({ count: 20, spread: 300, depth: [-60, -600],  size: 0.40, opacity: 0.70, color: 0xff9ed4 }); // pink
-  makeStarLayer({ count: 28, spread: 250, depth: [-30, -400],  size: 0.50, opacity: 0.80, color: 0xfff5cc }); // warm ivory
+  // Coloured stars are now handled by the 2D nebula canvas (always-on, no 3D clipping).
 
   // --------------------------------------------------------------
   // PLANETS — each chapter has a thematic planet floating off-axis.
