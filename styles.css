@@ -47,7 +47,7 @@ body{
   pointer-events:none;
   background:
     /* Nebula core — deep-blue cloud centre, like the reference */
-    radial-gradient(ellipse 72% 55% at 50% 42%, rgba(14,42,100,0.52), transparent 70%),
+    radial-gradient(ellipse 80% 60% at 50% 44%, rgba(10,38,110,0.75), transparent 68%),
     /* Cyan top-centre bloom */
     radial-gradient(900px 520px at 50% 10%, rgba(34,211,238,0.13), transparent 62%),
     /* Soft teal right */
