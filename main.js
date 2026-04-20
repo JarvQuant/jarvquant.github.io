@@ -479,8 +479,14 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     const rng = (a, b) => a + Math.random() * (b - a);
 
     function draw() {
-      const W = cv.width  = window.innerWidth;
-      const H = cv.height = window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      cv.width  = W * dpr;
+      cv.height = H * dpr;
+      cv.style.width  = W + "px";
+      cv.style.height = H + "px";
+      ctx.scale(dpr, dpr);
 
       // Base sky
       const sky = ctx.createLinearGradient(0, 0, 0, H);
@@ -515,27 +521,52 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
       cloud(W*.50, H*.75, W*.45, H*.30,   8, 25, 80, 0.16); // lower cloud
       cloud(W*.50, H*.44, W*.18, H*.18,  40,120,220, 0.10); // bright inner core
 
-      // Stars — always-on, with halo glow
+      // Stars — always-on, DPR-aware sizes, with glow halo
+      // [rgb, rMin, rMax, count, opMin, opMax]
       const palette = [
-        ["255,255,255", 0.8, 2.2, 320, 0.55, 0.95],
-        ["34,211,238",  1.0, 2.8,  45, 0.65, 1.00],
-        ["79,255,176",  0.8, 2.2,  28, 0.55, 0.90],
-        ["255,158,212", 0.8, 2.0,  22, 0.50, 0.85],
-        ["255,245,180", 0.9, 2.4,  32, 0.55, 0.95],
+        ["255,255,255", 0.5, 1.8, 380, 0.55, 0.95], // white base — many small
+        ["34,211,238",  1.2, 3.5,  55, 0.75, 1.00], // cyan accent
+        ["79,255,176",  1.0, 2.8,  35, 0.65, 0.92], // teal-green
+        ["255,158,212", 1.0, 2.6,  28, 0.60, 0.90], // pink
+        ["255,245,180", 1.1, 3.0,  38, 0.65, 0.95], // warm ivory
       ];
-      palette.forEach(([rgb, sMin, sMax, count, oMin, oMax]) => {
+      palette.forEach(([rgb, rMin, rMax, count, oMin, oMax]) => {
         for (let i = 0; i < count; i++) {
           const x  = rng(0, W), y = rng(0, H);
-          const r  = rng(sMin, sMax) / 2;
+          const r  = rng(rMin, rMax);
           const op = rng(oMin, oMax);
-          const halo = ctx.createRadialGradient(x, y, 0, x, y, r * 3.5);
-          halo.addColorStop(0, `rgba(${rgb},${(op * 0.55).toFixed(2)})`);
-          halo.addColorStop(1, `rgba(${rgb},0)`);
+          // Soft outer glow
+          const halo = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
+          halo.addColorStop(0,   `rgba(${rgb},${(op * 0.6).toFixed(2)})`);
+          halo.addColorStop(0.4, `rgba(${rgb},${(op * 0.2).toFixed(2)})`);
+          halo.addColorStop(1,   `rgba(${rgb},0)`);
           ctx.fillStyle = halo;
-          ctx.beginPath(); ctx.arc(x, y, r * 3.5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(x, y, r * 5, 0, Math.PI * 2); ctx.fill();
+          // Bright core
           ctx.fillStyle = `rgba(${rgb},${op.toFixed(2)})`;
           ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
         }
+      });
+
+      // A handful of large "hero stars" — unmistakably visible, scattered sparingly
+      const heroStars = [
+        [rng(.08,.25), rng(.10,.35), "34,211,238",  3.5, 0.95],
+        [rng(.35,.55), rng(.05,.25), "255,255,255",  4.0, 0.90],
+        [rng(.65,.88), rng(.12,.40), "79,255,176",  3.2, 0.88],
+        [rng(.10,.35), rng(.55,.85), "255,158,212", 3.0, 0.85],
+        [rng(.60,.90), rng(.50,.80), "255,245,180", 3.5, 0.90],
+        [rng(.40,.70), rng(.60,.90), "34,211,238",  2.8, 0.88],
+      ];
+      heroStars.forEach(([fx, fy, rgb, r, op]) => {
+        const x = fx * W, y = fy * H;
+        const halo = ctx.createRadialGradient(x, y, 0, x, y, r * 7);
+        halo.addColorStop(0,   `rgba(${rgb},${op.toFixed(2)})`);
+        halo.addColorStop(0.3, `rgba(${rgb},${(op * 0.35).toFixed(2)})`);
+        halo.addColorStop(1,   `rgba(${rgb},0)`);
+        ctx.fillStyle = halo;
+        ctx.beginPath(); ctx.arc(x, y, r * 7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = `rgba(${rgb},1)`;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
       });
     }
 
