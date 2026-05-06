@@ -138,6 +138,19 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   if (imgBoxClose) imgBoxClose.addEventListener("click", closeImgBox);
   if (imgBoxX) imgBoxX.addEventListener("click", closeImgBox);
 
+  // Product strip — click any card to open lightbox
+  document.querySelectorAll(".prod-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const img = card.querySelector("img");
+      const cap = card.querySelector("figcaption");
+      openBox({
+        src: img ? img.getAttribute("src") : null,
+        title: cap ? cap.textContent : "—",
+        cap: "",
+      });
+    });
+  });
+
   // Audio
   const audio = createAmbientEngine();
   const muteToggle = document.getElementById("muteToggle");

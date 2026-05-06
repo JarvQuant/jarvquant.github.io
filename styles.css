@@ -652,7 +652,7 @@ body:not(.is-entered) .chapter.is-active{
   border: 1px solid rgba(255,255,255,0.09);
   background: rgba(8,12,22,0.88);
   transition: border-color .25s ease, box-shadow .25s ease, transform .2s ease;
-  cursor: default;
+  cursor: zoom-in;
 }
 .prod-card:hover{
   border-color: rgba(34,211,238,0.42);
