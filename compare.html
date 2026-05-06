@@ -85,6 +85,7 @@
       --green:   #22c55e;
       --amber:   #f59e0b;
       --red:     rgba(245,247,255,0.28);
+      --planned: #818cf8;
       --radius:  12px;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -283,9 +284,10 @@
     }
     tr.group-header:hover { background: var(--bg); }
 
-    .yes  { color: var(--green); }
-    .no   { color: var(--fg-dim); font-size: 14px; opacity: .55; }
-    .part { color: var(--amber); font-size: 14px; }
+    .yes     { color: var(--green); }
+    .no      { color: var(--fg-dim); font-size: 14px; opacity: .55; }
+    .part    { color: var(--amber); font-size: 14px; }
+    .planned { color: var(--planned); font: 600 11px/1 var(--mono); letter-spacing: .5px; }
 
     /* ── Differentiators ── */
     .diff-section {
@@ -403,6 +405,7 @@
         <div class="legend-item"><span class="leg-yes">✓</span> Available</div>
         <div class="legend-item"><span class="leg-part">▪</span> Partial / Premium only</div>
         <div class="legend-item"><span class="leg-no">✗</span> Not available</div>
+        <div class="legend-item" style="color:var(--planned);font:600 12px/1 var(--mono)">→ Roadmap</div>
       </div>
     </section>
 
@@ -486,7 +489,7 @@
           </tr>
           <tr>
             <td>Mobile App</td>
-            <td class="col-jq"><span class="part">▪</span></td>
+            <td class="col-jq"><span class="planned">→</span></td>
             <td><span class="yes">✓</span></td>
             <td><span class="part">▪</span></td>
             <td><span class="yes">✓</span></td>
@@ -621,7 +624,7 @@
 
           <tr>
             <td>Auto Broker Sync</td>
-            <td class="col-jq"><span class="part">▪</span></td>
+            <td class="col-jq"><span class="planned">→</span></td>
             <td><span class="yes">✓</span></td>
             <td><span class="yes">✓</span></td>
             <td><span class="yes">✓</span></td>
