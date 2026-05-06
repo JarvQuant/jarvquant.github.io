@@ -1913,68 +1913,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     frames.push(border);
   }
 
-  // --- Exhibits (6) ---
-  const exhibits = [
-    { src: "assets/world-equity-curve.png",      title: "Strategy Builder — Equity + Drawdown" },
-    { src: "assets/world-jqivs-orderbook.png",   title: "JQIV$ Live — Order Book" },
-    { src: "assets/world-jqivs-depth.png",       title: "JQIV$ Live — Order Depth" },
-    { src: "assets/world-strategy-builder.png",  title: "Strategy Builder — Node Graph" },
-    { src: "assets/world-prop-sim.png",          title: "Prop Sim — Bar-by-Bar Replay" },
-    { src: "assets/world-options-sim.png",       title: "Options Sim — Chain + IV Setup" },
-  ];
-
-  const exhibitGeo = makeFrameGeometry(5.4, 3.2);
-  const exhibitMeshes = [];
-
-  for (let i = 0; i < exhibits.length; i++) {
-    const rec = {
-      id: `EX-${i + 1}`,
-      ts: "exhibit",
-      instrument: "JarvQuant",
-      setup: exhibits[i].title,
-      r: "—",
-      note: "Exhibit plate.",
-    };
-
-    const border = new THREE.Mesh(exhibitGeo, baseBorder.clone());
-    border.userData.rec = rec;
-
-    const plate = new THREE.Mesh(makeFrameGeometry(5.22, 3.05), plateMat.clone());
-    plate.position.z = -0.001;
-
-    const inner = new THREE.Mesh(
-      makeFrameGeometry(5.05, 2.92),
-      new THREE.MeshBasicMaterial({ color: 0x0a0f18, transparent: true, opacity: 0.90, depthWrite: false })
-    );
-    inner.position.z = 0.001;
-
-    border.add(plate);
-    border.add(inner);
-
-    const row = (i / 3) | 0;
-    const col = i % 3;
-
-    // Keep the exhibit wall orthogonal (no yaw). Widen spacing a touch to avoid screen-space overlap.
-    border.position.set(-8.2 + col * 8.2, 1.15 - row * 4.1, -9.2);
-    border.rotation.y = 0.0;
-
-    reserved.push({ x: border.position.x, y: border.position.y, z: border.position.z, r: 7.2 });
-
-    frameGroup.add(border);
-    frames.push(border);
-    exhibitMeshes.push({ inner, src: exhibits[i].src });
-  }
-
-  (async () => {
-    try {
-      for (const ex of exhibitMeshes) {
-        const tex = await loadTexture(ex.src);
-        ex.inner.material = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.96 });
-      }
-    } catch {}
-  })();
-
-  // (Manifest plates removed — keep all information in in-world cards only.)
+  // (Exhibit plates moved to HTML product strip in the Memory chapter.)
 
   // Selection leash
   const leashMat = new THREE.LineBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.0 });
