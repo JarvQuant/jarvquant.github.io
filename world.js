@@ -1915,12 +1915,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
 
   // --- Exhibits (6) ---
   const exhibits = [
-    { src: "assets/replay.jpg", title: "Replay Engine" },
-    { src: "assets/settings.jpg", title: "Assumptions + Presets" },
-    { src: "assets/journal.jpg", title: "Journal + Export" },
-    { src: "assets/replay-trader.jpg", title: "Replay Trader" },
-    { src: "assets/strategy-trades.jpg", title: "Strategy → Trades" },
-    { src: "assets/place-holder-strat.jpg", title: "Strategy Capsule (WIP)" },
+    { src: "assets/world-equity-curve.png",      title: "Strategy Builder — Equity + Drawdown" },
+    { src: "assets/world-jqivs-orderbook.png",   title: "JQIV$ Live — Order Book" },
+    { src: "assets/world-jqivs-depth.png",       title: "JQIV$ Live — Order Depth" },
+    { src: "assets/world-strategy-builder.png",  title: "Strategy Builder — Node Graph" },
+    { src: "assets/world-prop-sim.png",          title: "Prop Sim — Bar-by-Bar Replay" },
+    { src: "assets/world-options-sim.png",       title: "Options Sim — Chain + IV Setup" },
   ];
 
   const exhibitGeo = makeFrameGeometry(5.4, 3.2);
