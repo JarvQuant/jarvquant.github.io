@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Payment received — JarvQuant</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#0a0d18" />
+  <link rel="icon" href="assets/favicon.png" type="image/png" />
+  <style>
+    /* Stand-alone styling — kept self-contained so this page works even
+       if the main site assets fail to load (it's the first thing the user
+       sees after a payment, must always render). Palette taken from
+       the main styles.css "Ghost Cathedral". */
+    :root{
+      --bg: #0a0d18;
+      --fg: rgba(245, 247, 255, 0.96);
+      --fg-body: rgba(245, 247, 255, 0.82);
+      --fg-dim: rgba(245, 247, 255, 0.66);
+      --hair: rgba(245, 247, 255, 0.14);
+      --c1: #6D28D9;
+      --c2: #22D3EE;
+      --c2-hi: #4FE4F0;
+      --glow: rgba(79, 228, 240, 0.24);
+      --radius: 14px;
+    }
+    *{ box-sizing: border-box; margin: 0; padding: 0; }
+    html, body{ height: 100%; }
+    body{
+      background: var(--bg);
+      color: var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      background-image:
+        radial-gradient(900px 520px at 50% 10%, rgba(34,211,238,0.13), transparent 62%),
+        radial-gradient(1100px 900px at 18% 38%, rgba(109,40,217,0.10), transparent 70%),
+        radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,0.00), rgba(0,0,0,0.58));
+    }
+    .card{
+      max-width: 480px;
+      width: 100%;
+      background: rgba(15, 20, 30, 0.85);
+      border: 1px solid var(--hair);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      text-align: center;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 80px rgba(0,0,0,.55);
+    }
+    .check{
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(34, 211, 238, 0.12);
+      border: 2px solid var(--c2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      color: var(--c2);
+      font-size: 32px; line-height: 1;
+      box-shadow: 0 0 30px var(--glow);
+    }
+    h1{
+      font-size: 22px; font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    p{
+      color: var(--fg-body);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .steps{
+      text-align: left;
+      background: rgba(34, 211, 238, 0.06);
+      border-left: 2px solid var(--c2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 18px 0 20px;
+    }
+    .steps ol{
+      margin: 0;
+      padding-left: 20px;
+      color: var(--fg-body);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .meta{
+      color: var(--fg-dim);
+      font-size: 12px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--hair);
+    }
+    .brand{
+      color: var(--c2);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="status">
+    <div class="check" aria-hidden="true">&#10003;</div>
+    <h1>Payment received</h1>
+    <p>Your subscription is being activated.</p>
+
+    <div class="steps">
+      <ol>
+        <li>Close this browser tab</li>
+        <li>Return to the <span class="brand">JarvQuant</span> app</li>
+        <li>Click <strong>Refresh Access</strong> in the pricing dialog</li>
+      </ol>
+    </div>
+
+    <p style="font-size: 13px; color: var(--fg-dim);">
+      Your new tier unlocks instantly once the app refreshes.
+      If anything looks off, reach out via Discord — we&rsquo;re around.
+    </p>
+
+    <div class="meta">JarvQuant &mdash; The Trading OS for Retail Performance</div>
+  </div>
+</body>
+</html>
