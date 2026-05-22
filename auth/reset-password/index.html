@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reset password — JarvQuant</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#0a0d18" />
+  <link rel="icon" href="/assets/favicon.png" type="image/png" />
+  <style>
+    :root{
+      --bg: #0a0d18;
+      --fg: rgba(245, 247, 255, 0.96);
+      --fg-body: rgba(245, 247, 255, 0.82);
+      --fg-dim: rgba(245, 247, 255, 0.66);
+      --hair: rgba(245, 247, 255, 0.14);
+      --c1: #6D28D9;
+      --c2: #22D3EE;
+      --c2-hi: #4FE4F0;
+      --amber: #F59E0B;
+      --glow: rgba(79, 228, 240, 0.24);
+      --glow-amber: rgba(245, 158, 11, 0.24);
+      --radius: 14px;
+    }
+    *{ box-sizing: border-box; margin: 0; padding: 0; }
+    html, body{ height: 100%; }
+    body{
+      background: var(--bg);
+      color: var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      background-image:
+        radial-gradient(900px 520px at 50% 10%, rgba(34,211,238,0.13), transparent 62%),
+        radial-gradient(1100px 900px at 18% 38%, rgba(109,40,217,0.10), transparent 70%),
+        radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,0.00), rgba(0,0,0,0.58));
+    }
+    .card{
+      max-width: 480px; width: 100%;
+      background: rgba(15, 20, 30, 0.85);
+      border: 1px solid var(--hair);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      text-align: center;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 80px rgba(0,0,0,.55);
+    }
+    .icon{
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 32px; line-height: 1;
+    }
+    .icon.lock{
+      background: rgba(34, 211, 238, 0.12);
+      border: 2px solid var(--c2);
+      color: var(--c2);
+      box-shadow: 0 0 30px var(--glow);
+    }
+    .icon.ok{
+      background: rgba(34, 211, 238, 0.12);
+      border: 2px solid var(--c2);
+      color: var(--c2);
+      box-shadow: 0 0 30px var(--glow);
+    }
+    .icon.err{
+      background: rgba(245, 158, 11, 0.12);
+      border: 2px solid var(--amber);
+      color: var(--amber);
+      box-shadow: 0 0 30px var(--glow-amber);
+    }
+    h1{
+      font-size: 22px; font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    p{
+      color: var(--fg-body);
+      font-size: 14px; line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    form{ text-align: left; margin-top: 8px; }
+    label{
+      display: block;
+      font-size: 12px; color: var(--fg-dim);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    input[type=password]{
+      width: 100%;
+      background: rgba(10, 13, 24, 0.7);
+      border: 1px solid var(--hair);
+      color: var(--fg);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input[type=password]:focus{ border-color: var(--c2); }
+    button{
+      width: 100%;
+      background: var(--c2);
+      color: #0a0d18;
+      border: none;
+      padding: 11px 16px;
+      border-radius: 8px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+      letter-spacing: 0.02em;
+    }
+    button:hover:not(:disabled){
+      background: var(--c2-hi);
+      box-shadow: 0 0 24px var(--glow);
+    }
+    button:disabled{ opacity: 0.55; cursor: not-allowed; }
+    .err-msg{
+      color: var(--amber);
+      font-size: 13px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      min-height: 18px;
+    }
+    .steps{
+      text-align: left;
+      background: rgba(34, 211, 238, 0.06);
+      border-left: 2px solid var(--c2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 18px 0 20px;
+    }
+    .steps ol{
+      margin: 0; padding-left: 20px;
+      color: var(--fg-body);
+      font-size: 13px; line-height: 1.7;
+    }
+    .meta{
+      color: var(--fg-dim);
+      font-size: 12px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--hair);
+    }
+    .brand{ color: var(--c2); font-weight: 600; letter-spacing: 0.02em; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="icon" class="icon lock">&#128274;</div>
+    <h1 id="title">Reset your password</h1>
+    <p id="subtitle">Choose a new password for your JarvQuant account.</p>
+
+    <form id="form">
+      <label for="pw1">New password</label>
+      <input type="password" id="pw1" autocomplete="new-password" minlength="8" required />
+      <label for="pw2">Confirm new password</label>
+      <input type="password" id="pw2" autocomplete="new-password" minlength="8" required />
+      <div class="err-msg" id="err"></div>
+      <button type="submit" id="submit">Update password</button>
+    </form>
+
+    <div id="result"></div>
+
+    <div class="meta">JarvQuant &mdash; The Trading OS for Retail Performance</div>
+  </div>
+
+  <script>
+    (function(){
+      const API = "https://jarvquant-api.onrender.com";
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token");
+
+      const form = document.getElementById("form");
+      const pw1 = document.getElementById("pw1");
+      const pw2 = document.getElementById("pw2");
+      const err = document.getElementById("err");
+      const submit = document.getElementById("submit");
+      const icon = document.getElementById("icon");
+      const title = document.getElementById("title");
+      const subtitle = document.getElementById("subtitle");
+      const result = document.getElementById("result");
+
+      function showErr(msg){
+        icon.className = "icon err";
+        icon.innerHTML = "&#33;";
+        title.textContent = "Link invalid";
+        subtitle.textContent = msg || "This reset link is invalid or has expired.";
+        form.style.display = "none";
+        result.innerHTML = '<p style="font-size:13px;color:var(--fg-dim);margin-top:14px;">' +
+          'Open the app and request a new password-reset email from the login screen.' +
+          '</p>';
+      }
+
+      function showOk(){
+        icon.className = "icon ok";
+        icon.innerHTML = "&#10003;";
+        title.textContent = "Password updated";
+        subtitle.textContent = "You can now log in with your new password.";
+        form.style.display = "none";
+        result.innerHTML = '<div class="steps"><ol>' +
+          '<li>Close this browser tab</li>' +
+          '<li>Return to the <span class="brand">JarvQuant</span> app</li>' +
+          '<li>Log in with your new password</li>' +
+          '</ol></div>';
+      }
+
+      if(!token){
+        showErr("No reset token in the link.");
+        return;
+      }
+
+      form.addEventListener("submit", function(e){
+        e.preventDefault();
+        err.textContent = "";
+        const p1 = pw1.value;
+        const p2 = pw2.value;
+        if(p1.length < 8){
+          err.textContent = "Password must be at least 8 characters.";
+          return;
+        }
+        if(p1 !== p2){
+          err.textContent = "Passwords don't match.";
+          return;
+        }
+        submit.disabled = true;
+        submit.textContent = "Updating…";
+        fetch(API + "/auth/password-reset/confirm", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ token: token, new_password: p1 })
+        })
+          .then(r => r.json().then(j => ({ok: r.ok, body: j})))
+          .then(({ok, body}) => {
+            if(ok){
+              showOk();
+            } else {
+              submit.disabled = false;
+              submit.textContent = "Update password";
+              err.textContent = (body && body.detail) ? body.detail : "Couldn't update password. The link may have expired.";
+            }
+          })
+          .catch(() => {
+            submit.disabled = false;
+            submit.textContent = "Update password";
+            err.textContent = "Couldn't reach the server. Try again in a moment.";
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
