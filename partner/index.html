@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Partner Dashboard — JarvQuant</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#0a0d18" />
+  <link rel="icon" href="/assets/favicon.png" type="image/png" />
+  <style>
+    :root {
+      --bg:        #0a0d18;
+      --fg:        rgba(245, 247, 255, 0.96);
+      --fg-body:   rgba(245, 247, 255, 0.82);
+      --fg-dim:    rgba(245, 247, 255, 0.54);
+      --hair:      rgba(245, 247, 255, 0.10);
+      --c1:        #6D28D9;
+      --c2:        #22D3EE;
+      --c2-hi:     #4FE4F0;
+      --green:     #34D399;
+      --amber:     #F59E0B;
+      --red:       #F87171;
+      --glow:      rgba(79, 228, 240, 0.18);
+      --glow-c1:   rgba(109, 40, 217, 0.18);
+      --radius:    14px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 20px 60px;
+      background-image:
+        radial-gradient(900px 520px at 50% -10%, rgba(34,211,238,0.10), transparent 62%),
+        radial-gradient(1100px 900px at 16% 30%, rgba(109,40,217,0.08), transparent 70%);
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── Header ── */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+    .logo-text {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--fg);
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: rgba(15, 20, 30, 0.88);
+      border: 1px solid var(--hair);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 24px 80px rgba(0,0,0,.55);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: 13px;
+      color: var(--fg-dim);
+      margin-bottom: 24px;
+    }
+
+    /* ── Code input row ── */
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      color: var(--fg);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 14px;
+      height: 42px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--c2);
+    }
+    input[type="text"]::placeholder {
+      color: var(--fg-dim);
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+
+    button.load-btn {
+      background: linear-gradient(90deg, var(--c1), #7C3AED);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      height: 42px;
+      padding: 0 20px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .15s;
+      white-space: nowrap;
+    }
+    button.load-btn:hover { opacity: .88; }
+    button.load-btn:disabled { opacity: .4; cursor: default; }
+
+    /* ── Status/error strip ── */
+    .strip {
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      display: none;
+    }
+    .strip.err  { background: rgba(248,113,113,.12); color: var(--red);   border: 1px solid rgba(248,113,113,.22); display: block; }
+    .strip.idle { background: rgba(34,211,238,.07);  color: var(--fg-dim); border: 1px solid var(--hair); display: block; }
+
+    /* ── Stats grid ── */
+    .stats-header {
+      margin-bottom: 20px;
+    }
+    .partner-name {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--fg);
+    }
+    .partner-code-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--c2);
+      background: rgba(34,211,238,.10);
+      border: 1px solid rgba(34,211,238,.22);
+      border-radius: 6px;
+      padding: 2px 8px;
+      margin-top: 4px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 420px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      padding: 18px 16px;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--fg-dim);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--fg);
+      line-height: 1;
+    }
+    .stat-value.accent-green { color: var(--green); }
+    .stat-value.accent-cyan  { color: var(--c2-hi); }
+    .stat-sub {
+      font-size: 11px;
+      color: var(--fg-dim);
+      margin-top: 4px;
+    }
+
+    /* ── Divider ── */
+    hr {
+      border: none;
+      border-top: 1px solid var(--hair);
+      margin: 20px 0;
+    }
+
+    /* ── Payout note ── */
+    .payout-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .payout-label {
+      font-size: 13px;
+      color: var(--fg-body);
+    }
+    .payout-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--amber);
+    }
+
+    /* ── Footer note ── */
+    .note {
+      font-size: 11px;
+      color: var(--fg-dim);
+      line-height: 1.55;
+      text-align: center;
+    }
+    .note a {
+      color: var(--c2);
+      text-decoration: none;
+    }
+    .note a:hover { text-decoration: underline; }
+
+    /* ── Spinner ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid var(--hair);
+      border-top-color: var(--c2);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+      margin: 0 auto;
+    }
+
+    /* ── Sections visibility ── */
+    #statsSection { display: none; }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Logo -->
+  <a class="logo" href="https://www.jarvquant.com/">
+    <img class="logo-img" src="/assets/favicon.png" alt="JarvQuant logo" />
+    <span class="logo-text">JarvQuant</span>
+  </a>
+
+  <!-- Lookup card -->
+  <div class="card" id="lookupCard">
+    <p class="card-title">Partner Dashboard</p>
+    <p class="card-sub">Enter your partner code to view your referral stats.</p>
+
+    <div class="input-row">
+      <input type="text" id="codeInput" placeholder="Your partner code" maxlength="32" autocomplete="off" spellcheck="false" />
+      <button class="load-btn" id="loadBtn" onclick="loadStats()">Load Stats</button>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div class="strip" id="strip"></div>
+      <div class="spinner" id="spinner"></div>
+    </div>
+  </div>
+
+  <!-- Stats card (shown after successful load) -->
+  <div class="card" id="statsSection">
+    <div class="stats-header">
+      <div class="partner-name" id="partnerName"></div>
+      <div class="partner-code-badge" id="partnerCodeBadge"></div>
+    </div>
+
+    <div class="grid">
+      <div class="stat-card">
+        <div class="stat-label">Sign-ups</div>
+        <div class="stat-value accent-cyan" id="statSignups">—</div>
+        <div class="stat-sub">users registered with your code</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Paid conversions</div>
+        <div class="stat-value accent-green" id="statConversions">—</div>
+        <div class="stat-sub">users who upgraded to a paid plan</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total commission</div>
+        <div class="stat-value accent-green" id="statTotal">—</div>
+        <div class="stat-sub">gross earned (all time)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Commission rate</div>
+        <div class="stat-value" id="statRate">12%</div>
+        <div class="stat-sub">per successful sale</div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="payout-row">
+      <div>
+        <div class="payout-label">Pending payout</div>
+        <div style="font-size:11px; color:var(--fg-dim); margin-top:2px;">
+          Not yet paid out — we'll settle manually each month.
+        </div>
+      </div>
+      <div class="payout-value" id="statPending">—</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <p class="note">
+    Stats update in real time after each sale. Questions?
+    <a href="mailto:hi@jarvquant.com">hi@jarvquant.com</a>
+  </p>
+
+</div>
+
+<script>
+  const API = "https://jarvquant-api.onrender.com";
+
+  // Pre-fill from ?code= query param
+  const params = new URLSearchParams(location.search);
+  const preCode = params.get("code") || params.get("ref") || "";
+  if (preCode) {
+    document.getElementById("codeInput").value = preCode.toUpperCase();
+    // Auto-load after a short delay so the page paints first
+    setTimeout(loadStats, 80);
+  }
+
+  // Also allow Enter key in the input
+  document.getElementById("codeInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") loadStats();
+  });
+
+  function setStrip(msg, cls) {
+    const el = document.getElementById("strip");
+    el.className = "strip " + cls;
+    el.textContent = msg;
+  }
+
+  function hideStrip() {
+    const el = document.getElementById("strip");
+    el.className = "strip";
+    el.textContent = "";
+  }
+
+  async function loadStats() {
+    const code = document.getElementById("codeInput").value.trim().toUpperCase();
+    if (!code) {
+      setStrip("Please enter your partner code.", "err");
+      return;
+    }
+
+    const btn = document.getElementById("loadBtn");
+    const spinner = document.getElementById("spinner");
+    hideStrip();
+    btn.disabled = true;
+    spinner.style.display = "block";
+    document.getElementById("statsSection").style.display = "none";
+
+    try {
+      const res = await fetch(`${API}/partner/stats?code=${encodeURIComponent(code)}`);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const msg = data.detail || `Error ${res.status}`;
+        setStrip(msg === "Partner code not found"
+          ? "Partner code not found. Check the code and try again."
+          : `Could not load stats: ${msg}`, "err");
+        return;
+      }
+      const data = await res.json();
+      renderStats(data);
+    } catch (err) {
+      setStrip("Network error — please try again.", "err");
+    } finally {
+      btn.disabled = false;
+      spinner.style.display = "none";
+    }
+  }
+
+  function fmt(eur) {
+    return "€ " + eur.toFixed(2).replace(".", ",");
+  }
+
+  function renderStats(data) {
+    document.getElementById("partnerName").textContent = data.name || data.code;
+    document.getElementById("partnerCodeBadge").textContent = data.code;
+    document.getElementById("statSignups").textContent = data.signups ?? "0";
+    document.getElementById("statConversions").textContent = data.paid_conversions ?? "0";
+    document.getElementById("statTotal").textContent = fmt(data.total_commission_eur ?? 0);
+    document.getElementById("statPending").textContent = fmt(data.pending_payout_eur ?? 0);
+    // Commission rate: derive from data if available, fallback to 12%
+    // (API doesn't expose rate directly; we keep it simple)
+    document.getElementById("statRate").textContent = "12%";
+
+    document.getElementById("statsSection").style.display = "block";
+    hideStrip();
+  }
+</script>
+</body>
+</html>
