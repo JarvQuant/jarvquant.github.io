@@ -102,6 +102,8 @@ export const I18N = {
     "lifetime.body": "Elite plan including PANTHEON, forever. All future tiers and add-ons included at no extra cost. One payment, never charged again. Hard cap at 200 seats. Founders rate locked for life.",
     "lifetime.note": "one-time",
 
+    "plan.inapp": "Available in-app",
+
     "beta.status": "Currently in private beta. Join Discord for early access and v1.0 launch alerts",
     "beta.cta": "Join Discord ↗",
 
@@ -223,6 +225,8 @@ export const I18N = {
     "lifetime.name": "Lifetime Access",
     "lifetime.body": "Elite inklusive PANTHEON, für immer. Alle zukünftigen Tiers und Add-Ons inklusive. Eine Zahlung, nie wieder abgerechnet. Limitiert auf 200 Plätze.",
     "lifetime.note": "einmalig",
+
+    "plan.inapp": "Im App kaufbar",
 
     "beta.status": "Aktuell Private Beta. Discord für Invites und v1.0 Launch-Alerts",
     "beta.cta": "Discord beitreten ↗",
