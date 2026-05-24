@@ -1552,148 +1552,311 @@ body.ch-edge      .chapter.is-active .chapter-title{ text-shadow: 0 0 26px rgba(
 @media (max-width: 820px), (max-height: 520px) and (orientation: landscape){
   body{
     overflow: auto;
-    overflow-x: hidden; /* prevent any accidental horizontal clipping/scroll */
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-
-    /* iOS safe-area (rounded corners / notch): keep content away from the left/right cutouts */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+    /* Tech dark background with cyan/purple glow — matches auth pages */
+    background: #07091a;
+    background-image:
+      radial-gradient(ellipse 120% 40% at 50% 0%, rgba(34,211,238,0.09), transparent 55%),
+      radial-gradient(ellipse 80% 50% at 10% 30%, rgba(109,40,217,0.07), transparent 60%);
   }
 
   /* kill heavy canvas on mobile */
+  #nebula{ display:none; }
   #world{ display:none; }
+  .overlay{ display:none; }
 
+  /* ── Topbar ── */
   .topbar{
     position: sticky;
     top: 0;
     left: 0;
     right: 0;
-    margin: 0 12px;
-    padding-top: max(12px, env(safe-area-inset-top));
-    padding-bottom: 10px;
+    margin: 0;
+    padding: max(14px, env(safe-area-inset-top)) 16px 12px;
     mix-blend-mode: normal;
-    flex-wrap: wrap;
-    gap: 10px;
-
-    /* Make it read like a proper mobile header bar */
-    background: rgba(5,6,10,0.88);
-    backdrop-filter: blur(var(--blur));
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    border-radius: 0 0 14px 14px;
+    flex-wrap: nowrap;
+    gap: 8px;
+    background: rgba(7,9,26,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(34,211,238,0.12);
+    border-radius: 0;
     z-index: 100;
   }
 
-  .controls{
-    width: 100%;
-    justify-content: flex-end;
+  .brand-text{
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: rgba(245,247,255,0.96);
   }
 
+  .controls{
+    width: auto;
+    margin-left: auto;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  /* Hide desktop nav + socials on mobile */
   .nav{ display:none; }
   .socials{ display:none; }
   .bw{ display:none; }
-
-  /* Hero (centered logo) not needed on mobile */
   .hero{ display:none; }
+  .hint{ display:none; }
+  .hud{ display:none; }
+  .panel{ display:none; }
+  [data-desktop-only]{ display:none; }
 
+  /* ── Main content area ── */
   .ui{
     position: relative;
     inset: auto;
     pointer-events: auto;
-
-    /* Use padding for horizontal gutters (safer than margins with safe-area + prevents clipping) */
-    padding: 14px max(12px, env(safe-area-inset-right)) 18px max(12px, env(safe-area-inset-left));
+    padding: 16px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left));
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
+  /* ── Chapters as dark tech cards ── */
   .chapter{
     position: relative;
     left: auto;
     bottom: auto;
     width: 100%;
-    margin: 14px 0;
-
-    /* strip the card look */
-    padding: 0;
-    border: 0;
-    background: transparent;
-    backdrop-filter: none;
-    box-shadow: none;
-
+    margin: 0;
     opacity: 1;
     transform: none;
     pointer-events: auto;
-  }
-  /* IMPORTANT: `.chapter.is-active` is more specific and still applies a -50% translate on desktop.
-     Override explicitly for mobile, otherwise the active chapter can slide left and get clipped. */
-  .chapter.is-active{ transform: none; }
 
+    /* Glass card look matching auth/partner pages */
+    background: rgba(13,17,35,0.85);
+    border: 1px solid rgba(34,211,238,0.10);
+    border-radius: 14px;
+    padding: 22px 18px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  }
+  .chapter.is-active{ transform: none; }
   .chapter::before{ display:none; }
+
+  /* ── Chapter typography ── */
+  .chapter-kicker{
+    font: 700 10px/1 var(--mono);
+    letter-spacing: 0.12em;
+    color: rgba(34,211,238,0.65);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
 
   .chapter-title{
     text-shadow: none;
-    font-size: 22px;
-    line-height: 1.15;
-    letter-spacing: -0.3px;
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    color: rgba(245,247,255,0.97);
+    margin-bottom: 10px;
   }
-  .chapter-sub{ font-size: 14px; line-height: 1.7; }
+
+  .chapter-sub{
+    font-size: 13px;
+    line-height: 1.72;
+    color: rgba(245,247,255,0.72);
+  }
 
   .chapter-actions{ pointer-events: auto; }
-  .hint{ display:none; }
 
-  /* product media */
-  .m-media{ display:block; margin: 12px 0 10px; }
+  /* ── Threshold bullet points ── */
+  .threshold-points{
+    margin: 14px 0 10px;
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .threshold-points li{
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(245,247,255,0.78);
+    padding-left: 16px;
+    position: relative;
+  }
+  .threshold-points li::before{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(34,211,238,0.7);
+  }
+
+  .threshold-why{
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(34,211,238,0.85);
+    margin-top: 12px;
+    line-height: 1.55;
+  }
+
+  /* ── Product media ── */
+  .m-media{ display:block; margin: 14px 0 4px; }
   .m-shot{
     width: 100%;
     height: auto;
     display:block;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(0,0,0,0.20);
+    border-radius: 10px;
+    border: 1px solid rgba(34,211,238,0.12);
+    background: rgba(0,0,0,0.30);
   }
 
-  /* Mobile-only copy blocks */
-  [data-desktop-only]{ display:none; }
-
-  .m-info{ display:block; margin: 12px 0 6px; }
+  /* ── Mobile positioning copy ── */
+  .m-info{ display:block; margin: 10px 0 4px; }
   .m-info-title{
-    margin: 12px 0 8px;
-    font: 900 12px/1 var(--mono);
-    letter-spacing: 1.0px;
+    margin: 14px 0 8px;
+    font: 800 10px/1 var(--mono);
+    letter-spacing: 0.10em;
     text-transform: uppercase;
-    color: rgba(34,211,238,0.78);
+    color: rgba(34,211,238,0.75);
+    border-bottom: 1px solid rgba(34,211,238,0.12);
+    padding-bottom: 6px;
   }
   .m-list{
     margin: 0 0 8px;
-    padding-left: 18px;
-    color: rgba(245,247,255,0.76);
-    font: 700 13px/1.65 var(--mono);
+    padding-left: 16px;
+    color: rgba(245,247,255,0.75);
+    font-size: 13px;
+    line-height: 1.65;
   }
-  .m-list li{ margin: 6px 0; }
+  .m-list li{ margin: 5px 0; }
 
-  /* footer socials */
+  /* ── Download button ── */
+  .download-btn{
+    font-size: 14px;
+    padding: 13px 22px;
+  }
+  .download-note{
+    font-size: 11px;
+    text-align: center;
+  }
+
+  /* ── Pricing grid ── */
+  .pricing-grid{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px 0 0;
+  }
+
+  .plan{
+    border-radius: 12px;
+    padding: 18px 16px;
+    background: rgba(10,14,28,0.9);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .plan.is-featured{
+    border-color: rgba(34,211,238,0.28);
+    background: rgba(13,20,40,0.92);
+    box-shadow: 0 0 24px rgba(34,211,238,0.06);
+  }
+
+  .plan-name{ font-size: 18px; }
+  .plan-amount{ font-size: 28px; }
+
+  /* ── Extras ── */
+  .pricing-extras{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .extra{
+    border-radius: 12px;
+    padding: 18px 16px;
+    background: rgba(10,14,28,0.9);
+  }
+
+  /* ── Footer socials ── */
   .m-footer{
     display:flex;
-    margin-top: 18px;
-    padding-top: 14px;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: 8px;
+    padding: 16px 0 max(16px, env(safe-area-inset-bottom));
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     justify-content: center;
+    border-top: 1px solid rgba(34,211,238,0.08);
   }
   .m-social{
     display:inline-flex;
     align-items:center;
-    padding: 10px 12px;
+    padding: 9px 14px;
     border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.04);
-    color: rgba(245,247,255,0.72);
+    border: 1px solid rgba(34,211,238,0.14);
+    background: rgba(34,211,238,0.04);
+    color: rgba(245,247,255,0.65);
     text-decoration:none;
-    font: 800 12px/1 var(--mono);
-    letter-spacing: .4px;
+    font: 700 11px/1 var(--mono);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    transition: background .15s, color .15s;
   }
-  .m-social:hover{ background: rgba(255,255,255,0.07); color: var(--fg); }
+  .m-social:hover{
+    background: rgba(34,211,238,0.10);
+    color: rgba(34,211,238,0.95);
+    border-color: rgba(34,211,238,0.30);
+  }
 
-  /* optional: less clutter */
-  .hud{ display:none; }
-  .panel{ display:none; }
+  /* ── Product strip ── */
+  .prod-strip{
+    margin: 12px -4px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .prod-strip::-webkit-scrollbar{ display:none; }
+  .prod-strip-track{
+    display: flex;
+    gap: 10px;
+    padding: 4px 4px 10px;
+    width: max-content;
+  }
+  .prod-card{
+    width: 200px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(34,211,238,0.10);
+    background: rgba(0,0,0,0.25);
+  }
+  .prod-card img{
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+  }
+  .prod-card figcaption{
+    font: 600 10px/1.4 var(--mono);
+    color: rgba(245,247,255,0.55);
+    padding: 6px 8px;
+    letter-spacing: .03em;
+  }
+
+  /* ── Beta strip ── */
+  .beta-strip{
+    border-radius: 10px;
+    font-size: 12px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    background: rgba(34,211,238,0.04);
+    border: 1px solid rgba(34,211,238,0.10);
+  }
 }
