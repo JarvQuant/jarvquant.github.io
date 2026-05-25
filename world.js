@@ -655,7 +655,7 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
     g.fillStyle = "rgba(200,225,255,0.42)";
     g.font = "600 13px ui-monospace, Menlo, Consolas, monospace";
     const fragments = [
-      "T-42d 14:30 NAS100 L", "entry clean", "hesitated",
+      "T-42d 14:30 L", "entry clean", "hesitated",
       "volatility high", "structure intact", "context > outcome",
       "BOS retest", "FVG fill", "EQH swept", "journal #0214",
       "R=1.75", "SL tight", "context noted", "scaled out partial",
@@ -1494,12 +1494,12 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
       title: { en: "[APPROACH]", de: "[ANSATZ]" },
       body: {
         en:
-          "Built by a solo developer + an AI agent — no bloated team, no overhead.\n\n" +
-          "Community-first beta: real feedback before public launch.\n\n" +
+          "Built by a solo developer plus an AI agent. No bloated team, no overhead.\n\n" +
+          "Community-first development: real feedback shapes every release.\n\n" +
           "Course-sellers need you to sell. You're building what they can’t deliver.",
         de:
-          "Gebaut von einem Entwickler + AI Agent — kein aufgeblasenes Team, kein Overhead.\n\n" +
-          "Community-first Beta: echtes Feedback vor Public Launch.\n\n" +
+          "Gebaut von einem Entwickler plus AI Agent. Kein aufgeblasenes Team, kein Overhead.\n\n" +
+          "Community-first Entwicklung: echtes Feedback prägt jedes Release.\n\n" +
           "Kurs-Verkäufer brauchen dich, um zu verkaufen. Du baust, was sie nie liefern können.",
       },
       x: XL,
@@ -1640,13 +1640,13 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
       title: { en: "[ACCESS]", de: "[ZUGANG]" },
       body: {
         en:
-          "JarvQuant is currently internal.\n\n" +
-          "Public beta is planned at v0.5.0 (limited invites).\n" +
-          "Discord is the primary path to invites and drops.",
+          "Free Starter tier available for everyone.\n\n" +
+          "All paid upgrades happen inside the app once you have created your account.\n" +
+          "Discord is the primary channel for community, drops, and direct feedback.",
         de:
-          "JarvQuant ist aktuell intern.\n\n" +
-          "Public Beta ist ab v0.5.0 geplant (limitierte Invites).\n" +
-          "Discord ist der primäre Weg zu Invites und Drops.",
+          "Free Starter Tier verfügbar für alle.\n\n" +
+          "Alle bezahlten Upgrades laufen direkt in der App nach Account-Erstellung.\n" +
+          "Discord ist der primäre Kanal für Community, Drops und direktes Feedback.",
       },
       x: XR,
       y: 1.45,

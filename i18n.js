@@ -46,7 +46,7 @@ export const I18N = {
     "edge.sub": "Every tier is built for a different stage of your trading development. No credit card needed to start. Download and run in under a minute.",
     "edge.cta": "Download for Windows",
     "edge.cta2": "Join the Community",
-    "edge.download.note": "Private beta · .exe · no installer needed",
+    "edge.download.note": "Windows · .exe · no installer needed",
     "edge.micro": "Pricing locks at v1.0. Founders rate stays grandfathered for life.",
 
     // Pricing
@@ -104,7 +104,7 @@ export const I18N = {
 
     "plan.inapp": "Available in-app",
 
-    "beta.status": "Currently in private beta. Join Discord for early access and v1.0 launch alerts",
+    "beta.status": "Active development. Join Discord for community, drops, and direct feedback.",
     "beta.cta": "Join Discord ↗",
 
     // Mobile positioning copy
@@ -114,7 +114,7 @@ export const I18N = {
 
     "pos.approach.title": "How it's built",
     "pos.approach.1": "Built by a solo developer and an AI agent. Lean by design, no overhead passed to you.",
-    "pos.approach.2": "Community-first beta: real trader feedback shapes every release before public launch.",
+    "pos.approach.2": "Community-first development: real trader feedback shapes every release.",
     "pos.approach.3": "No course upsells. No lifestyle content. Just a professional tool for systematic self-improvement.",
 
     "pos.angle.title": "Why JarvQuant",
@@ -170,7 +170,7 @@ export const I18N = {
     "edge.sub": "Free startet den Loop. Pro baut das System. Elite zeigt dir dich selbst.",
     "edge.cta": "Download für Windows",
     "edge.cta2": "Community beitreten",
-    "edge.download.note": "Private Beta · .exe · kein Installer nötig",
+    "edge.download.note": "Windows · .exe · kein Installer nötig",
     "edge.micro": "Preise gelten ab v1.0. Founders-Rate bleibt lebenslang grandfathered.",
 
     // Pricing
@@ -228,7 +228,7 @@ export const I18N = {
 
     "plan.inapp": "Im App kaufbar",
 
-    "beta.status": "Aktuell Private Beta. Discord für Invites und v1.0 Launch-Alerts",
+    "beta.status": "Aktive Entwicklung. Discord für Community, Drops und direktes Feedback.",
     "beta.cta": "Discord beitreten ↗",
 
     // Mobile positioning copy
@@ -238,7 +238,7 @@ export const I18N = {
 
     "pos.approach.title": "Der Ansatz",
     "pos.approach.1": "Gebaut von einem Entwickler und einem AI Agent. Lean by design, kein Overhead.",
-    "pos.approach.2": "Community-first Beta: echtes Feedback vor Public Launch.",
+    "pos.approach.2": "Community-first Entwicklung: echtes Feedback prägt jedes Release.",
     "pos.approach.3": "Keine Kurs-Upsells. Kein Lifestyle-Content. Nur ein professionelles Tool.",
 
     "pos.angle.title": "Warum JarvQuant",
