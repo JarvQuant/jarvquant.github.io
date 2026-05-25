@@ -45,7 +45,7 @@ export const I18N = {
     "edge.title": "Start free. Go deeper when you're ready.",
     "edge.sub": "Every tier is built for a different stage of your trading development. No credit card needed to start. Download and run in under a minute.",
     "edge.cta": "Download for Windows",
-    "edge.cta2": "Join the Community (get a key)",
+    "edge.cta2": "Join the Community",
     "edge.download.note": "Private beta · .exe · no installer needed",
     "edge.micro": "Pricing locks at v1.0. Founders rate stays grandfathered for life.",
 
@@ -72,7 +72,7 @@ export const I18N = {
     "plan.free.f2": "Data import (CSV, Parquet, MT5)",
     "plan.free.f3": "Trade journal: 10 entries rolling",
     "plan.free.f4": "1 active strategy slot",
-    "plan.free.cta": "Get a key",
+    "plan.free.cta": "Download Free",
 
     "plan.pro.tag": "PRO",
     "plan.pro.flag": "MOST POPULAR",
@@ -169,7 +169,7 @@ export const I18N = {
     "edge.title": "Wähle wie du trainierst.",
     "edge.sub": "Free startet den Loop. Pro baut das System. Elite zeigt dir dich selbst.",
     "edge.cta": "Download für Windows",
-    "edge.cta2": "Community (Key anfordern)",
+    "edge.cta2": "Community beitreten",
     "edge.download.note": "Private Beta · .exe · kein Installer nötig",
     "edge.micro": "Preise gelten ab v1.0. Founders-Rate bleibt lebenslang grandfathered.",
 
@@ -196,7 +196,7 @@ export const I18N = {
     "plan.free.f2": "Daten-Imports",
     "plan.free.f3": "Journal Lite: 10 Einträge rolling",
     "plan.free.f4": "1 aktiver Strategy-Slot",
-    "plan.free.cta": "Key anfordern",
+    "plan.free.cta": "Kostenlos Downloaden",
 
     "plan.pro.tag": "PRO",
     "plan.pro.flag": "MEISTGEWÄHLT",
