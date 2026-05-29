@@ -46,7 +46,7 @@ export const I18N = {
     "edge.sub": "Every tier is built for a different stage of your trading development. No credit card needed to start. Download and run in under a minute.",
     "edge.cta": "Download for Windows",
     "edge.cta2": "Join the Community",
-    "edge.download.note": "Windows · .exe · no installer needed",
+    "edge.download.note": "Windows · one-click installer",
     "edge.micro": "Pricing locks at v1.0. Founders rate stays grandfathered for life.",
 
     // Pricing
@@ -170,7 +170,7 @@ export const I18N = {
     "edge.sub": "Free startet den Loop. Pro baut das System. Elite zeigt dir dich selbst.",
     "edge.cta": "Download für Windows",
     "edge.cta2": "Community beitreten",
-    "edge.download.note": "Windows · .exe · kein Installer nötig",
+    "edge.download.note": "Windows · Ein-Klick-Installer",
     "edge.micro": "Preise gelten ab v1.0. Founders-Rate bleibt lebenslang grandfathered.",
 
     // Pricing
