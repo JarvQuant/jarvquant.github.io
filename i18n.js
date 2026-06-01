@@ -76,7 +76,7 @@ export const I18N = {
 
     "plan.pro.tag": "PRO",
     "plan.pro.flag": "MOST POPULAR",
-    "plan.pro.period": "or €349 / year. Saves ~€131",
+    "plan.pro.period": "Billed monthly · cancel anytime",
     "plan.pro.f1": "Unlimited replay, imports, and journal entries",
     "plan.pro.f2": "Strategy Builder with rules and constraints",
     "plan.pro.f3": "Prop firm challenge simulator with rule presets",
@@ -85,7 +85,7 @@ export const I18N = {
     "plan.pro.cta": "Start with Pro",
 
     "plan.elite.tag": "ELITE",
-    "plan.elite.period": "or €699 / year. Saves ~€261",
+    "plan.elite.period": "Billed monthly · cancel anytime",
     "plan.elite.f1": "Everything in Pro",
     "plan.elite.f2": "PANTHEON: full simulation suite (Options Sim, Syndex + 5 synthetic markets)",
     "plan.elite.f3": "VANTA AI Coach: dedicated trader personality, error analysis and psychology",
@@ -200,7 +200,7 @@ export const I18N = {
 
     "plan.pro.tag": "PRO",
     "plan.pro.flag": "MEISTGEWÄHLT",
-    "plan.pro.period": "oder €349 / Jahr. Spart ~€131",
+    "plan.pro.period": "Monatlich abgerechnet · jederzeit kündbar",
     "plan.pro.f1": "Alles aus Free, unbegrenzt",
     "plan.pro.f2": "Strategy Builder Sandbox",
     "plan.pro.f3": "Prop Sim mit Rule-Presets",
@@ -209,7 +209,7 @@ export const I18N = {
     "plan.pro.cta": "Mit Pro starten",
 
     "plan.elite.tag": "ELITE",
-    "plan.elite.period": "oder €699 / Jahr. Spart ~€261",
+    "plan.elite.period": "Monatlich abgerechnet · jederzeit kündbar",
     "plan.elite.f1": "Alles aus Pro",
     "plan.elite.f2": "PANTHEON: komplette Simulations-Suite (Options Sim, Syndex + 5 Märkte)",
     "plan.elite.f3": "VANTA AI Coach: Trading-Persönlichkeit, Fehleranalyse und Psychologie",
