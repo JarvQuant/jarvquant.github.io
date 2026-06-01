@@ -1,4 +1,4 @@
-import { resolveLang, applyI18n, I18N, setLang } from "./i18n.js";
+import { resolveLang, applyI18n, I18N, setLang } from "./i18n.js?v=2";
 import { createAmbientEngine } from "./audio.js";
 import { createWorld } from "./world.js";
 import { revealSequence } from "./textfx.js";
