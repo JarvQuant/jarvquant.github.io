@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin · JarvQuant</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#0a0d18" />
+  <link rel="icon" href="/assets/favicon.png" type="image/png" />
+  <style>
+    :root{
+      --bg:#0a0d18; --fg:rgba(245,247,255,.96); --fg-dim:rgba(245,247,255,.54);
+      --hair:rgba(245,247,255,.10); --c1:#6D28D9; --c2:#22D3EE; --c2-hi:#4FE4F0;
+      --green:#34D399; --amber:#F59E0B; --red:#F87171; --radius:14px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      background:var(--bg); color:var(--fg);
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      padding:32px 18px 64px; min-height:100vh;
+      background-image:
+        radial-gradient(900px 520px at 50% -10%, rgba(34,211,238,.10), transparent 62%),
+        radial-gradient(1100px 900px at 16% 30%, rgba(109,40,217,.08), transparent 70%);
+    }
+    .wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:20px;}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .logo-img{width:32px;height:32px;border-radius:8px;}
+    .logo-text{font-size:18px;font-weight:800;color:var(--fg);}
+    .card{background:rgba(15,20,30,.88);border:1px solid var(--hair);border-radius:var(--radius);
+      padding:28px 26px;backdrop-filter:blur(16px);box-shadow:0 24px 80px rgba(0,0,0,.55);}
+    .card-title{font-size:20px;font-weight:700;margin-bottom:4px;}
+    .card-sub{font-size:13px;color:var(--fg-dim);margin-bottom:22px;}
+    input[type=password]{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--hair);
+      border-radius:8px;color:var(--fg);font-size:14px;letter-spacing:.12em;padding:0 14px;height:44px;outline:none;}
+    input:focus{border-color:var(--c2);}
+    button.primary{width:100%;background:linear-gradient(90deg,var(--c1),#7C3AED);color:#fff;border:none;
+      border-radius:8px;height:44px;font-size:13px;font-weight:700;cursor:pointer;margin-top:12px;}
+    button.primary:hover{opacity:.88;} button.primary:disabled{opacity:.4;cursor:default;}
+    .strip{font-size:12px;padding:10px 14px;border-radius:8px;margin-top:12px;display:none;}
+    .strip.err{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.22);display:block;}
+    .login-shell{max-width:420px;margin:6vh auto 0;}
+
+    .topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+    .topbar .meta{font-size:11px;color:var(--fg-dim);}
+    .btn-ghost{background:rgba(255,255,255,.05);border:1px solid var(--hair);color:var(--fg);
+      border-radius:8px;height:34px;padding:0 14px;font-size:12px;font-weight:600;cursor:pointer;}
+    .btn-ghost:hover{border-color:var(--c2);}
+
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+    @media(max-width:760px){.kpis{grid-template-columns:1fr 1fr;}}
+    .kpi{background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:10px;padding:16px;}
+    .kpi-label{font-size:11px;font-weight:600;color:var(--fg-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+    .kpi-value{font-size:26px;font-weight:800;line-height:1;}
+    .kpi-value.cyan{color:var(--c2-hi);} .kpi-value.green{color:var(--green);} .kpi-value.amber{color:var(--amber);}
+    .kpi-sub{font-size:11px;color:var(--fg-dim);margin-top:5px;}
+
+    .charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:760px){.charts{grid-template-columns:1fr;}}
+    .chart-card{background:rgba(15,20,30,.88);border:1px solid var(--hair);border-radius:var(--radius);padding:18px;}
+    .chart-card h3{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--fg);}
+    .chart-box{position:relative;height:220px;}
+
+    .lists{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+    @media(max-width:760px){.lists{grid-template-columns:1fr;}}
+    .list-card{background:rgba(15,20,30,.88);border:1px solid var(--hair);border-radius:var(--radius);padding:18px;}
+    .list-card h3{font-size:13px;font-weight:700;margin-bottom:12px;}
+    .row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--hair);}
+    .row:last-child{border-bottom:none;} .row .k{color:var(--fg-dim);} .row .v{font-weight:700;}
+    #dash{display:none;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="logo" href="https://www.jarvquant.com/"><img class="logo-img" src="/assets/favicon.png" alt="JarvQuant"/><span class="logo-text">JarvQuant · Admin</span></a>
+
+  <!-- Login -->
+  <div class="login-shell" id="loginShell">
+    <div class="card">
+      <p class="card-title">Admin Dashboard</p>
+      <p class="card-sub">Enter the admin key to view live performance metrics.</p>
+      <input type="password" id="keyInput" placeholder="Admin key" autocomplete="current-password" />
+      <button class="primary" id="loginBtn" onclick="login()">View Dashboard</button>
+      <div class="strip" id="strip"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dash">
+    <div class="topbar">
+      <div class="meta" id="meta">—</div>
+      <button class="btn-ghost" onclick="load()">↻ Refresh</button>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-label">Total Sign-ups</div><div class="kpi-value cyan" id="kSignups">—</div><div class="kpi-sub" id="kSignupsSub"></div></div>
+      <div class="kpi"><div class="kpi-label">Page Views (30d)</div><div class="kpi-value" id="kViews">—</div><div class="kpi-sub">website visits</div></div>
+      <div class="kpi"><div class="kpi-label">Downloads</div><div class="kpi-value" id="kDownloads">—</div><div class="kpi-sub">all releases</div></div>
+      <div class="kpi"><div class="kpi-label">Est. MRR</div><div class="kpi-value green" id="kMrr">—</div><div class="kpi-sub" id="kMrrSub"></div></div>
+    </div>
+
+    <div class="charts" style="margin-top:16px;">
+      <div class="chart-card"><h3>Sign-ups · last 30 days</h3><div class="chart-box"><canvas id="chSignups"></canvas></div></div>
+      <div class="chart-card"><h3>Page Views · last 30 days</h3><div class="chart-box"><canvas id="chViews"></canvas></div></div>
+    </div>
+
+    <div class="lists" style="margin-top:16px;">
+      <div class="list-card"><h3>Sign-ups by code</h3><div id="byCode"></div></div>
+      <div class="list-card"><h3>Active subscriptions</h3><div id="byTier"></div></div>
+      <div class="list-card"><h3>Downloads by release</h3><div id="byRelease"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = "https://jarvquant-api.onrender.com";
+  let KEY = "";
+  let chSignups, chViews;
+
+  document.getElementById("keyInput").addEventListener("keydown", e => { if (e.key === "Enter") login(); });
+
+  function setErr(msg){ const el=document.getElementById("strip"); el.className="strip err"; el.textContent=msg; }
+
+  async function login(){
+    KEY = document.getElementById("keyInput").value.trim();
+    if(!KEY){ setErr("Enter the admin key."); return; }
+    const btn=document.getElementById("loginBtn"); btn.disabled=true;
+    const ok = await load();
+    btn.disabled=false;
+    if(ok){
+      document.getElementById("loginShell").style.display="none";
+      document.getElementById("dash").style.display="block";
+    }
+  }
+
+  function fmtEur(n){ return "€ " + (n??0).toFixed(2).replace(".",","); }
+
+  async function load(){
+    try{
+      const res = await fetch(API + "/admin/stats", { headers: { Authorization: "Bearer " + KEY } });
+      if(!res.ok){ setErr(res.status===401 ? "Invalid admin key." : "Error "+res.status); return false; }
+      render(await res.json());
+      return true;
+    }catch(e){ setErr("Network error — backend may be waking up, try again."); return false; }
+  }
+
+  function render(d){
+    document.getElementById("meta").textContent = "Updated " + new Date(d.generated_at).toLocaleString();
+    // KPIs
+    document.getElementById("kSignups").textContent = d.signups.total;
+    const nqq = (d.signups.by_code.find(c=>c.code==="NQQ")||{}).count || 0;
+    document.getElementById("kSignupsSub").textContent = nqq + " via NQQ";
+    document.getElementById("kViews").textContent = d.pageviews.total_30d;
+    document.getElementById("kDownloads").textContent = d.downloads.total;
+    document.getElementById("kMrr").textContent = fmtEur(d.revenue.mrr_eur);
+    document.getElementById("kMrrSub").textContent = d.revenue.active_subs + " active · " + fmtEur(d.revenue.commission_total_eur) + " commission";
+
+    // Charts
+    drawLine("chSignups", chSignups, d.signups.by_day, "#4FE4F0").then(c=>chSignups=c);
+    drawLine("chViews", chViews, d.pageviews.by_day, "#7C3AED").then(c=>chViews=c);
+
+    // Lists
+    listInto("byCode", d.signups.by_code.map(c=>[c.code, c.count]));
+    listInto("byTier", Object.entries(d.revenue.by_tier));
+    listInto("byRelease", d.downloads.by_release.map(r=>[r.tag, r.count]));
+  }
+
+  async function drawLine(canvasId, existing, series, color){
+    if(existing) existing.destroy();
+    const ctx = document.getElementById(canvasId).getContext("2d");
+    const grad = ctx.createLinearGradient(0,0,0,220);
+    grad.addColorStop(0, color+"55"); grad.addColorStop(1, color+"00");
+    return new Chart(ctx, {
+      type:"line",
+      data:{ labels: series.map(p=>p.date.slice(5)), datasets:[{
+        data: series.map(p=>p.count), borderColor:color, backgroundColor:grad,
+        fill:true, tension:.35, pointRadius:0, borderWidth:2 }]},
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+        scales:{ x:{ grid:{display:false}, ticks:{color:"#6b7280",maxTicksLimit:6,font:{size:10}} },
+                 y:{ grid:{color:"rgba(255,255,255,.06)"}, ticks:{color:"#6b7280",precision:0,font:{size:10}}, beginAtZero:true } } }
+    });
+  }
+
+  function listInto(id, pairs){
+    const el = document.getElementById(id);
+    if(!pairs.length){ el.innerHTML = '<div class="row"><span class="k">No data yet</span></div>'; return; }
+    el.innerHTML = pairs.map(([k,v])=>`<div class="row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join("");
+  }
+</script>
+</body>
+</html>
