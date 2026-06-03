@@ -773,7 +773,7 @@
   <script>
     try {
       var _pv = JSON.stringify({ path: location.pathname, ref: document.referrer || "" });
-      var _api = "https://jarvquant-api.onrender.com/track";
+      var _api = "https://jarvquant-api.onrender.com/v";
       if (navigator.sendBeacon) navigator.sendBeacon(_api, _pv);
       else fetch(_api, { method: "POST", body: _pv, keepalive: true });
     } catch (e) {}
