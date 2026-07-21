@@ -109,6 +109,10 @@
       <div class="list-card"><h3>Active subscriptions</h3><div id="byTier"></div></div>
       <div class="list-card"><h3>Downloads by release</h3><div id="byRelease"></div></div>
     </div>
+
+    <div class="lists" style="margin-top:16px;">
+      <div class="list-card" style="grid-column:1 / -1;"><h3>Traffic sources · last 30 days</h3><div id="byReferrer"></div></div>
+    </div>
   </div>
 </div>
 
@@ -163,6 +167,7 @@
     listInto("byCode", d.signups.by_code.map(c=>[c.code, c.count]));
     listInto("byTier", Object.entries(d.revenue.by_tier));
     listInto("byRelease", d.downloads.by_release.map(r=>[r.tag, r.count]));
+    listInto("byReferrer", (d.pageviews.referrers||[]).map(r=>[r.source, r.count]));
   }
 
   async function drawLine(canvasId, existing, series, color){
