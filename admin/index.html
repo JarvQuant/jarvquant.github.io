@@ -46,7 +46,7 @@
       border-radius:8px;height:34px;padding:0 14px;font-size:12px;font-weight:600;cursor:pointer;}
     .btn-ghost:hover{border-color:var(--c2);}
 
-    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+    .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
     @media(max-width:760px){.kpis{grid-template-columns:1fr 1fr;}}
     .kpi{background:rgba(255,255,255,.03);border:1px solid var(--hair);border-radius:10px;padding:16px;}
     .kpi-label{font-size:11px;font-weight:600;color:var(--fg-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
@@ -96,12 +96,17 @@
       <div class="kpi"><div class="kpi-label">Total Sign-ups</div><div class="kpi-value cyan" id="kSignups">—</div><div class="kpi-sub" id="kSignupsSub"></div></div>
       <div class="kpi"><div class="kpi-label">Page Views (30d)</div><div class="kpi-value" id="kViews">—</div><div class="kpi-sub">website visits</div></div>
       <div class="kpi"><div class="kpi-label">Downloads</div><div class="kpi-value" id="kDownloads">—</div><div class="kpi-sub">all releases</div></div>
+      <div class="kpi"><div class="kpi-label">App Installs</div><div class="kpi-value cyan" id="kInstalls">—</div><div class="kpi-sub" id="kInstallsSub">first launches (needs ≥ v1.0.1)</div></div>
       <div class="kpi"><div class="kpi-label">Est. MRR</div><div class="kpi-value green" id="kMrr">—</div><div class="kpi-sub" id="kMrrSub"></div></div>
     </div>
 
     <div class="charts" style="margin-top:16px;">
       <div class="chart-card"><h3>Sign-ups · last 30 days</h3><div class="chart-box"><canvas id="chSignups"></canvas></div></div>
       <div class="chart-card"><h3>Page Views · last 30 days</h3><div class="chart-box"><canvas id="chViews"></canvas></div></div>
+    </div>
+
+    <div class="charts" style="margin-top:16px;">
+      <div class="chart-card" style="grid-column:1 / -1;"><h3>App Launches · last 30 days</h3><div class="chart-box"><canvas id="chApp"></canvas></div></div>
     </div>
 
     <div class="lists" style="margin-top:16px;">
@@ -119,7 +124,7 @@
 <script>
   const API = "https://jarvquant-api.onrender.com";
   let KEY = "";
-  let chSignups, chViews;
+  let chSignups, chViews, chApp;
 
   document.getElementById("keyInput").addEventListener("keydown", e => { if (e.key === "Enter") login(); });
 
@@ -158,10 +163,14 @@
     document.getElementById("kDownloads").textContent = d.downloads.total;
     document.getElementById("kMrr").textContent = fmtEur(d.revenue.mrr_eur);
     document.getElementById("kMrrSub").textContent = d.revenue.active_subs + " active · " + fmtEur(d.revenue.commission_total_eur) + " commission";
+    const app = d.app || {};
+    document.getElementById("kInstalls").textContent = app.first_opens_total ?? "—";
+    document.getElementById("kInstallsSub").textContent = (app.opens_30d ?? 0) + " launches (30d)";
 
     // Charts
     drawLine("chSignups", chSignups, d.signups.by_day, "#4FE4F0").then(c=>chSignups=c);
     drawLine("chViews", chViews, d.pageviews.by_day, "#7C3AED").then(c=>chViews=c);
+    drawLine("chApp", chApp, app.by_day || [], "#34D399").then(c=>chApp=c);
 
     // Lists
     listInto("byCode", d.signups.by_code.map(c=>[c.code, c.count]));
