@@ -138,19 +138,6 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   if (imgBoxClose) imgBoxClose.addEventListener("click", closeImgBox);
   if (imgBoxX) imgBoxX.addEventListener("click", closeImgBox);
 
-  // Product strip — click any card to open lightbox
-  document.querySelectorAll(".prod-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      const img = card.querySelector("img");
-      const cap = card.querySelector("figcaption");
-      openBox({
-        src: img ? img.getAttribute("src") : null,
-        title: cap ? cap.textContent : "—",
-        cap: "",
-      });
-    });
-  });
-
   // Audio
   const audio = createAmbientEngine();
   const muteToggle = document.getElementById("muteToggle");
@@ -331,6 +318,7 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   // Desktop rail
   let rail = 0;
   let railTarget = 0;
+  const scrollCue = document.getElementById("scrollCue");
 
   function chapterForRail(t) {
     if (t < 0.18) return "threshold";
@@ -355,6 +343,11 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
     // Progress rail fill — smooth bar that tracks rail position
     if (progFill) {
       progFill.style.height = (rail * 100).toFixed(2) + "%";
+    }
+
+    // Scroll cue — visible while there is more page below, gone at the end.
+    if (scrollCue) {
+      scrollCue.classList.toggle("is-hidden", rail > 0.9 || !entered);
     }
 
     requestAnimationFrame(tickRail);
@@ -408,11 +401,12 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
         }
       }
 
-      const sensitivity = 0.00024;
-      const distToMemory = Math.abs(railTarget - 0.32);
-      const damping = distToMemory < 0.15 ? 0.55 : 1.0;
+      // Tuned for a near-native scroll feel: ~2x the old sensitivity and no
+      // section-local damping — the slowdown around Memory made the page feel
+      // unresponsive ("is my wheel broken?") for first-time visitors.
+      const sensitivity = 0.00048;
 
-      const next = clamp(railTarget + e.deltaY * sensitivity * damping, 0, 1);
+      const next = clamp(railTarget + e.deltaY * sensitivity, 0, 1);
 
       e.preventDefault();
       railTarget = next;
