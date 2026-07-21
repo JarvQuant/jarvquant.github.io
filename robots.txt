@@ -1,4 +1,8 @@
+# robots.txt — https://www.jarvquant.com
+# Search engines are welcome; the private admin dashboard is not.
+
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 Sitemap: https://www.jarvquant.com/sitemap.xml
