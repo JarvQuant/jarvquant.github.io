@@ -496,11 +496,10 @@ export function createWorld(canvas, { onHoverFragment, onSelectRecord, lang = "e
   dir.position.set(6, 10, 6);
   scene.add(dir);
 
-  const floor = new THREE.GridHelper(900, 320, 0xffffff, 0xffffff);
-  floor.material.opacity = 0.045;
-  floor.material.transparent = true;
-  floor.position.y = -1.25;
-  scene.add(floor);
+  // NOTE: a ground GridHelper used to sit here (y=-1.25, opacity 0.045).
+  // A flat plane below the camera projects a hard horizon line at eye level
+  // no matter how faint or how low it is — that was the stray dark line
+  // across the page. It added almost nothing visually, so it's removed.
 
   // --- Distant planet landmark (sphere + ring) ---
   // Disabled for now: it reads a bit too "gimmicky" and competes with the UI.
