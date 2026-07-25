@@ -1,8 +1,11 @@
 # robots.txt — https://www.jarvquant.com
-# Search engines are welcome; the private admin dashboard is not.
+# Search engines and AI crawlers are welcome; the private admin dashboard is not.
 
 User-agent: *
 Allow: /
 Disallow: /admin/
+
+# AI assistants: /llms.txt holds a plain-text summary of what JarvQuant is,
+# written specifically to be read by language models.
 
 Sitemap: https://www.jarvquant.com/sitemap.xml

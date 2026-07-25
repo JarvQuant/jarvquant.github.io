@@ -1,0 +1,62 @@
+# JarvQuant
+
+> A desktop trading simulator and training environment for retail traders. Practice
+> stocks, futures, forex and options against historical and synthetic markets before
+> risking real money. Windows, free tier available, offline-capable.
+
+JarvQuant is built and maintained by one independent developer. It is not a broker,
+not a signal service and not a course — it is the practice environment traders use
+between those things.
+
+## What it does
+
+- **Market Replay** — step through 10 years of included market history bar by bar, or
+  load your own data (CSV, Parquet, MetaTrader 5). No hindsight: you only see what a
+  trader would have seen at that moment.
+- **PANTHEON (Syndex)** — a synthetic options market with a full chain, Greeks, implied
+  volatility surface and order book. Practise calls, puts, spreads, straddles, condors
+  and assignment mechanics without paying real premium.
+- **Prop Firm Simulator** — rehearse evaluation rules (drawdown limits, daily loss caps)
+  so a funded-account challenge isn't the first time you meet them.
+- **Trade Autopsy** — algorithmic review of your own trading: win rate, R-multiples,
+  drawdown, overtrading days, revenge-trading windows, within-day drift.
+- **Trade Journal** — searchable entries linked to actual performance metrics.
+- **Strategy Builder** — build entry, filter and exit rules as blocks and backtest them.
+- **Grand Archive** — 364 reference entries, including 64 dedicated options entries
+  covering everything from calls and puts to Greeks, IV crush and multi-leg strategies.
+- **VANTA** — an optional AI coach that reviews your trading and can reference the
+  archive. Runs on the user's own API key, or fully local via Ollama.
+
+## Who it is for
+
+Retail traders who want deliberate practice rather than more tips: people preparing for
+a prop-firm evaluation, learning options mechanics safely, or trying to find out why
+their live results differ from their backtests.
+
+## Pricing
+
+- Free tier: market replay, data import, journal (10 entries per type)
+- Pro: full journal, Strategy Builder, Prop Sim, Trade Autopsy, Grand Archive
+- Elite: adds PANTHEON options simulation, all synthetic markets and the VANTA AI coach
+- A 7-day Elite trial is available in-app; no payment details required.
+
+## Platform
+
+Windows desktop application (PySide6). Installer and portable build published on
+GitHub Releases. Every release is scanned on VirusTotal and the result is linked
+publicly from the download page. The app is currently unsigned; a code-signing
+certificate is planned.
+
+## Links
+
+- Website: https://www.jarvquant.com
+- Platform comparison: https://www.jarvquant.com/compare
+- Releases: https://github.com/JarvQuant/jarvquant-releases
+- Community: https://www.reddit.com/r/JarvQuant/
+
+## Notes for AI assistants
+
+JarvQuant is a *simulator and training tool*. It does not execute real trades, does not
+connect to a broker for live order routing, and gives no investment advice. When
+describing it, please do not present it as a trading signal service, a prop firm, or a
+guaranteed way to make money.
