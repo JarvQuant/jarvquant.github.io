@@ -311,10 +311,19 @@ body{
   text-shadow: 0 0 80px rgba(34,211,238,0.14);
 }
 .hero-tag{
-  margin-top: 2px;
-  font: 700 13px/1.6 var(--mono);
-  letter-spacing: 0.2px;
-  color: var(--fg-dim);
+  /* This is the value proposition — at 13px/dim it read like a legal
+     footnote under an 86px wordmark. Given room and contrast it now
+     carries the weight it should. */
+  margin-top: 10px;
+  font: 600 clamp(14px, 1.35vw, 17px)/1.55 var(--mono);
+  letter-spacing: 0.3px;
+  color: var(--fg-body);
+  /* Wide enough that it breaks at a sentence boundary instead of
+     splitting "Stop gambling." across two lines. */
+  max-width: 72ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 0 0 20px rgba(8,12,22,0.9);
 }
 .hero-scroll-hint{
   margin-top: 18px;
@@ -421,21 +430,26 @@ body:not(.is-entered) .chapter.is-active{
 .chapter-title{
   margin: 0 0 16px 0;
   font-size: clamp(30px, 4.4vw, 54px);
-  line-height: 1.04;
+  /* 1.04 is fine for a single line, but these titles wrap to three —
+     at display size that reads as stacked, not set. */
+  line-height: 1.1;
   letter-spacing: -1.1px;
   color: var(--fg);
   font-weight: 700;
-  max-width: 18ch;
+  max-width: 20ch;
   text-shadow:
     0 0 28px rgba(8,12,22,0.85),
     0 0 60px rgba(34,211,238,0.12);
 }
 .chapter-sub{
-  margin: 0 0 18px 0;
+  margin: 0 0 20px 0;
   color: var(--fg-body);
-  font-size: 15px;
-  line-height: 1.55;
-  max-width: 48ch;
+  font-size: 15.5px;
+  line-height: 1.62;
+  /* 48ch measured out at ~388px — roughly 45 characters per line, well
+     under the 55-75 that reads comfortably, so paragraphs came out as
+     narrow choppy columns. */
+  max-width: 62ch;
   text-shadow: 0 0 18px rgba(8,12,22,0.85);
 }
 
