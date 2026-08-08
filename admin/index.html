@@ -162,7 +162,14 @@
     document.getElementById("kViews").textContent = d.pageviews.total_30d;
     document.getElementById("kDownloads").textContent = d.downloads.total;
     document.getElementById("kMrr").textContent = fmtEur(d.revenue.mrr_eur);
-    document.getElementById("kMrrSub").textContent = d.revenue.active_subs + " active · " + fmtEur(d.revenue.commission_total_eur) + " commission";
+    // MRR counts Stripe-backed subs only. Comped access is shown alongside
+    // so promos stay visible without pretending to be revenue.
+    const rev = d.revenue;
+    const comped = rev.comped_active ?? 0;
+    document.getElementById("kMrrSub").textContent =
+      rev.active_subs + " paying"
+      + (comped ? " · " + comped + " comped" : "")
+      + " · " + fmtEur(rev.commission_total_eur) + " commission";
     const app = d.app || {};
     document.getElementById("kInstalls").textContent = app.first_opens_total ?? "—";
     document.getElementById("kInstallsSub").textContent = (app.opens_30d ?? 0) + " launches (30d)";
@@ -174,7 +181,11 @@
 
     // Lists
     listInto("byCode", d.signups.by_code.map(c=>[c.code, c.count]));
-    listInto("byTier", Object.entries(d.revenue.by_tier));
+    listInto("byTier", [
+      ...Object.entries(rev.by_tier).map(([k, v]) => [k + " (paying)", v]),
+      ...Object.entries(rev.comped_by_tier || {}).map(([k, v]) => [k + " (comped)", v]),
+      ...(rev.comped_expired ? [["expired, pending logout", rev.comped_expired]] : []),
+    ]);
     listInto("byRelease", d.downloads.by_release.map(r=>[r.tag, r.count]));
     listInto("byReferrer", (d.pageviews.referrers||[]).map(r=>[r.source, r.count]));
   }
