@@ -697,7 +697,10 @@
   <!-- Privacy-friendly page-view beacon (no cookies, no PII) -->
   <script>
     try {
-      var _pv = JSON.stringify({ path: location.pathname, ref: document.referrer || "" });
+      // Prefer an explicit ?ref= tag (e.g. paid ad links) over document.referrer,
+      // which in-app browsers (Instagram, Reddit) often strip or mangle.
+      var _qref = new URLSearchParams(location.search).get("ref");
+      var _pv = JSON.stringify({ path: location.pathname, ref: _qref || document.referrer || "" });
       var _api = "https://jarvquant-api.onrender.com/v";
       if (navigator.sendBeacon) navigator.sendBeacon(_api, _pv);
       else fetch(_api, { method: "POST", body: _pv, keepalive: true });
