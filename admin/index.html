@@ -95,7 +95,7 @@
     <div class="kpis">
       <div class="kpi"><div class="kpi-label">Total Sign-ups</div><div class="kpi-value cyan" id="kSignups">—</div><div class="kpi-sub" id="kSignupsSub"></div></div>
       <div class="kpi"><div class="kpi-label">Page Views (30d)</div><div class="kpi-value" id="kViews">—</div><div class="kpi-sub">website visits</div></div>
-      <div class="kpi"><div class="kpi-label">Downloads</div><div class="kpi-value" id="kDownloads">—</div><div class="kpi-sub">all releases</div></div>
+      <div class="kpi"><div class="kpi-label">Downloads</div><div class="kpi-value" id="kDownloads">—</div><div class="kpi-sub" id="kDownloadsSub">all releases</div></div>
       <div class="kpi"><div class="kpi-label">App Installs</div><div class="kpi-value cyan" id="kInstalls">—</div><div class="kpi-sub" id="kInstallsSub">first launches (needs ≥ v1.0.1)</div></div>
       <div class="kpi"><div class="kpi-label">Est. MRR</div><div class="kpi-value green" id="kMrr">—</div><div class="kpi-sub" id="kMrrSub"></div></div>
     </div>
@@ -160,7 +160,10 @@
     const nqq = (d.signups.by_code.find(c=>c.code==="NQQ")||{}).count || 0;
     document.getElementById("kSignupsSub").textContent = nqq + " via NQQ";
     document.getElementById("kViews").textContent = d.pageviews.total_30d;
-    document.getElementById("kDownloads").textContent = d.downloads.total;
+    const dl = d.downloads;
+    document.getElementById("kDownloads").textContent = dl.ok === false ? "—" : dl.total;
+    document.getElementById("kDownloadsSub").textContent =
+      dl.ok === false ? "fetch failed: " + (dl.error || "unknown") : "all releases";
     document.getElementById("kMrr").textContent = fmtEur(d.revenue.mrr_eur);
     // MRR counts Stripe-backed subs only. Comped access is shown alongside
     // so promos stay visible without pretending to be revenue.
@@ -186,7 +189,11 @@
       ...Object.entries(rev.comped_by_tier || {}).map(([k, v]) => [k + " (comped)", v]),
       ...(rev.comped_expired ? [["expired, pending logout", rev.comped_expired]] : []),
     ]);
-    listInto("byRelease", d.downloads.by_release.map(r=>[r.tag, r.count]));
+    listInto("byRelease",
+      dl.ok === false
+        ? [["GitHub fetch failed", dl.error || "unknown error"]]
+        : dl.by_release.map(r=>[r.tag, r.count])
+    );
     listInto("byReferrer", (d.pageviews.referrers||[]).map(r=>[r.source, r.count]));
   }
 
