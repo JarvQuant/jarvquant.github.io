@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verify — JarvQuant</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#0a0d18" />
+  <link rel="icon" href="/assets/favicon.png" type="image/png" />
+  <style>
+    /* Self-contained: this page must render even if the main site assets
+       fail, since a broken verification page looks like a broken server. */
+    :root{
+      --bg:#0a0d18; --fg:rgba(245,247,255,.96); --fg-body:rgba(245,247,255,.82);
+      --fg-dim:rgba(245,247,255,.60); --hair:rgba(245,247,255,.12);
+      --c1:#6D28D9; --c2:#22D3EE; --green:#34D399; --red:#F87171; --radius:14px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;}
+    body{
+      background:var(--bg); color:var(--fg);
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      display:flex; align-items:center; justify-content:center; padding:24px;
+      background-image:
+        radial-gradient(900px 520px at 50% -10%, rgba(34,211,238,.10), transparent 62%),
+        radial-gradient(1100px 900px at 16% 30%, rgba(109,40,217,.08), transparent 70%);
+    }
+    .card{
+      width:100%; max-width:440px; background:rgba(15,20,30,.88);
+      border:1px solid var(--hair); border-radius:var(--radius); padding:34px 30px;
+      backdrop-filter:blur(16px); box-shadow:0 24px 80px rgba(0,0,0,.55); text-align:center;
+    }
+    .logo{width:44px;height:44px;border-radius:10px;margin:0 auto 18px;display:block;}
+    h1{font-size:20px;font-weight:800;margin-bottom:8px;}
+    p{font-size:13.5px;line-height:1.6;color:var(--fg-body);}
+    .muted{color:var(--fg-dim);font-size:12.5px;margin-top:14px;}
+    .widget{margin:22px 0 6px;display:flex;justify-content:center;min-height:70px;}
+    button{
+      width:100%;background:linear-gradient(90deg,var(--c1),#7C3AED);color:#fff;border:none;
+      border-radius:9px;height:46px;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;
+    }
+    button:hover{opacity:.9;} button:disabled{opacity:.4;cursor:default;}
+    .state{margin-top:16px;font-size:13px;line-height:1.55;padding:12px 14px;border-radius:9px;display:none;}
+    .state.ok{display:block;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.28);color:var(--green);}
+    .state.err{display:block;background:rgba(248,113,113,.10);border:1px solid rgba(248,113,113,.28);color:var(--red);}
+    .brand{margin-top:22px;font-size:11px;color:var(--fg-dim);}
+    .brand a{color:var(--c2);text-decoration:none;}
+  </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+  <div class="card">
+    <img class="logo" src="/assets/favicon.png" alt="JarvQuant" />
+    <h1>Quick verification</h1>
+    <p>One check to confirm you're a person, then you'll get access to the server.</p>
+
+    <div class="widget">
+      <!-- Replace data-sitekey with your Cloudflare Turnstile site key -->
+      <div class="cf-turnstile"
+           data-sitekey="TURNSTILE_SITE_KEY"
+           data-callback="onSolved"
+           data-theme="dark"></div>
+    </div>
+
+    <button id="btn" disabled>Verify me</button>
+    <div class="state" id="state"></div>
+    <p class="muted" id="hint">Complete the check above to continue.</p>
+
+    <div class="brand">JarvQuant · <a href="https://www.jarvquant.com">jarvquant.com</a></div>
+  </div>
+
+<script>
+  const API = "https://jarvquant-api.onrender.com";
+  const btn = document.getElementById("btn");
+  const stateEl = document.getElementById("state");
+  const hint = document.getElementById("hint");
+  let turnstileToken = "";
+
+  // The signed token comes from the Discord button; it carries the user's
+  // Discord id and expires quickly. Without it there is nothing to verify.
+  const params = new URLSearchParams(location.search);
+  const token = params.get("t") || "";
+
+  function show(kind, msg){
+    stateEl.className = "state " + kind;
+    stateEl.textContent = msg;
+  }
+
+  if (!token) {
+    show("err", "This link is missing its verification code. Go back to Discord and click the button again.");
+    hint.style.display = "none";
+  }
+
+  // Called by the Turnstile widget once the challenge is solved.
+  window.onSolved = function (t) {
+    turnstileToken = t;
+    if (token) { btn.disabled = false; hint.textContent = "Ready — click Verify me."; }
+  };
+
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    hint.style.display = "none";
+    show("ok", "Verifying…");
+    try {
+      const r = await fetch(API + "/discord/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: token, turnstile: turnstileToken }),
+      });
+      if (r.ok) {
+        show("ok", "You're verified. You can close this tab and head back to Discord.");
+        btn.style.display = "none";
+      } else {
+        let detail = "Verification failed. Go back to Discord and click the button again.";
+        try { const j = await r.json(); if (j.detail) detail = j.detail; } catch (e) {}
+        show("err", detail);
+        btn.disabled = false;
+      }
+    } catch (e) {
+      show("err", "Could not reach the server. Please try again in a moment.");
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
