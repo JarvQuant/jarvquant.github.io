@@ -160,10 +160,17 @@
     const nqq = (d.signups.by_code.find(c=>c.code==="NQQ")||{}).count || 0;
     document.getElementById("kSignupsSub").textContent = nqq + " via NQQ";
     document.getElementById("kViews").textContent = d.pageviews.total_30d;
+    // A stale reading still carries real numbers from the last good fetch,
+    // so show them rather than a dash — only a fetch that never succeeded
+    // leaves us with nothing to display.
     const dl = d.downloads;
-    document.getElementById("kDownloads").textContent = dl.ok === false ? "—" : dl.total;
+    const dlStale = dl.stale === true;
+    const dlBlank = dl.ok === false && !dlStale;
+    document.getElementById("kDownloads").textContent = dlBlank ? "—" : dl.total;
     document.getElementById("kDownloadsSub").textContent =
-      dl.ok === false ? "fetch failed: " + (dl.error || "unknown") : "all releases";
+      dlBlank ? "fetch failed: " + (dl.error || "unknown")
+              : dlStale ? "all releases · last known (refresh rate-limited)"
+              : "all releases";
     document.getElementById("kMrr").textContent = fmtEur(d.revenue.mrr_eur);
     // MRR counts Stripe-backed subs only. Comped access is shown alongside
     // so promos stay visible without pretending to be revenue.
