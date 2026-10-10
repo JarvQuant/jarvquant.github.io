@@ -9,7 +9,7 @@
 
   <link rel="canonical" href="https://www.jarvquant.com/" />
   <meta name="robots" content="index,follow" />
-  <meta name="theme-color" content="#05060a" />
+  <meta name="theme-color" content="#0a0c10" />
   <meta name="google-site-verification" content="GZYj6iDuDzTTYH891eALYbDdMbPakX9H-hKgYT9-Ns8" />
 
   <!-- Open Graph / Twitter -->
@@ -265,429 +265,429 @@
   ]
   </script>
 
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css?v=2" />
 </head>
-
 <body>
-  <canvas id="nebula" aria-hidden="true"></canvas>
-  <canvas id="world" aria-hidden="true"></canvas>
-  <div class="overlay" aria-hidden="true"></div>
+  <a class="skip" href="#main">Skip to content</a>
 
-  <div class="brandwords" aria-hidden="true">
-    <div class="bw bw-memory" id="bwMemory">MEMORY</div>
-    <div class="bw bw-replay" id="bwReplay">REPLAY</div>
-    <div class="bw bw-structure" id="bwStructure">STRUCTURE</div>
-    <div class="bw bw-edge" id="bwEdge">EDGE</div>
-  </div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-replay" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5"/><path d="M10.5 9.2l4.5 2.8-4.5 2.8z"/></g></symbol>
+      <symbol id="i-journal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19"/><path d="M9 7.5h6M9 11h6"/></g></symbol>
+      <symbol id="i-autopsy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 3.5v17h17"/><path d="M7.5 15l3.5-4 3 2.5 5-6.5"/></g></symbol>
+      <symbol id="i-archive" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z"/><path d="M3.5 12.5l8.5 4.5 8.5-4.5"/><path d="M3.5 16.5l8.5 4.5 8.5-4.5"/></g></symbol>
+      <symbol id="i-candles" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 3v18M16.5 3v18"/><rect x="5.5" y="7" width="4" height="8" rx="1"/><rect x="14.5" y="10" width="4" height="6" rx="1"/></g></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8 8 0 0 1-11.7 7.1L3.5 20.5l1.4-5A8 8 0 1 1 20.5 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></g></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></g></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6.5h9M17 6.5h3M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></g></symbol>
+      <symbol id="i-import" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.5v4A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5v-4"/><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/></g></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-discord" viewBox="0 0 24 24"><path fill="currentColor" d="M20.32 4.37A19.8 19.8 0 0 0 15.4 2.84a13.7 13.7 0 0 0-.63 1.29 18.4 18.4 0 0 0-5.5 0 12.6 12.6 0 0 0-.64-1.29 19.7 19.7 0 0 0-4.93 1.53C.6 9.05-.24 13.6.18 18.1a19.9 19.9 0 0 0 6.04 3.05c.49-.66.92-1.36 1.3-2.1a12.9 12.9 0 0 1-2.04-.98l.5-.39a14.2 14.2 0 0 0 12.06 0l.5.39c-.65.39-1.33.71-2.04.98.37.74.81 1.44 1.3 2.1a19.8 19.8 0 0 0 6.04-3.05c.5-5.22-.85-9.73-3.52-13.73zM8.02 15.33c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.95 2.42-2.15 2.42zm7.96 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.94 2.42-2.15 2.42z"/></symbol>
+    </defs>
+  </svg>
 
-  <header class="topbar">
-    <a class="brand" href="#" aria-label="JarvQuant home" data-action="home">
-      <img class="brand-logo" src="assets/logo.png" alt="" aria-hidden="true" />
-      <span class="brand-text">JarvQuant</span>
-    </a>
-
-    <nav class="nav" aria-label="Primary">
-      <button class="nav-item" data-action="goto" data-target="memory" data-i18n="nav.memory">Memory</button>
-      <button class="nav-item" data-action="goto" data-target="replay" data-i18n="nav.replay">Replay</button>
-      <button class="nav-item" data-action="goto" data-target="structure" data-i18n="nav.structure">Structure</button>
-      <button class="nav-item" data-action="goto" data-target="edge" data-i18n="nav.edge">Access</button>
-    </nav>
-
-    <div class="controls">
-      <div class="socials" aria-label="Social links">
-        <a class="social" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer">Discord</a>
-        <a class="social" href="https://x.com/JarvQuant" target="_blank" rel="noreferrer">X</a>
-        <a class="social" href="https://www.instagram.com/jarvquant?igsh=MXZoOHByeDhyMm1raA==" target="_blank" rel="noreferrer">IG</a>
-        <a class="social" href="https://youtube.com/@JarvQuant" target="_blank" rel="noreferrer">YouTube</a>
-        <a class="social" href="https://www.tiktok.com/@jarvquant?_r=1&_t=ZN-93yVKmzLK0U" target="_blank" rel="noreferrer">TikTok</a>
-      </div>
-
-      <a class="pill cta-pill" id="getAccess" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe" title="Download JarvQuant for Windows">
-        <span class="cta-arrow" aria-hidden="true">⬇</span>
-        <span class="pill-text" data-i18n="ui.download">Download</span>
+  <header class="header" id="header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#" aria-label="JarvQuant home">
+        <svg class="brand-mark" viewBox="0 0 26 26" aria-hidden="true"><rect x=".5" y=".5" width="25" height="25" rx="7" fill="#151920" stroke="#262c36"/><path d="M5 14.5h3l2.2-6 3 10.5 2.6-7.5 1.4 3H21" fill="none" stroke="#33c6e3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>JarvQuant</span>
       </a>
-
-      <button class="pill" id="muteToggle" aria-pressed="true" title="Mute">
-        <span class="pill-dot" aria-hidden="true"></span>
-        <span class="pill-text" data-i18n="ui.mute">Muted</span>
-      </button>
-
-      <label class="lang" title="Language">
-        <span class="lang-label">Lang</span>
-        <select class="lang-select" id="langSelect" aria-label="Language">
+      <nav class="nav" id="nav" aria-label="Primary">
+        <a href="#how" data-i18n="nav.how">How it works</a>
+        <a href="#features" data-i18n="nav.features">Features</a>
+        <a href="#pricing" data-i18n="nav.pricing">Pricing</a>
+        <a href="#faq" data-i18n="nav.faq">FAQ</a>
+        <a href="/compare" data-i18n="nav.compare">Compare</a>
+      </nav>
+      <div class="header-actions">
+        <a class="icon-link" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer" aria-label="Discord"><svg><use href="#i-discord"/></svg></a>
+        <select class="lang" id="langSelect" aria-label="Language">
           <option value="en">EN</option>
           <option value="de">DE</option>
         </select>
-      </label>
+        <a class="btn btn-primary" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe" aria-label="Download JarvQuant for Windows">
+          <svg><use href="#i-download"/></svg><span data-i18n="cta.download_short">Download</span>
+        </a>
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav"><svg><use href="#i-menu"/></svg></button>
+      </div>
     </div>
   </header>
 
-  <main class="ui">
-    <div class="hero" id="hero" aria-hidden="false">
-      <div class="hero-inner">
-        <img class="hero-logo" src="assets/logo.png" alt="" aria-hidden="true" />
-        <div class="hero-word">JarvQuant</div>
-        <div class="hero-tag" data-i18n="hero.tag">The Trading OS for retail performance. Stop gambling. Start training.</div>
-        <div class="hero-scroll-hint" data-i18n="hero.scroll">Scroll to explore the platform</div>
-      </div>
-    </div>
-    <section class="chapter is-active" id="chapter-threshold" data-chapter="threshold">
-      <div class="chapter-kicker" data-i18n="threshold.kicker">THRESHOLD · BOOK I</div>
-      <h1 class="chapter-title" data-i18n="threshold.title">The gap between theory and real market experience. Closed.</h1>
-      <p class="chapter-sub" data-i18n="threshold.sub">JarvQuant is a replay-first market archive and training lab. Replay any market bar-by-bar, analyze your performance algorithmically, build strategies with hard constraints, and train with deliberate practice drills. All in one offline-capable Windows app.</p>
-
-      <ul class="threshold-points" aria-label="Why JarvQuant" >
-        <li data-i18n="threshold.point1">Bar-by-bar market replay with 10 years of data included. Practice in real conditions, without knowing what comes next.</li>
-        <li data-i18n="threshold.point2">Searchable trade journal connected to your actual performance metrics. Patterns never get lost in screenshots again.</li>
-        <li data-i18n="threshold.point3">Strategy Builder, Deliberate Practice drills, and a 300+ playbook archive. Turn repetition into a system you can trust.</li>
-      </ul>
-
-      <p class="threshold-why" data-i18n="threshold.why">This is how serious retail traders stop guessing and start building a measurable, repeatable edge.</p>
-
-      <div class="micro" data-i18n="threshold.micro" data-desktop-only>Tip: move your mouse gently. Click a record to focus.</div>
-    </section>
-
-    <section class="chapter" id="chapter-memory" data-chapter="memory">
-      <div class="chapter-kicker" data-i18n="memory.kicker">MEMORY FIELD</div>
-      <h2 class="chapter-title" data-i18n="memory.title">Your trades are data. JarvQuant makes them speak.</h2>
-      <p class="chapter-sub" data-i18n="memory.sub">Every decision stored. Every pattern retrievable. Structured, objective self-improvement. No spreadsheets, no screenshots, no guesswork.</p>
-
-      <figure class="m-media" aria-hidden="true">
-        <img class="m-shot" src="assets/journal.jpg" alt="JarvQuant trade journal interface — searchable trade entries linked to performance data" loading="lazy" />
-      </figure>
-
-      <div class="m-info" aria-label="Positioning">
-        <div class="m-info-title" data-i18n="pos.model.title">The Model</div>
-        <ul class="m-list">
-          <li data-i18n="pos.model.1">No VC funding. No external pricing pressure. Pricing set by the product, not investors.</li>
-          <li data-i18n="pos.model.2">Full data sovereignty. Your trades stay on your machine, never shared with external servers.</li>
-        </ul>
-
-        <div class="m-info-title" data-i18n="pos.approach.title">How it's built</div>
-        <ul class="m-list">
-          <li data-i18n="pos.approach.1">Built by a solo developer and an AI agent. Lean by design, no overhead passed to you.</li>
-          <li data-i18n="pos.approach.2">Community-first development: real trader feedback shapes every release.</li>
-          <li data-i18n="pos.approach.3">No course upsells. No lifestyle content. Just a professional tool for systematic self-improvement.</li>
-        </ul>
-
-        <div class="m-info-title" data-i18n="pos.angle.title">Why JarvQuant</div>
-        <ul class="m-list">
-          <li data-i18n="pos.angle.1">Most trading tools only log what happened. JarvQuant shows you why and gives you structured drills to train what went wrong.</li>
-          <li data-i18n="pos.angle.2">300+ strategy playbooks. Deliberate Practice challenges. Algorithmic post-trade review. What institutions have had for years, now available for retail traders.</li>
-          <li data-i18n="pos.angle.3">If you are serious about performance, JarvQuant is the only platform built for that specific goal.</li>
-        </ul>
-      </div>
-
-      <div class="micro" data-i18n="memory.micro" data-desktop-only>
-        Scroll to move. Click a record to zoom.
-      </div>
-    </section>
-
-    <section class="chapter" id="chapter-replay" data-chapter="replay">
-      <div class="chapter-kicker" data-i18n="replay.kicker">REPLAY CHAMBER</div>
-      <h2 class="chapter-title" data-i18n="replay.title">Replay any market moment before you knew the outcome.</h2>
-      <p class="chapter-sub" data-i18n="replay.sub">Step through 10 years of market history bar-by-bar, or load your own data. Practice entries, exits, and risk management in real conditions with zero hindsight bias. Powered by the JQIV Market Engine with dynamic volatility, spreads, and slippage.</p>
-
-      <figure class="m-media" aria-hidden="true">
-        <img class="m-shot" src="assets/replay.jpg" alt="JarvQuant market replay — bar-by-bar chart replay interface for trading practice without hindsight bias" loading="lazy" />
-      </figure>
-
-      <div class="micro" data-i18n="replay.micro" data-desktop-only>Step through any market. One bar at a time.</div>
-    </section>
-
-    <section class="chapter" id="chapter-structure" data-chapter="structure">
-      <div class="chapter-kicker" data-i18n="structure.kicker">STRATEGY STRUCTURE</div>
-      <h2 class="chapter-title" data-i18n="structure.title">Build the system that keeps you disciplined.</h2>
-      <p class="chapter-sub" data-i18n="structure.sub">Choose from 300+ strategy playbooks, each with checklists and documented error patterns. Wire your rules and risk limits into hard constraints. Then run Deliberate Practice drills until the system is second nature.</p>
-
-      <figure class="m-media" aria-hidden="true">
-        <img class="m-shot" src="assets/settings.jpg" alt="JarvQuant strategy structure — rules, risk constraints, and execution settings panel" loading="lazy" />
-      </figure>
-
-      <div class="micro" data-i18n="structure.micro" data-desktop-only>Rules in. Discipline out.</div>
-    </section>
-
-    <section class="chapter chapter-wide" id="chapter-edge" data-chapter="edge">
-      <div class="chapter-kicker" data-i18n="edge.kicker">ACCESS · BOOK V</div>
-      <h2 class="chapter-title" data-i18n="edge.title">Start free. Go deeper when you're ready.</h2>
-      <p class="chapter-sub" data-i18n="edge.sub">Every tier is built for a different stage of your trading development. No credit card needed to start. Download and run in under a minute.</p>
-
-      <!-- Primary download CTA — direct .exe from the releases repo -->
-      <div class="download-row">
-        <a class="download-btn" id="downloadBtn" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe">
-          <span class="download-icon" aria-hidden="true">⬇</span>
-          <span class="download-text" data-i18n="edge.cta">Download for Windows</span>
-        </a>
-        <span class="download-note" data-i18n="edge.download.note">Windows · one-click installer</span>
-      </div>
-      <a class="download-verify" href="https://www.virustotal.com/gui/file/f1f52a2a09401cc2a6fa61e3a1f05dcfaf6aa32b3f7e62344798ab7662726fe4" target="_blank" rel="noopener noreferrer">
-        <span class="verify-shield" aria-hidden="true">🛡</span>
-        <span class="verify-text">Independently scanned on VirusTotal — clean across all engines. Verify it yourself before you install.</span>
-        <span class="verify-cta">Verify the scan <span class="verify-arrow" aria-hidden="true">↗</span></span>
-      </a>
-
-      <!-- Exhibition carousel — rotating 3D ring of product shots -->
-      <section class="exhibit" aria-label="Product exhibition">
-        <div class="exhibit-stage" id="exhibitStage">
-          <div class="exhibit-ring" id="exhibitRing">
-            <button type="button" class="exhibit-card" data-index="0" data-i18n-title="ex.1.title" data-i18n-cap="ex.1.cap" style="--i:0">
-              <img src="assets/autopsy-overtrade.png" alt="JarvQuant Trade Autopsy overtrade zone — daily trade limit visualized as a real-time line" loading="lazy" />
-            </button>
-            <button type="button" class="exhibit-card" data-index="1" data-i18n-title="ex.2.title" data-i18n-cap="ex.2.cap" style="--i:1">
-              <img src="assets/autopsy-grid.png" alt="JarvQuant Trade Autopsy daily breakdown — PnL, trades, sessions and within-day drift analysis" loading="lazy" />
-            </button>
-            <button type="button" class="exhibit-card" data-index="2" data-i18n-title="ex.3.title" data-i18n-cap="ex.3.cap" style="--i:2">
-              <img src="assets/autopsy-equity.png" alt="JarvQuant Trade Autopsy equity curve — winrate, average R-multiple, and drawdown metrics" loading="lazy" />
-            </button>
-            <button type="button" class="exhibit-card" data-index="3" data-i18n-title="ex.4.title" data-i18n-cap="ex.4.cap" style="--i:3">
-              <img src="assets/archive-style.png" alt="JarvQuant Grand Archive style test — personalized trading strategy matching based on your trading profile" loading="lazy" />
-            </button>
-            <button type="button" class="exhibit-card" data-index="4" data-i18n-title="ex.5.title" data-i18n-cap="ex.5.cap" style="--i:4">
-              <img src="assets/import-mt5.png" alt="JarvQuant MT5 data import bridge — connect MetaTrader 5 trade history via CSV, Parquet, or direct MT5 bridge" loading="lazy" />
-            </button>
+  <main id="main">
+    <!-- Hero: a live replay chart. Candles form tick by tick, the future stays hidden. -->
+    <section class="hero" id="hero">
+      <div class="hero-chart" aria-hidden="true"><canvas id="heroChart"></canvas></div>
+      <div class="wrap">
+        <div class="hero-copy">
+          <div class="eyebrow fade-in" style="--d:.05s"><span class="live-dot"></span><span data-i18n="hero.eyebrow">Market replay · Trade review · Synthetic markets</span></div>
+          <h1 class="split-words" id="heroTitle" data-i18n="hero.title">Trade the past like it's live.</h1>
+          <p class="lede fade-in" style="--d:.55s" data-i18n="hero.lede">JarvQuant replays real market data bar by bar with the future hidden. Practise your setups, then let Trade Autopsy show you what your trades are really doing to your account.</p>
+          <div class="hero-ctas fade-in" style="--d:.7s">
+            <a class="btn btn-primary btn-lg" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe">
+              <svg><use href="#i-download"/></svg><span data-i18n="cta.download">Download for Windows</span>
+            </a>
+            <a class="btn btn-secondary btn-lg" href="#how" data-i18n="cta.how">See how it works</a>
           </div>
-        </div>
-
-        <div class="exhibit-caption" id="exhibitCaption" aria-live="polite">
-          <div class="exhibit-counter"><span id="exhibitIdx">1</span><span class="exhibit-sep">/</span><span id="exhibitTotal">5</span></div>
-          <div class="exhibit-title" id="exhibitTitle">—</div>
-          <div class="exhibit-cap" id="exhibitCap">—</div>
-        </div>
-
-        <div class="exhibit-controls" role="group" aria-label="Carousel controls">
-          <button type="button" class="exhibit-arrow exhibit-prev" id="exhibitPrev" aria-label="Previous">‹</button>
-          <button type="button" class="exhibit-arrow exhibit-next" id="exhibitNext" aria-label="Next">›</button>
-        </div>
-      </section>
-
-      <!-- Pricing grid -->
-      <div class="pricing-grid" role="list">
-        <article class="plan plan-free" role="listitem">
-          <div class="plan-tag" data-i18n="plan.free.tag">FREE</div>
-          <div class="plan-name" data-i18n="plan.free.name">Starter</div>
-          <div class="plan-price"><span class="plan-amount">€0</span></div>
-          <div class="plan-period" data-i18n="plan.free.period">Forever. No card.</div>
-          <ul class="plan-features">
-            <li data-i18n="plan.free.f1">Bar-by-bar market replay environment</li>
-            <li data-i18n="plan.free.f2">Data import (CSV, Parquet, MT5)</li>
-            <li data-i18n="plan.free.f3">Trade journal: 10 entries rolling</li>
-            <li data-i18n="plan.free.f4">1 active strategy slot</li>
+          <ul class="hero-meta fade-in" style="--d:.85s">
+            <li><svg><use href="#i-check"/></svg><span data-i18n="hero.meta1">Free plan, no card required</span></li>
+            <li><svg><use href="#i-check"/></svg><a href="https://www.virustotal.com/gui/file/f1f52a2a09401cc2a6fa61e3a1f05dcfaf6aa32b3f7e62344798ab7662726fe4" target="_blank" rel="noopener noreferrer" data-i18n="hero.meta2">Scanned clean on VirusTotal</a></li>
+            <li><svg><use href="#i-check"/></svg><span data-i18n="hero.meta3">Your trades stay on your PC</span></li>
           </ul>
-          <a class="plan-cta plan-cta-ghost" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe">
-            <span data-i18n="plan.free.cta">Download Free</span>
-          </a>
-        </article>
-
-        <article class="plan plan-pro is-featured" role="listitem">
-          <div class="plan-flag" data-i18n="plan.pro.flag">MOST POPULAR</div>
-          <div class="plan-tag" data-i18n="plan.pro.tag">PRO</div>
-          <div class="plan-name" data-i18n="plan.pro.name">Operator</div>
-          <div class="plan-price">
-            <span class="plan-amount">€39<span class="plan-cents">.99</span></span>
-            <span class="plan-unit">/mo</span>
-          </div>
-          <div class="plan-period">
-            <span data-i18n="plan.pro.period">Billed monthly · cancel anytime</span>
-          </div>
-          <ul class="plan-features">
-            <li data-i18n="plan.pro.f1">Unlimited replay, imports, and journal entries</li>
-            <li data-i18n="plan.pro.f2">Strategy Builder with rules and constraints</li>
-            <li data-i18n="plan.pro.f3">Prop firm challenge simulator with rule presets</li>
-            <li data-i18n="plan.pro.f4">Backtesting engine</li>
-            <li data-i18n="plan.pro.f5">Trade Autopsy: algorithmic post-trade review</li>
-          </ul>
-          <div class="plan-cta plan-cta-inapp" data-i18n="plan.inapp">Available in-app</div>
-        </article>
-
-        <article class="plan plan-elite" role="listitem">
-          <div class="plan-tag" data-i18n="plan.elite.tag">ELITE</div>
-          <div class="plan-name" data-i18n="plan.elite.name">Architect</div>
-          <div class="plan-price">
-            <span class="plan-amount">€79<span class="plan-cents">.99</span></span>
-            <span class="plan-unit">/mo</span>
-          </div>
-          <div class="plan-period">
-            <span data-i18n="plan.elite.period">Billed monthly · cancel anytime</span>
-          </div>
-          <ul class="plan-features">
-            <li data-i18n="plan.elite.f1">Everything in Pro</li>
-            <li data-i18n="plan.elite.f2">PANTHEON: full simulation suite (Options Sim, Syndex + 5 synthetic markets)</li>
-            <li data-i18n="plan.elite.f3">VANTA AI Coach: dedicated trader personality, error analysis and psychology</li>
-            <li data-i18n="plan.elite.f4">Grand Archive: 300+ strategy playbooks with checklists and error patterns</li>
-            <li data-i18n="plan.elite.f5">Priority support</li>
-          </ul>
-          <div class="plan-cta plan-cta-inapp" data-i18n="plan.inapp">Available in-app</div>
-        </article>
-      </div>
-
-      <!-- Add-on + Lifetime row -->
-      <div class="pricing-extras">
-        <div class="extra extra-addon">
-          <div class="extra-tag" data-i18n="addon.tag">ADD-ON</div>
-          <div class="extra-name" data-i18n="addon.name">PANTHEON</div>
-          <div class="extra-body" data-i18n="addon.body">
-            The full simulation suite. Options Sim with live chains, Greeks, IV modeling and DTE tracking. Syndex synthetic market engine. Five additional synthetic markets: Volatex, Tempus, Chronus, Atlas, Kairos. Stack on any paid tier.
-          </div>
-          <div class="extra-price">
-            <span>€29.99 / mo</span>
-          </div>
-          <div class="plan-cta plan-cta-inapp" style="margin-top:12px;" data-i18n="plan.inapp">Available in-app</div>
-        </div>
-
-        <div class="extra extra-lifetime">
-          <div class="extra-tag" data-i18n="lifetime.tag">FOUNDERS · LIMITED 200</div>
-          <div class="extra-name" data-i18n="lifetime.name">Lifetime Access</div>
-          <div class="extra-body" data-i18n="lifetime.body">Elite plan including PANTHEON, forever. All future tiers and add-ons included at no extra cost. One payment, never charged again. Hard cap at 200 seats. Founders rate locked for life.</div>
-          <div class="extra-price">
-            <span>€1499</span>
-            <span class="extra-sep">·</span>
-            <span data-i18n="lifetime.note">one-time</span>
-          </div>
-          <div class="plan-cta plan-cta-inapp" style="margin-top:12px;" data-i18n="plan.inapp">Available in-app</div>
         </div>
       </div>
-
-      <!-- Refund policy notice -->
-      <p style="text-align:center; font-size:11px; color:rgba(245,247,255,0.50); max-width:560px; margin:18px auto 0; line-height:1.55;">
-        All sales are final. No refunds. You can cancel any subscription anytime to stop future billing — access stays until the end of the current billing period.
-      </p>
-
-      <!-- Community status strip -->
-      <div class="beta-strip">
-        <span class="beta-dot" aria-hidden="true"></span>
-        <span data-i18n="beta.status">Active development. Join Discord for community, drops, and direct feedback.</span>
-        <a class="beta-link" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer" data-i18n="beta.cta">Join Discord ↗</a>
-      </div>
-
-      <!-- Visible FAQ — mirrors the FAQPage structured data above.
-           Google only grants FAQ rich results when the answers are
-           actually visible to visitors, and it's the clearest plain-English
-           description of the product on the whole page. -->
-      <section class="faq" aria-labelledby="faq-heading">
-        <h2 class="faq-heading" id="faq-heading">Frequently asked questions</h2>
-
-        <details class="faq-item">
-          <summary>What is JarvQuant?</summary>
-          <p>JarvQuant is a desktop trading simulator and training environment for retail traders. You practise stocks, futures, forex and options against replayed historical data and synthetic markets, then review your own behaviour algorithmically. It runs on Windows, works offline, and has a free tier.</p>
-        </details>
-
-        <details class="faq-item">
-          <summary>Is JarvQuant a trading simulator?</summary>
-          <p>Yes. You trade against historical market data replayed bar by bar, or against synthetic markets from the JQIV engine. No real money is at risk and no orders are routed to a broker. It's built for deliberate practice: repeating realistic decisions until entries, exits and risk management become consistent.</p>
-        </details>
-
-        <details class="faq-item">
-          <summary>Can I practise options trading?</summary>
-          <p>Yes. PANTHEON is a synthetic options market with a full chain, live Greeks (delta, gamma, theta, vega), an implied volatility surface and an order book. Practise long calls and puts, covered calls, spreads, straddles, iron condors and assignment mechanics without paying real premium. The Grand Archive adds 64 options entries, from calls and puts through IV crush and strike selection to advanced multi-leg constructions.</p>
-        </details>
-
-        <details class="faq-item">
-          <summary>How is this different from paper trading with a broker?</summary>
-          <p>Broker paper trading runs in real time, so rehearsing a specific setup means waiting for it to happen again. JarvQuant replays history at any speed — hundreds of setups in an afternoon — and hides future bars so hindsight bias can't creep in. It also adds what brokers don't: algorithmic review of your habits, prop-firm rule simulation, a strategy builder with hard risk constraints, and a journal tied to your metrics.</p>
-        </details>
-
-        <details class="faq-item">
-          <summary>Can I prepare for a prop firm challenge?</summary>
-          <p>Yes. The Prop Firm Simulator reproduces evaluation constraints — profit targets, maximum daily loss, trailing and end-of-day drawdown — so you learn how you behave under those rules before paying an evaluation fee. Trade Autopsy then surfaces the habits that usually break challenges, like overtrading days and revenge trading after a loss.</p>
-        </details>
-
-        <details class="faq-item">
-          <summary>Is it free, and is there a trial?</summary>
-          <p>The free tier includes bar-by-bar market replay, data import and a journal capped at 10 entries per type — no card, no time limit. A 7-day Elite trial can be started inside the app and unlocks everything, including PANTHEON and the VANTA AI coach. No payment details are required, and nothing is charged when it ends.</p>
-        </details>
-
-        <details class="faq-item">
-          <summary>Does it work with MetaTrader 5?</summary>
-          <p>Yes. You can import your MT5 trade history via the data bridge, as well as CSV and Parquet files, and analyse your real trading in Trade Autopsy and the journal alongside your simulated sessions.</p>
-        </details>
-
-        <details class="faq-item">
-          <summary>What platforms are supported?</summary>
-          <p>JarvQuant is a native Windows desktop application. Every release is published on GitHub and scanned on VirusTotal, with the result linked from the download button above.</p>
-        </details>
-      </section>
-
-      <div class="micro" data-i18n="edge.micro" data-desktop-only>
-        Pricing locks at v1.0. Founders rate stays grandfathered for life.
+      <div class="hud" aria-hidden="true">
+        <div><div class="k" data-i18n="hud.mode">Replay</div><div class="v play">NAS100 · 5m</div></div>
+        <div><div class="k" data-i18n="hud.bar">Bar</div><div class="v" id="hudBar">1,284</div></div>
+        <div><div class="k" data-i18n="hud.trades">Trades</div><div class="v" id="hudTrades">0</div></div>
+        <div><div class="k" data-i18n="hud.session">Session</div><div class="v" id="hudR">+0.0R</div></div>
       </div>
     </section>
 
-    <div class="hud" id="hud" aria-hidden="true">
-      <div class="hud-title" id="hudTitle">Fragment</div>
-      <div class="hud-sub" id="hudSub">—</div>
+    <!-- Ticker tape: PANTHEON synthetic markets -->
+    <div class="tape" aria-label="PANTHEON synthetic markets">
+      <div class="tape-label"><span class="live-dot"></span><span data-i18n="tape.label">PANTHEON markets</span></div>
+      <div class="tape-track" id="tape"></div>
     </div>
 
-    <div class="panel" id="panel" aria-hidden="true">
-      <div class="panel-kicker" id="panelKicker">RECORD</div>
-      <div class="panel-title" id="panelTitle">—</div>
-      <div class="panel-body" id="panelBody">—</div>
-      <div class="panel-actions">
-        <button class="btn ghost" id="panelClose" type="button">Close</button>
+    <!-- The loop -->
+    <section class="section" id="how">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div class="kicker" data-i18n="loop.kicker">How it works</div>
+          <h2 data-i18n="loop.title">Four steps. Repeat until it's boring.</h2>
+        </div>
+
+        <div class="loop-grid">
+          <div class="loop-stage">
+            <div class="stage-frame">
+              <div class="stage-bar"><span>JarvQuant</span><span id="stageName">Replay</span><span class="steps" id="stageSteps"><span class="on"></span><span></span><span></span><span></span></span></div>
+
+              <div class="scene on" data-scene="0">
+                <div class="mini"><canvas id="miniChart"></canvas></div>
+                <div class="controls mono"><span>◀ Step</span><span class="on">▶ Play</span><span>4×</span><span>Step ▶</span></div>
+              </div>
+
+              <div class="scene" data-scene="1">
+                <div class="ticket">
+                  <div class="row"><div class="seg buy">▲ BUY / LONG</div><div class="seg sell">▼ SELL / SHORT</div></div>
+                  <div class="lbl">Order type</div>
+                  <div class="row3"><div class="seg sel">Market</div><div class="seg">Limit</div><div class="seg">Stop</div></div>
+                  <div class="lbl">Quantity</div>
+                  <div class="field">1.00 <small>NAS100</small></div>
+                  <div class="lbl">Stop loss / Take profit</div>
+                  <div class="row"><div class="field">4,812.0 <small>SL</small></div><div class="field">4,839.5 <small>TP</small></div></div>
+                  <div class="place">▲ PLACE BUY</div>
+                  <div class="cursor"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6.5 1.5L9.5 19z" fill="#e8ebf0" stroke="#08090c" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+                </div>
+                <div class="toast">Filled · Long 1.00 NAS100 @ 4,821.50</div>
+              </div>
+
+              <div class="scene" data-scene="2">
+                <div class="review">
+                  <div class="review-head">Trade Autopsy <small>example data</small></div>
+                  <div class="kpis">
+                    <div class="kpi"><div class="k">Winrate</div><div class="v" data-count="53.8" data-suffix="%">0%</div></div>
+                    <div class="kpi"><div class="k">Avg R</div><div class="v" data-count="0.57" data-suffix="R" data-dec="2">0R</div></div>
+                    <div class="kpi"><div class="k">Trades</div><div class="v" data-count="39">0</div></div>
+                  </div>
+                  <svg class="eq" viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true">
+                    <defs><linearGradient id="eqFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22c39a" stop-opacity=".28"/><stop offset="1" stop-color="#22c39a" stop-opacity="0"/></linearGradient></defs>
+                    <line class="zero" x1="0" y1="104" x2="400" y2="104"/>
+                    <path class="area" d=""/>
+                    <path class="line" pathLength="1" d=""/>
+                  </svg>
+                  <div class="flag"><i></i><span><b>Pattern found:</b> 11 revenge trades opened within 20 minutes of a loss. Together they cost 2.4R.</span></div>
+                </div>
+              </div>
+
+              <div class="scene" data-scene="3">
+                <div class="rules">
+                  <div class="rules-head">Strategy rules <small>NAS100 · ORB</small></div>
+                  <div class="rule" style="--i:0">Max 3 trades per day <span class="tog"></span></div>
+                  <div class="rule" style="--i:1">Pause 20 min after a loss <span class="tog"></span></div>
+                  <div class="rule" style="--i:2">Risk 0.5% per trade <span class="tog"></span></div>
+                  <div class="rule" style="--i:3">London and New York sessions only <span class="tog"></span></div>
+                  <div class="saved"><svg><use href="#i-check"/></svg>Saved to Strategy Builder</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="loop-steps">
+            <article class="step on" data-step="0">
+              <div class="num">01 · <span data-i18n="loop.1.k">Replay</span></div>
+              <h3 data-i18n="loop.1.t">Hide the future.</h3>
+              <p data-i18n="loop.1.d">Pick a market and a date, then move forward one bar at a time. You see exactly what you would have seen live, nothing more. 10 years of data are included, or bring your own.</p>
+            </article>
+            <article class="step" data-step="1">
+              <div class="num">02 · <span data-i18n="loop.2.k">Execute</span></div>
+              <h3 data-i18n="loop.2.t">Trade it like it's real.</h3>
+              <p data-i18n="loop.2.d">Market, limit and stop orders with stop loss and take profit, plus spread, slippage and fees. Add prop firm rules when you want the pressure.</p>
+            </article>
+            <article class="step" data-step="2">
+              <div class="num">03 · <span data-i18n="loop.3.k">Review</span></div>
+              <h3 data-i18n="loop.3.t">Let the numbers talk.</h3>
+              <p data-i18n="loop.3.d">Trade Autopsy reads your history and finds what memory hides: revenge trades, overtrading and the session that quietly costs you money.</p>
+            </article>
+            <article class="step" data-step="3">
+              <div class="num">04 · <span data-i18n="loop.4.k">Adjust</span></div>
+              <h3 data-i18n="loop.4.t">Turn mistakes into rules.</h3>
+              <p data-i18n="loop.4.d">Write what you learned into the Strategy Builder as hard limits, so your next session starts from a better version of your plan.</p>
+            </article>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Vertical chapter progress rail (desktop only) -->
-    <nav class="progress-rail" id="progressRail" aria-label="Chapter progress" data-desktop-only>
-      <button class="prog-dot" data-action="goto" data-target="threshold" data-chapter="threshold" aria-label="Threshold">
-        <span class="prog-tick"></span><span class="prog-label">Threshold</span>
-      </button>
-      <button class="prog-dot" data-action="goto" data-target="memory" data-chapter="memory" aria-label="Memory">
-        <span class="prog-tick"></span><span class="prog-label">Memory</span>
-      </button>
-      <button class="prog-dot" data-action="goto" data-target="replay" data-chapter="replay" aria-label="Replay">
-        <span class="prog-tick"></span><span class="prog-label">Replay</span>
-      </button>
-      <button class="prog-dot" data-action="goto" data-target="structure" data-chapter="structure" aria-label="Structure">
-        <span class="prog-tick"></span><span class="prog-label">Structure</span>
-      </button>
-      <button class="prog-dot" data-action="goto" data-target="edge" data-chapter="edge" aria-label="Access">
-        <span class="prog-tick"></span><span class="prog-label">Access</span>
-      </button>
-      <span class="prog-line" aria-hidden="true"></span>
-      <span class="prog-fill" id="progFill" aria-hidden="true"></span>
-    </nav>
+    <!-- Showcase -->
+    <section class="section" id="inside" style="padding-top:48px">
+      <div class="wrap">
+        <div class="section-head center" data-reveal>
+          <div class="kicker" data-i18n="show.kicker">Inside the app</div>
+          <h2 data-i18n="show.title">Built like a trading terminal. Because it is one.</h2>
+        </div>
+        <div class="showcase">
+          <div class="tilt" id="tilt">
+            <figure class="shot" style="margin:0">
+              <div class="shot-bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="title" id="shotTitle">JarvQuant · Syndex</span></div>
+              <div class="shot-imgs" id="shotImgs">
+                <img class="on" src="assets/app-syndex.webp" width="1600" height="825" alt="Syndex synthetic options market with live chart and option chain" data-title="Syndex" />
+                <img src="assets/app-autopsy.webp" width="1600" height="825" loading="lazy" alt="Trade Autopsy dashboard with KPIs, equity curve and PnL per day" data-title="Trade Autopsy" />
+                <img src="assets/app-archive.webp" width="1600" height="825" loading="lazy" alt="Grand Archive style test" data-title="Grand Archive" />
+                <img src="assets/app-vanta.webp" width="1600" height="825" loading="lazy" alt="VANTA AI coach chat and analysis panel" data-title="VANTA" />
+                <img src="assets/app-journal.webp" width="1600" height="825" loading="lazy" alt="Structured trade journal entry" data-title="Journal" />
+              </div>
+            </figure>
+          </div>
+        </div>
+        <div class="tabs" role="tablist" id="tabs">
+          <button class="tab on" role="tab" aria-selected="true" data-i="0"><span data-i18n="show.t1">Syndex</span><span class="bar"></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-i="1"><span data-i18n="show.t2">Trade Autopsy</span><span class="bar"></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-i="2"><span data-i18n="show.t3">Grand Archive</span><span class="bar"></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-i="3"><span data-i18n="show.t4">VANTA</span><span class="bar"></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-i="4"><span data-i18n="show.t5">Journal</span><span class="bar"></span></button>
+        </div>
+        <p class="caption" id="caption" aria-live="polite"></p>
+        <div hidden>
+          <span data-i18n="show.c1" id="cap0">Syndex: a synthetic options market with a live chart, a full chain, depth and an IV surface.</span>
+          <span data-i18n="show.c2" id="cap1">Trade Autopsy: winrate, average R, drawdown, PnL per day and performance per session.</span>
+          <span data-i18n="show.c3" id="cap2">Grand Archive: a style test that ranks 300+ playbooks against the way you trade.</span>
+          <span data-i18n="show.c4" id="cap3">VANTA: an AI coach that works from your own journal and Autopsy data.</span>
+          <span data-i18n="show.c5" id="cap4">Journal: structured entries for context, setup, execution and review.</span>
+        </div>
+      </div>
+    </section>
 
-    <!-- Persistent scroll cue — hides near the end of the rail -->
-    <div class="scroll-cue is-hidden" id="scrollCue" aria-hidden="true" data-desktop-only>
-      <span class="scroll-cue-chevron">⌄</span>
-    </div>
+    <!-- Features -->
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div class="kicker" data-i18n="features.kicker">Everything in the box</div>
+          <h2 data-i18n="features.title">One app instead of five tabs and a spreadsheet.</h2>
+        </div>
+        <div class="grid">
+          <article class="card" data-reveal><span class="ico"><svg><use href="#i-replay"/></svg></span><h3 data-i18n="f.replay.t">Market Replay</h3><p data-i18n="f.replay.d">Step through history one bar at a time without seeing what comes next. Practice entries, exits and risk on real data with zero hindsight.</p></article>
+          <article class="card" data-reveal style="--d:.06s"><span class="ico"><svg><use href="#i-journal"/></svg></span><h3 data-i18n="f.journal.t">Trade Journal</h3><p data-i18n="f.journal.d">Structured entries for context, setup, execution and review, linked to your actual results. Searchable, exportable to PDF.</p></article>
+          <article class="card" data-reveal style="--d:.12s"><span class="ico"><svg><use href="#i-autopsy"/></svg></span><h3><span data-i18n="f.autopsy.t">Trade Autopsy</span><span class="tier">PRO</span></h3><p data-i18n="f.autopsy.d">Algorithmic review of your history: overtrading, revenge trades, session performance and drawdown streaks.</p></article>
+          <article class="card" data-reveal><span class="ico"><svg><use href="#i-sliders"/></svg></span><h3><span data-i18n="f.builder.t">Strategy Builder</span><span class="tier">PRO</span></h3><p data-i18n="f.builder.d">Turn your rules and risk limits into hard constraints, then backtest them before you trust them with money.</p></article>
+          <article class="card" data-reveal style="--d:.06s"><span class="ico"><svg><use href="#i-target"/></svg></span><h3><span data-i18n="f.prop.t">Prop Firm Simulator</span><span class="tier">PRO</span></h3><p data-i18n="f.prop.d">Profit targets, daily loss limits and trailing drawdown. Find out how you trade under the rules before you pay the evaluation fee.</p></article>
+          <article class="card" data-reveal style="--d:.12s"><span class="ico"><svg><use href="#i-archive"/></svg></span><h3><span data-i18n="f.archive.t">Grand Archive</span><span class="tier">ELITE</span></h3><p data-i18n="f.archive.d">300+ strategy playbooks with checklists and known failure patterns, from ORB to order flow. A style test matches them to you.</p></article>
+          <article class="card" data-reveal><span class="ico"><svg><use href="#i-candles"/></svg></span><h3><span data-i18n="f.pantheon.t">PANTHEON Markets</span><span class="tier">ELITE</span></h3><p data-i18n="f.pantheon.d">Synthetic markets that never repeat: options with live Greeks and an IV surface, plus crypto, futures, CFD, spot and forex.</p></article>
+          <article class="card" data-reveal style="--d:.06s"><span class="ico"><svg><use href="#i-chat"/></svg></span><h3><span data-i18n="f.vanta.t">VANTA AI Coach</span><span class="tier">ELITE</span></h3><p data-i18n="f.vanta.d">A coach that reads your journal and Autopsy reports, so the feedback is about your trades and not trading in general.</p></article>
+          <article class="card" data-reveal style="--d:.12s"><span class="ico"><svg><use href="#i-import"/></svg></span><h3 data-i18n="f.import.t">Data Import</h3><p data-i18n="f.import.d">Bring your own data and history from MetaTrader 5, TradingView CSV exports or Parquet files.</p></article>
+        </div>
+      </div>
+    </section>
 
-    <!-- Mini navigation tutorial (shows briefly on desktop) -->
-    <div class="hint" id="navHint" aria-hidden="true">
-      <div class="hint-title" data-i18n="hint.title">Navigation</div>
-      <div class="hint-body" data-i18n="hint.body">Scroll to travel · Click a chapter above · Click records to open</div>
-    </div>
+    <!-- Stats + principles -->
+    <section class="section" style="padding-top:32px">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <div class="kicker" data-i18n="pr.kicker">How it's built</div>
+          <h2 data-i18n="pr.title">A tool, not a course.</h2>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="n"><span data-count="10">0</span></div><div class="l" data-i18n="stats.1">years of market data included</div></div>
+          <div class="stat"><div class="n"><span data-count="300">0</span><sup>+</sup></div><div class="l" data-i18n="stats.2">strategy playbooks with checklists</div></div>
+          <div class="stat"><div class="n"><span data-count="6">0</span></div><div class="l" data-i18n="stats.3">synthetic markets that never repeat</div></div>
+          <div class="stat"><div class="n"><span data-count="2">0</span></div><div class="l" data-i18n="stats.4">languages, English and German</div></div>
+        </div>
+        <div class="principles">
+          <div class="principle" data-reveal><h3 data-i18n="pr.1.t">Your data stays local</h3><p data-i18n="pr.1.d">Trades, journals and imports live on your machine. They are never uploaded to us.</p></div>
+          <div class="principle" data-reveal style="--d:.08s"><h3 data-i18n="pr.2.t">Independent</h3><p data-i18n="pr.2.d">No venture funding, so pricing is set by the product and not by a growth target. No upsells, no signals, no lifestyle content.</p></div>
+          <div class="principle" data-reveal style="--d:.16s"><h3 data-i18n="pr.3.t">Shaped by traders</h3><p data-i18n="pr.3.d">Feature requests and bug reports from the Discord go straight into the next release.</p></div>
+        </div>
+      </div>
+    </section>
 
-    <!-- Archive stamp (bottom-left, subtle) -->
-    <div class="arc-stamp" aria-hidden="true" data-desktop-only>
-      <span class="arc-dot"></span>
-      <span class="arc-text">ARC-V1.0 · ENTRY 0001</span>
-    </div>
+    <!-- Pricing -->
+    <section class="section" id="pricing">
+      <div class="wrap">
+        <div class="section-head center" data-reveal>
+          <div class="kicker" data-i18n="pricing.kicker">Pricing</div>
+          <h2 data-i18n="pricing.title">Start free. Go deeper when you're ready.</h2>
+          <p data-i18n="pricing.sub">No credit card to start. Paid plans and a 7-day Elite trial are available inside the app.</p>
+        </div>
 
-    <!-- Mobile-only footer socials (topbar socials hidden on mobile) -->
-    <footer class="m-footer" aria-label="Social links">
-      <a class="m-social" href="/compare">Compare Platforms</a>
-      <a class="m-social" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer">Discord</a>
-      <a class="m-social" href="https://x.com/JarvQuant" target="_blank" rel="noreferrer">X</a>
-      <a class="m-social" href="https://www.instagram.com/jarvquant?igsh=MXZoOHByeDhyMm1raA==" target="_blank" rel="noreferrer">IG</a>
-      <a class="m-social" href="https://youtube.com/@JarvQuant" target="_blank" rel="noreferrer">YouTube</a>
-      <a class="m-social" href="https://www.tiktok.com/@jarvquant?_r=1&_t=ZN-93yVKmzLK0U" target="_blank" rel="noreferrer">TikTok</a>
-    </footer>
+        <div class="plans">
+          <article class="plan" data-reveal>
+            <div class="plan-tier" data-i18n="plan.free.tag">FREE</div>
+            <div class="plan-name" data-i18n="plan.free.name">Starter</div>
+            <div class="plan-price"><span class="amt">€0</span></div>
+            <div class="plan-note" data-i18n="plan.free.period">Forever. No card.</div>
+            <ul>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.free.f1">Bar-by-bar market replay environment</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.free.f2">Data import (CSV, Parquet, MT5)</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.free.f3">Trade journal: 10 entries rolling</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.free.f4">1 active strategy slot</span></li>
+            </ul>
+            <a class="btn btn-secondary btn-block" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe" data-i18n="plan.free.cta">Download Free</a>
+          </article>
+
+          <article class="plan featured" data-reveal style="--d:.08s">
+            <div class="plan-badge" data-i18n="plan.pro.flag">MOST POPULAR</div>
+            <div class="plan-tier" data-i18n="plan.pro.tag">PRO</div>
+            <div class="plan-name" data-i18n="plan.pro.name">Operator</div>
+            <div class="plan-price"><span class="amt">€39.99</span><span class="per" data-i18n="plan.per_month">/ month</span></div>
+            <div class="plan-note" data-i18n="plan.pro.period">Billed monthly · cancel anytime</div>
+            <ul>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f1">Unlimited replay, imports, and journal entries</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f2">Strategy Builder with rules and constraints</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f3">Prop firm challenge simulator with rule presets</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f4">Backtesting engine</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f5">Trade Autopsy: algorithmic post-trade review</span></li>
+            </ul>
+            <a class="btn btn-primary btn-block" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe" data-i18n="plan.cta_inapp">Download and upgrade in-app</a>
+          </article>
+
+          <article class="plan" data-reveal style="--d:.16s">
+            <div class="plan-tier" data-i18n="plan.elite.tag">ELITE</div>
+            <div class="plan-name" data-i18n="plan.elite.name">Architect</div>
+            <div class="plan-price"><span class="amt">€79.99</span><span class="per" data-i18n="plan.per_month">/ month</span></div>
+            <div class="plan-note" data-i18n="plan.elite.period">Billed monthly · cancel anytime</div>
+            <ul>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.elite.f1">Everything in Pro</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.elite.f2">PANTHEON: full simulation suite (Options Sim, Syndex + 5 synthetic markets)</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.elite.f3">VANTA AI Coach: dedicated trader personality, error analysis and psychology</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.elite.f4">Grand Archive: 300+ strategy playbooks with checklists and error patterns</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.elite.f5">Priority support</span></li>
+            </ul>
+            <a class="btn btn-secondary btn-block" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe" data-i18n="plan.cta_trial">Try Elite free for 7 days</a>
+          </article>
+        </div>
+
+        <div class="extras">
+          <div class="extra" data-reveal>
+            <div class="plan-tier" data-i18n="addon.tag">ADD-ON</div>
+            <h3 data-i18n="addon.name">PANTHEON</h3>
+            <div class="price">€29.99<small data-i18n="plan.per_month">/ month</small></div>
+            <p data-i18n="addon.body">The full simulation suite. Options Sim with live chains, Greeks, IV modeling and DTE tracking. Syndex synthetic market engine. Five additional synthetic markets: Volatex, Tempus, Chronus, Atlas, Kairos. Stack on any paid tier.</p>
+          </div>
+          <div class="extra" data-reveal style="--d:.08s">
+            <div class="plan-tier" data-i18n="lifetime.tag">FOUNDERS · LIMITED 200</div>
+            <h3 data-i18n="lifetime.name">Lifetime Access</h3>
+            <div class="price">€1,499<small data-i18n="lifetime.note">one-time</small></div>
+            <p data-i18n="lifetime.body">Elite plan including PANTHEON, forever. All future tiers and add-ons included at no extra cost. One payment, never charged again. Hard cap at 200 seats. Founders rate locked for life.</p>
+          </div>
+        </div>
+
+        <p class="fineprint" data-i18n="pricing.fine">All sales are final. You can cancel any subscription at any time to stop future billing, and access stays active until the end of the current billing period.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="wrap faq-wrap">
+        <div class="section-head" data-reveal>
+          <div class="kicker" data-i18n="faq.kicker">FAQ</div>
+          <h2 data-i18n="faq.title">Questions traders ask before installing.</h2>
+          <p><span data-i18n="faq.more">Something else?</span> <a href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer" style="color:var(--accent)" data-i18n="faq.discord">Ask in Discord</a></p>
+        </div>
+        <div class="faq-list">
+          <details><summary data-i18n="faq.1.q">What is JarvQuant?</summary><p data-i18n="faq.1.a">A desktop trading simulator and training environment for retail traders. You practise stocks, futures, forex and options against replayed historical data and synthetic markets, then review your own behaviour with the journal, Trade Autopsy and the VANTA coach.</p></details>
+          <details><summary data-i18n="faq.2.q">Is real money involved?</summary><p data-i18n="faq.2.a">No. You trade against historical data replayed bar by bar, or against synthetic markets from the JQIV engine. No orders are routed to a broker and no real money is at risk.</p></details>
+          <details><summary data-i18n="faq.3.q">Can I practise options trading?</summary><p data-i18n="faq.3.a">Yes. PANTHEON is a synthetic options market with a full chain, live Greeks (delta, gamma, theta, vega), an implied volatility surface and an order book. Practise long calls and puts, covered calls, spreads and straddles without risking capital.</p></details>
+          <details><summary data-i18n="faq.4.q">How is this different from paper trading with a broker?</summary><p data-i18n="faq.4.a">Broker paper trading runs in real time, so rehearsing a setup means waiting for it to happen again. JarvQuant replays history at any speed, so you can work through hundreds of setups in an afternoon while future bars stay hidden.</p></details>
+          <details><summary data-i18n="faq.5.q">Can I prepare for a prop firm challenge?</summary><p data-i18n="faq.5.a">Yes. The Prop Firm Simulator reproduces evaluation rules such as profit targets, maximum daily loss and trailing or end-of-day drawdown, so you learn how you behave under those rules before paying an evaluation fee.</p></details>
+          <details><summary data-i18n="faq.6.q">Is it free, and is there a trial?</summary><p data-i18n="faq.6.a">The free plan includes bar-by-bar replay, data import and a journal capped at 10 entries, with no card and no time limit. A 7-day Elite trial can be started inside the app and unlocks everything, including PANTHEON and VANTA.</p></details>
+          <details><summary data-i18n="faq.7.q">Does it work with MetaTrader 5?</summary><p data-i18n="faq.7.a">Yes. Import your MT5 trade history through the data bridge, or load CSV and Parquet files, and analyse your real trading in Trade Autopsy and the journal next to your simulated sessions.</p></details>
+          <details><summary data-i18n="faq.8.q">Which platforms are supported?</summary><p data-i18n="faq.8.a">JarvQuant is a native Windows desktop app with a one-click installer. Every release is published on GitHub and scanned on VirusTotal. The interface is available in English and German.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA: a breakout draws itself behind the headline -->
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="final" id="final">
+          <svg class="breakout" viewBox="0 0 1200 420" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="boFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#33c6e3" stop-opacity=".16"/><stop offset="1" stop-color="#33c6e3" stop-opacity="0"/></linearGradient></defs>
+            <line class="bo-lvl" x1="0" y1="340" x2="1200" y2="340"/>
+            <path class="bo-area" id="boArea" d=""/>
+            <path class="bo-line" id="boLine" pathLength="1" d=""/>
+          </svg>
+          <h2 data-i18n="final.title">Your next hundred trades can be practice.</h2>
+          <p data-i18n="final.sub">Install the free plan and replay your first session in a few minutes.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary btn-lg" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe"><svg><use href="#i-download"/></svg><span data-i18n="cta.download">Download for Windows</span></a>
+            <a class="btn btn-secondary btn-lg" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer" data-i18n="cta.discord">Join the Discord</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <div class="lightbox" id="imgBox" aria-hidden="true">
-    <div class="lightbox-backdrop" id="imgBoxClose"></div>
-    <div class="lightbox-inner" role="dialog" aria-modal="true" aria-label="Exhibit">
-      <div class="lightbox-top">
-        <div class="lightbox-title" id="imgBoxTitle">—</div>
-        <button class="lightbox-x" id="imgBoxX" type="button" aria-label="Close">×</button>
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <a class="brand" href="#" aria-label="JarvQuant home">
+            <svg class="brand-mark" viewBox="0 0 26 26" aria-hidden="true"><rect x=".5" y=".5" width="25" height="25" rx="7" fill="#151920" stroke="#262c36"/><path d="M5 14.5h3l2.2-6 3 10.5 2.6-7.5 1.4 3H21" fill="none" stroke="#33c6e3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>JarvQuant</span>
+          </a>
+          <p data-i18n="footer.tag">The trading simulator and performance lab for serious retail traders.</p>
+        </div>
+        <div>
+          <h4 data-i18n="footer.product">Product</h4>
+          <ul>
+            <li><a href="#how" data-i18n="nav.how">How it works</a></li>
+            <li><a href="#pricing" data-i18n="nav.pricing">Pricing</a></li>
+            <li><a href="/compare" data-i18n="footer.compare">Compare platforms</a></li>
+            <li><a href="https://github.com/JarvQuant/jarvquant-releases/releases" target="_blank" rel="noopener noreferrer" data-i18n="footer.releases">Release notes</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 data-i18n="footer.company">Company</h4>
+          <ul>
+            <li><a href="/partner/" data-i18n="footer.partner">Partner program</a></li>
+            <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 data-i18n="footer.community">Community</h4>
+          <ul>
+            <li><a href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer">Discord</a></li>
+            <li><a href="https://x.com/JarvQuant" target="_blank" rel="noreferrer">X</a></li>
+            <li><a href="https://youtube.com/@JarvQuant" target="_blank" rel="noreferrer">YouTube</a></li>
+            <li><a href="https://www.tiktok.com/@jarvquant" target="_blank" rel="noreferrer">TikTok</a></li>
+            <li><a href="https://www.instagram.com/jarvquant" target="_blank" rel="noreferrer">Instagram</a></li>
+          </ul>
+        </div>
       </div>
-      <img class="lightbox-img" id="imgBoxImg" alt="Exhibit preview" />
-      <div class="lightbox-cap" id="imgBoxCap">—</div>
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> JarvQuant</span>
+        <p data-i18n="footer.disclaimer">JarvQuant is a simulation and training tool. Nothing on this site or in the app is financial advice. Trading involves substantial risk of loss.</p>
+      </div>
     </div>
-  </div>
+  </footer>
 
-  <script type="module" src="main.js?v=4"></script>
+  <script type="module" src="site.js?v=2"></script>
+  <script type="module" src="motion.js?v=1"></script>
   <!-- Privacy-friendly page-view beacon (no cookies, no PII) -->
   <script>
     try {
