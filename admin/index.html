@@ -149,6 +149,7 @@
       const res = await fetch(API + "/admin/stats", { headers: { Authorization: "Bearer " + KEY } });
       if(!res.ok){ setErr(res.status===401 ? "Invalid admin key." : "Error "+res.status); return false; }
       render(await res.json());
+      liveDownloads();
       return true;
     }catch(e){ setErr("Network error — backend may be waking up, try again."); return false; }
   }
@@ -218,6 +219,28 @@
         scales:{ x:{ grid:{display:false}, ticks:{color:"#6b7280",maxTicksLimit:6,font:{size:10}} },
                  y:{ grid:{color:"rgba(255,255,255,.06)"}, ticks:{color:"#6b7280",precision:0,font:{size:10}}, beginAtZero:true } } }
     });
+  }
+
+  // The backend's GitHub call often hits the shared Render IP's rate limit,
+  // so the browser asks GitHub itself (its own quota) and overrides the
+  // backend figures when that works. Release tags are escaped before display.
+  async function liveDownloads(){
+    try{
+      const r = await fetch("https://api.github.com/repos/JarvQuant/jarvquant-releases/releases?per_page=100",
+                            { headers: { Accept: "application/vnd.github+json" } });
+      if(!r.ok) return;
+      const rels = await r.json();
+      let total = 0;
+      const rows = [];
+      for(const rel of rels){
+        const n = (rel.assets||[]).reduce((s,a)=>s + (a.download_count||0), 0);
+        total += n;
+        if(n) rows.push([String(rel.tag_name||"?").replace(/[<>&"]/g,""), n]);
+      }
+      document.getElementById("kDownloads").textContent = total;
+      document.getElementById("kDownloadsSub").textContent = "all releases · live from GitHub";
+      listInto("byRelease", rows);
+    }catch(e){ /* keep the backend figures */ }
   }
 
   function listInto(id, pairs){
