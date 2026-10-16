@@ -5,26 +5,27 @@
 > risking real money. Windows, free tier available, offline-capable.
 
 JarvQuant is built and maintained by one independent developer. It is not a broker,
-not a signal service and not a course — it is the practice environment traders use
+not a signal service and not a course. It is the practice environment traders use
 between those things.
 
 ## What it does
 
-- **Market Replay** — step through 10 years of included market history bar by bar, or
+- **Market Replay**: Step through up to 9 years of included market history bar by bar (or watch each
+  candle form second by second in live-candle mode), or
   load your own data (CSV, Parquet, MetaTrader 5). No hindsight: you only see what a
   trader would have seen at that moment.
-- **PANTHEON (Syndex)** — a synthetic options market with a full chain, Greeks, implied
+- **PANTHEON (Syndex)**: A synthetic options market with a full chain, Greeks, implied
   volatility surface and order book. Practise calls, puts, spreads, straddles, condors
   and assignment mechanics without paying real premium.
-- **Prop Firm Simulator** — rehearse evaluation rules (drawdown limits, daily loss caps)
+- **Prop Firm Simulator**: Rehearse evaluation rules (drawdown limits, daily loss caps)
   so a funded-account challenge isn't the first time you meet them.
-- **Trade Autopsy** — algorithmic review of your own trading: win rate, R-multiples,
+- **Trade Autopsy**: Algorithmic review of your own trading: win rate, R-multiples,
   drawdown, overtrading days, revenge-trading windows, within-day drift.
-- **Trade Journal** — searchable entries linked to actual performance metrics.
-- **Strategy Builder** — build entry, filter and exit rules as blocks and backtest them.
-- **Grand Archive** — 364 reference entries, including 64 dedicated options entries
+- **Trade Journal**: Searchable entries linked to actual performance metrics.
+- **Strategy Builder**: Build entry, filter and exit rules as blocks and backtest them.
+- **Grand Archive**: 364 reference entries, including 64 dedicated options entries
   covering everything from calls and puts to Greeks, IV crush and multi-leg strategies.
-- **VANTA** — an optional AI coach that reviews your trading and can reference the
+- **VANTA**: An optional AI coach that reviews your trading and can reference the
   archive. Runs on the user's own API key, or fully local via Ollama.
 
 ## Who it is for
