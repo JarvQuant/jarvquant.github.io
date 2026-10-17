@@ -284,6 +284,9 @@
     document.getElementById("statConversions").textContent = data.paid_conversions ?? 0;
     document.getElementById("statTotal").textContent       = fmt(data.total_commission_eur);
     document.getElementById("statPending").textContent     = fmt(data.pending_payout_eur);
+    if (typeof data.commission_rate === "number") {
+      document.getElementById("statRate").textContent = `${+(data.commission_rate * 100).toFixed(2)}%`;
+    }
     document.getElementById("statsCard").style.display = "block";
     hideStrip();
   }
