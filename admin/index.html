@@ -67,6 +67,31 @@
     .row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--hair);}
     .row:last-child{border-bottom:none;} .row .k{color:var(--fg-dim);} .row .v{font-weight:700;}
     #dash{display:none;}
+
+    /* Partners */
+    .p-card{background:rgba(15,20,30,.88);border:1px solid var(--hair);border-radius:var(--radius);padding:18px;margin-top:16px;}
+    .p-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
+    .p-head h3{font-size:13px;font-weight:700;}
+    .p-head input{background:rgba(255,255,255,.05);border:1px solid var(--hair);border-radius:8px;color:var(--fg);
+      height:32px;padding:0 10px;font-size:12px;outline:none;min-width:200px;}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+    .chip{font-size:11px;color:var(--fg-dim);border:1px solid var(--hair);border-radius:999px;padding:4px 10px;}
+    .chip b{color:var(--fg);}
+    .tbl-wrap{overflow-x:auto;}
+    table.ptbl{width:100%;border-collapse:collapse;font-size:12px;min-width:980px;}
+    .ptbl th{text-align:right;color:var(--fg-dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;
+      padding:8px 8px;border-bottom:1px solid var(--hair);cursor:pointer;white-space:nowrap;user-select:none;}
+    .ptbl th:first-child,.ptbl td:first-child,.ptbl th:nth-child(2),.ptbl td:nth-child(2){text-align:left;}
+    .ptbl th.on{color:var(--c2-hi);}
+    .ptbl td{text-align:right;padding:9px 8px;border-bottom:1px solid var(--hair);white-space:nowrap;}
+    .ptbl tr:hover td{background:rgba(255,255,255,.025);}
+    .ptbl .nm{font-weight:700;} .ptbl .sub{display:block;font-size:10px;color:var(--fg-dim);font-weight:400;}
+    .ptbl .lk{font-family:ui-monospace,Consolas,monospace;color:var(--c2-hi);cursor:pointer;}
+    .ptbl .g{color:var(--green);font-weight:700;} .ptbl .a{color:var(--amber);font-weight:700;}
+    .badge{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:6px;}
+    .badge.active{color:var(--green);background:rgba(52,211,153,.12);}
+    .badge.unconfirmed{color:var(--amber);background:rgba(245,158,11,.12);}
+    .badge.disabled{color:var(--red);background:rgba(248,113,113,.12);}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
@@ -118,11 +143,25 @@
     <div class="lists" style="margin-top:16px;">
       <div class="list-card" style="grid-column:1 / -1;"><h3>Traffic sources · last 30 days</h3><div id="byReferrer"></div></div>
     </div>
+
+    <div class="p-card">
+      <div class="p-head">
+        <h3>Partners</h3>
+        <input id="pFilter" placeholder="Filter by name, link or e-mail" />
+      </div>
+      <div class="chips" id="pChips"></div>
+      <div class="tbl-wrap"><table class="ptbl">
+        <thead><tr id="pHead"></tr></thead>
+        <tbody id="pBody"></tbody>
+      </table></div>
+      <div class="kpi-sub" id="pNote" style="margin-top:10px"></div>
+    </div>
   </div>
 </div>
 
 <script>
-  const API = "https://jarvquant-api.onrender.com";
+  const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+    ? "http://localhost:8765" : "https://jarvquant-api.onrender.com";
   let KEY = "";
   let chSignups, chViews, chApp;
 
@@ -150,6 +189,7 @@
       if(!res.ok){ setErr(res.status===401 ? "Invalid admin key." : "Error "+res.status); return false; }
       render(await res.json());
       liveDownloads();
+      loadPartners();
       return true;
     }catch(e){ setErr("Network error — backend may be waking up, try again."); return false; }
   }
@@ -242,6 +282,91 @@
       listInto("byRelease", rows);
     }catch(e){ /* keep the backend figures */ }
   }
+
+  // ── Partners ── names come from self sign-ups, so everything is set as text.
+  const P_COLS = [
+    ["name", "Partner"], ["link", "Link"], ["clicks_30d", "Clicks 30d"], ["leads", "E-mail leads"],
+    ["signups", "Sign-ups"], ["active_customers", "Paying"], ["rate", "Rate"], ["revenue_eur", "Revenue"],
+    ["earned_eur", "Earned"], ["pending_eur", "Open"], ["paid_eur", "Paid out"], ["stripe", "Payouts"],
+  ];
+  let P_DATA = null, P_SORT = "earned_eur", P_DESC = true;
+
+  async function loadPartners(){
+    try{
+      const res = await fetch(API + "/admin/partners", { headers: { Authorization: "Bearer " + KEY } });
+      if(!res.ok){ document.getElementById("pNote").textContent = "Partners: error " + res.status; return; }
+      P_DATA = await res.json();
+      renderPartners();
+    }catch(e){ document.getElementById("pNote").textContent = "Partners: network error"; }
+  }
+
+  function el(tag, cls, text){
+    const e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text != null) e.textContent = text;
+    return e;
+  }
+
+  function renderPartners(){
+    const d = P_DATA, t = d.totals;
+    const chips = document.getElementById("pChips"); chips.innerHTML = "";
+    [["partners", t.partners], ["active", t.active], ["unconfirmed", t.unconfirmed], ["clicks 30d", t.clicks_30d],
+     ["sign-ups", t.signups], ["paying", t.active_customers], ["revenue", fmtEur(t.revenue_eur)],
+     ["earned", fmtEur(t.earned_eur)], ["open", fmtEur(t.pending_eur)], ["payable now", fmtEur(t.payable_eur)],
+     ["paid out", fmtEur(t.paid_eur)]].forEach(([k, v]) => {
+      const c = el("span", "chip"); c.append(el("b", null, String(v)), " " + k); chips.appendChild(c);
+    });
+
+    const head = document.getElementById("pHead"); head.innerHTML = "";
+    P_COLS.forEach(([key, label]) => {
+      const th = el("th", key === P_SORT ? "on" : "", label + (key === P_SORT ? (P_DESC ? " ↓" : " ↑") : ""));
+      th.onclick = () => { P_DESC = key === P_SORT ? !P_DESC : true; P_SORT = key; renderPartners(); };
+      head.appendChild(th);
+    });
+
+    const q = document.getElementById("pFilter").value.trim().toLowerCase();
+    const rows = d.partners
+      .filter(p => !q || [p.name, p.code, p.email, p.link].some(v => (v || "").toLowerCase().includes(q)))
+      .sort((a, b) => {
+        const x = a[P_SORT], y = b[P_SORT];
+        const r = typeof x === "number" ? x - y : String(x).localeCompare(String(y));
+        return P_DESC ? -r : r;
+      });
+
+    const body = document.getElementById("pBody"); body.innerHTML = "";
+    if(!rows.length){
+      const tr = el("tr"); const td = el("td", null, "No partners yet"); td.colSpan = P_COLS.length;
+      tr.appendChild(td); body.appendChild(tr);
+    }
+    rows.forEach(p => {
+      const tr = el("tr");
+      const who = el("td");
+      who.append(el("span", "nm", p.name), el("span", "badge " + p.status, p.status),
+                 el("span", "sub", p.email + (p.country ? " · " + p.country : "")));
+      const link = el("td");
+      const short = p.link.replace(/^https?:\/\/(www\.)?/, "");
+      const lk = el("span", "lk", short); lk.title = "Copy link";
+      lk.onclick = async () => {
+        try { await navigator.clipboard.writeText(p.link); lk.textContent = "copied ✓"; setTimeout(() => lk.textContent = short, 1200); }
+        catch(e){}
+      };
+      link.append(lk, el("span", "sub", p.joined_at ? "since " + p.joined_at.slice(0, 10) : ""));
+      const rate = el("td", null, (+(p.rate * 100).toFixed(1)) + " %");
+      if(p.rate_floor > 0) rate.append(el("span", "sub", "floor " + (+(p.rate_floor * 100).toFixed(1)) + " %"));
+      const open = el("td", "a", fmtEur(p.pending_eur));
+      open.append(el("span", "sub", fmtEur(p.payable_eur) + " payable"));
+      const earned = el("td", "g", fmtEur(p.earned_eur));
+      if(p.last_sale_at) earned.append(el("span", "sub", "last " + p.last_sale_at.slice(0, 10)));
+      tr.append(who, link, el("td", null, p.clicks_30d), el("td", null, p.leads), el("td", null, p.signups),
+                el("td", null, p.active_customers), rate, el("td", null, fmtEur(p.revenue_eur)), earned, open,
+                el("td", null, fmtEur(p.paid_eur)), el("td", null, p.stripe === "connected" ? "Stripe ✓" : "not set up"));
+      body.appendChild(tr);
+    });
+    document.getElementById("pNote").textContent =
+      "Open = earned, not yet paid out. Payable = open and older than " + d.payout_rules.hold_days + " days; " +
+      "paid automatically on the 3rd of each month from " + fmtEur(d.payout_rules.min_eur) + " per partner.";
+  }
+  document.getElementById("pFilter").addEventListener("input", () => P_DATA && renderPartners());
 
   function listInto(id, pairs){
     const el = document.getElementById(id);
