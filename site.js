@@ -128,6 +128,8 @@ const SITE = {
     "footer.compare": "Compare platforms",
     "footer.releases": "Release notes",
     "footer.partner": "Partner program",
+    "footer.imprint": "Legal notice",
+    "footer.privacy": "Privacy",
     "footer.disclaimer": "JarvQuant is a simulation and training tool. Nothing on this site or in the app is financial advice. Trading involves substantial risk of loss.",
   },
 
@@ -255,6 +257,8 @@ const SITE = {
     "footer.compare": "Plattformen vergleichen",
     "footer.releases": "Release Notes",
     "footer.partner": "Partnerprogramm",
+    "footer.imprint": "Impressum",
+    "footer.privacy": "Datenschutz",
     "footer.disclaimer": "JarvQuant ist ein Simulations- und Trainingswerkzeug. Nichts auf dieser Seite oder in der App ist eine Finanzberatung. Trading ist mit erheblichem Verlustrisiko verbunden.",
   },
 };

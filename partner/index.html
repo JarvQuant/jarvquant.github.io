@@ -3,293 +3,369 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Partner Dashboard — JarvQuant</title>
-  <meta name="robots" content="noindex,nofollow" />
+  <title>Partner Program — JarvQuant</title>
+  <meta name="description" content="Earn 15–25 % recurring commission for every JarvQuant customer you refer. Personal link, live dashboard, automatic monthly payouts." />
   <meta name="theme-color" content="#0a0d18" />
   <link rel="icon" href="/assets/favicon.png" type="image/png" />
   <style>
     :root {
-      --bg:      #0a0d18;
-      --fg:      rgba(245,247,255,0.96);
-      --fg-body: rgba(245,247,255,0.82);
-      --fg-dim:  rgba(245,247,255,0.54);
-      --hair:    rgba(245,247,255,0.10);
-      --c1:      #6D28D9;
-      --c2:      #22D3EE;
-      --c2-hi:   #4FE4F0;
-      --green:   #34D399;
-      --amber:   #F59E0B;
-      --red:     #F87171;
-      --radius:  14px;
+      --bg:#0a0d18; --fg:rgba(245,247,255,.96); --fg-body:rgba(245,247,255,.82); --fg-dim:rgba(245,247,255,.54);
+      --hair:rgba(245,247,255,.10); --c1:#6D28D9; --c2:#22D3EE; --c2-hi:#4FE4F0; --green:#34D399;
+      --amber:#F59E0B; --red:#F87171; --radius:14px;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { min-height: 100%; }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
     body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 40px 20px 60px;
-      background-image:
-        radial-gradient(900px 520px at 50% -10%, rgba(34,211,238,0.10), transparent 62%),
-        radial-gradient(1100px 900px at 16% 30%, rgba(109,40,217,0.08), transparent 70%);
+      background:var(--bg); color:var(--fg); min-height:100vh;
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      display:flex; justify-content:center; padding:40px 20px 60px;
+      background-image:radial-gradient(900px 520px at 50% -10%,rgba(34,211,238,.10),transparent 62%),
+                       radial-gradient(1100px 900px at 16% 30%,rgba(109,40,217,.08),transparent 70%);
     }
-    .shell { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 20px; }
+    .shell { width:100%; max-width:560px; display:flex; flex-direction:column; gap:20px; }
+    .top { display:flex; align-items:center; justify-content:space-between; }
+    .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .logo img { width:32px; height:32px; border-radius:8px; }
+    .logo span { font-size:18px; font-weight:800; color:var(--fg); }
+    .link-btn { background:none; border:0; color:var(--fg-dim); font-size:13px; cursor:pointer; }
+    .link-btn:hover { color:var(--fg); }
+    .card { background:rgba(15,20,30,.88); border:1px solid var(--hair); border-radius:var(--radius);
+            padding:28px 26px; backdrop-filter:blur(16px); box-shadow:0 24px 80px rgba(0,0,0,.55); }
+    h1 { font-size:26px; line-height:1.2; margin-bottom:8px; }
+    h2 { font-size:18px; margin-bottom:4px; }
+    .sub { font-size:14px; color:var(--fg-body); line-height:1.5; }
+    .dim { color:var(--fg-dim); font-size:12px; line-height:1.5; }
+    .tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0 6px; }
+    .tier { border:1px solid var(--hair); border-radius:10px; padding:14px 10px; text-align:center; background:rgba(255,255,255,.03); }
+    .tier b { display:block; font-size:24px; color:var(--c2-hi); }
+    .tier span { font-size:11px; color:var(--fg-dim); }
+    ul.how { list-style:none; margin:16px 0 0; display:grid; gap:8px; }
+    ul.how li { font-size:13px; color:var(--fg-body); padding-left:20px; position:relative; line-height:1.45; }
+    ul.how li::before { content:"✓"; position:absolute; left:0; color:var(--green); }
 
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-img { width: 32px; height: 32px; border-radius: 8px; }
-    .logo-text { font-size: 18px; font-weight: 800; color: var(--fg); letter-spacing: -0.01em; }
+    .tabs { display:flex; gap:6px; margin-bottom:18px; background:rgba(255,255,255,.04); padding:4px; border-radius:10px; }
+    .tabs button { flex:1; height:36px; border:0; border-radius:7px; background:none; color:var(--fg-dim); font-weight:700; cursor:pointer; }
+    .tabs button.on { background:rgba(255,255,255,.08); color:var(--fg); }
+    .field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+    .field label { font-size:11px; font-weight:600; color:var(--fg-dim); text-transform:uppercase; letter-spacing:.06em; }
+    input,select { width:100%; height:44px; background:rgba(255,255,255,.05); border:1px solid var(--hair); border-radius:8px;
+                   color:var(--fg); font-size:14px; padding:0 14px; outline:none; }
+    select option { background:#0f141e; }
+    input:focus,select:focus { border-color:var(--c2); }
+    .hint { font-size:12px; color:var(--fg-dim); }
+    .hint b { color:var(--c2-hi); font-weight:600; }
+    .check { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--fg-body); margin:6px 0 4px; }
+    .check input { width:16px; height:16px; margin-top:2px; flex:none; }
+    .check a, .note a { color:var(--c2); text-decoration:none; }
+    button.primary { width:100%; height:44px; border:0; border-radius:8px; margin-top:8px; cursor:pointer;
+                     background:linear-gradient(90deg,var(--c1),#7C3AED); color:#fff; font-weight:700; font-size:14px; }
+    button.primary:disabled { opacity:.45; cursor:default; }
+    button.ghost { height:38px; padding:0 14px; border:1px solid var(--hair); border-radius:8px; background:rgba(255,255,255,.04);
+                   color:var(--fg); font-weight:600; font-size:13px; cursor:pointer; }
+    .strip { font-size:13px; padding:10px 14px; border-radius:8px; margin-top:12px; display:none; line-height:1.45; }
+    .strip.err { display:block; background:rgba(248,113,113,.12); color:var(--red); border:1px solid rgba(248,113,113,.22); }
+    .strip.ok  { display:block; background:rgba(52,211,153,.10); color:var(--green); border:1px solid rgba(52,211,153,.22); }
 
-    .card {
-      background: rgba(15,20,30,0.88);
-      border: 1px solid var(--hair);
-      border-radius: var(--radius);
-      padding: 32px 28px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 24px 80px rgba(0,0,0,.55);
-    }
-    .card-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-    .card-sub   { font-size: 13px; color: var(--fg-dim); margin-bottom: 24px; }
-
-    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-    .field label { font-size: 11px; font-weight: 600; color: var(--fg-dim); text-transform: uppercase; letter-spacing: .06em; }
-
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--hair);
-      border-radius: 8px;
-      color: var(--fg);
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0 14px;
-      height: 44px;
-      outline: none;
-      transition: border-color .15s;
-    }
-    input[type="password"] { letter-spacing: 0.12em; }
-    input:focus { border-color: var(--c2); }
-    input::placeholder { color: var(--fg-dim); text-transform: none; letter-spacing: 0; font-weight: 400; }
-
-    button.primary {
-      width: 100%;
-      background: linear-gradient(90deg, var(--c1), #7C3AED);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      height: 44px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: opacity .15s;
-    }
-    button.primary:hover { opacity: .88; }
-    button.primary:disabled { opacity: .4; cursor: default; }
-
-    .strip {
-      font-size: 12px;
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-top: 12px;
-      display: none;
-    }
-    .strip.err  { background: rgba(248,113,113,.12); color: var(--red);   border: 1px solid rgba(248,113,113,.22); display: block; }
-    .strip.idle { background: rgba(34,211,238,.07);  color: var(--fg-dim); border: 1px solid var(--hair); display: block; }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner {
-      width: 20px; height: 20px;
-      border: 2px solid var(--hair);
-      border-top-color: var(--c2);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      display: none; margin: 12px auto 0;
-    }
-
-    /* ── Stats ── */
-    .partner-name  { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-    .code-badge {
-      display: inline-block; font-size: 11px; font-weight: 700;
-      letter-spacing: .08em; color: var(--c2);
-      background: rgba(34,211,238,.10); border: 1px solid rgba(34,211,238,.22);
-      border-radius: 6px; padding: 2px 8px; margin-bottom: 20px;
-    }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width:420px) { .grid { grid-template-columns: 1fr; } }
-    .stat-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--hair);
-      border-radius: 10px; padding: 18px 16px;
-    }
-    .stat-label { font-size:11px; font-weight:600; color:var(--fg-dim); text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
-    .stat-value { font-size:28px; font-weight:800; line-height:1; }
-    .stat-value.cyan  { color: var(--c2-hi); }
-    .stat-value.green { color: var(--green); }
-    .stat-sub { font-size:11px; color:var(--fg-dim); margin-top:4px; }
-    hr { border:none; border-top:1px solid var(--hair); margin:20px 0; }
-    .payout-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .payout-label { font-size:13px; color:var(--fg-body); }
-    .payout-sub { font-size:11px; color:var(--fg-dim); margin-top:2px; }
-    .payout-value { font-size:20px; font-weight:800; color:var(--amber); white-space:nowrap; }
-
-    .note { font-size:11px; color:var(--fg-dim); line-height:1.55; text-align:center; }
-    .note a { color:var(--c2); text-decoration:none; }
-    .note a:hover { text-decoration:underline; }
-
-    #statsCard { display: none; }
+    .linkbox { display:flex; gap:8px; margin:14px 0 6px; }
+    .linkbox input { font-family:ui-monospace,Consolas,monospace; color:var(--c2-hi); }
+    .bar { height:8px; border-radius:6px; background:rgba(255,255,255,.07); overflow:hidden; margin:10px 0 6px; }
+    .bar i { display:block; height:100%; background:linear-gradient(90deg,var(--c2),var(--c1)); }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+    .stat { border:1px solid var(--hair); border-radius:10px; padding:14px; background:rgba(255,255,255,.03); }
+    .stat .l { font-size:11px; font-weight:600; color:var(--fg-dim); text-transform:uppercase; letter-spacing:.06em; }
+    .stat .v { font-size:24px; font-weight:800; margin-top:6px; }
+    .stat .s { font-size:11px; color:var(--fg-dim); margin-top:3px; }
+    .v.cyan { color:var(--c2-hi); } .v.green { color:var(--green); } .v.amber { color:var(--amber); }
+    .row { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .payouts { margin-top:12px; display:grid; gap:6px; }
+    .payouts div { display:flex; justify-content:space-between; font-size:13px; color:var(--fg-body);
+                   border-bottom:1px solid var(--hair); padding:6px 0; }
+    .badge { font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; }
+    .badge.paid { color:var(--green); background:rgba(52,211,153,.12); }
+    .badge.failed { color:var(--red); background:rgba(248,113,113,.12); }
+    .badge.pending { color:var(--amber); background:rgba(245,158,11,.12); }
+    .note { font-size:12px; color:var(--fg-dim); text-align:center; line-height:1.55; }
+    [hidden] { display:none !important; }
+    @media (max-width:440px) { .grid { grid-template-columns:1fr; } .tiers b { font-size:20px; } }
   </style>
 </head>
 <body>
 <div class="shell">
-
-  <a class="logo" href="https://www.jarvquant.com/">
-    <img class="logo-img" src="/assets/favicon.png" alt="JarvQuant" />
-    <span class="logo-text">JarvQuant</span>
-  </a>
-
-  <!-- Login card -->
-  <div class="card" id="loginCard">
-    <p class="card-title">Partner Dashboard</p>
-    <p class="card-sub">Enter your partner code and PIN to view your stats.</p>
-
-    <div class="field">
-      <label>Partner Code</label>
-      <input type="text" id="codeInput" placeholder="e.g. NQQ" maxlength="32" autocomplete="off" spellcheck="false" />
-    </div>
-    <div class="field">
-      <label>PIN</label>
-      <input type="password" id="pinInput" placeholder="Your dashboard PIN" maxlength="64" autocomplete="current-password" />
-    </div>
-
-    <button class="primary" id="loadBtn" onclick="loadStats()">View Stats</button>
-    <div class="strip" id="strip"></div>
-    <div class="spinner" id="spinner"></div>
+  <div class="top">
+    <a class="logo" href="/"><img src="/assets/favicon.png" alt="" /><span>JarvQuant</span></a>
+    <button class="link-btn" id="logoutBtn" hidden>Log out</button>
   </div>
 
-  <!-- Stats card -->
-  <div class="card" id="statsCard">
-    <div class="partner-name" id="partnerName"></div>
-    <div class="code-badge"   id="partnerCode"></div>
+  <!-- Public: pitch + sign up / log in -->
+  <section id="publicView">
+    <div class="card">
+      <h1>Earn up to 25 % on every customer you bring</h1>
+      <p class="sub">Share your personal link. Everyone who signs up through it is yours for good, and you earn on
+        every payment they make — month after month, not just the first one.</p>
+      <div class="tiers">
+        <div class="tier"><b>15 %</b><span>from day one</span></div>
+        <div class="tier"><b>20 %</b><span>from 10 paying customers</span></div>
+        <div class="tier"><b>25 %</b><span>from 25 paying customers</span></div>
+      </div>
+      <ul class="how">
+        <li>Your own link: <span id="exampleLink">jarvquant.com/r/yourname</span> — no codes for your audience to type.</li>
+        <li>Works from phone to PC: viewers on a phone get the download link by e-mail and stay yours.</li>
+        <li>Live dashboard: clicks, sign-ups, paying customers, earnings.</li>
+        <li>Paid automatically every month to your bank account via Stripe. No invoices, no chasing.</li>
+      </ul>
+    </div>
 
-    <div class="grid">
-      <div class="stat-card">
-        <div class="stat-label">Sign-ups</div>
-        <div class="stat-value cyan"  id="statSignups">—</div>
-        <div class="stat-sub">users registered with your code</div>
+    <div class="card">
+      <div class="tabs">
+        <button id="tabSignup" class="on" type="button">Become a partner</button>
+        <button id="tabLogin" type="button">Log in</button>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Paid conversions</div>
-        <div class="stat-value green" id="statConversions">—</div>
-        <div class="stat-sub">users who upgraded to a paid plan</div>
+
+      <form id="signupForm" novalidate>
+        <div class="field"><label>Name</label><input id="suName" autocomplete="name" maxlength="80" placeholder="Your name or channel" /></div>
+        <div class="field"><label>E-mail</label><input id="suEmail" type="email" autocomplete="email" placeholder="you@example.com" /></div>
+        <div class="field">
+          <label>Your link name</label>
+          <input id="suHandle" maxlength="20" autocomplete="off" spellcheck="false" placeholder="e.g. alextrades" />
+          <span class="hint">Your link: <b id="suPreview">jarvquant.com/r/…</b> (3–20 letters, digits, - or _)</span>
+        </div>
+        <div class="field"><label>Password</label><input id="suPass" type="password" autocomplete="new-password" placeholder="At least 8 characters" /></div>
+        <div class="field">
+          <label>Country (for payouts)</label>
+          <select id="suCountry"></select>
+        </div>
+        <label class="check"><input type="checkbox" id="suTerms" /> <span>I accept the <a href="/partner/terms.html" target="_blank">partner terms</a>. How we handle your data: <a href="/datenschutz/" target="_blank">privacy policy</a>.</span></label>
+        <button class="primary" type="submit" id="suBtn">Create my partner link</button>
+        <div class="strip" id="suMsg"></div>
+      </form>
+
+      <form id="loginForm" hidden novalidate>
+        <div class="field"><label>E-mail or link name</label><input id="liLogin" autocomplete="username" spellcheck="false" /></div>
+        <div class="field"><label>Password (or PIN)</label><input id="liPass" type="password" autocomplete="current-password" /></div>
+        <button class="primary" type="submit" id="liBtn">Log in</button>
+        <div class="strip" id="liMsg"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Partner dashboard -->
+  <section id="dashView" hidden>
+    <div class="card">
+      <h2 id="dName"></h2>
+      <p class="dim">Share this link anywhere — bio, video descriptions, posts, Discord.</p>
+      <div class="linkbox"><input id="dLink" readonly /><button class="ghost" id="copyBtn" type="button">Copy</button></div>
+
+      <div class="row" style="margin-top:16px">
+        <div><div class="dim">Your commission</div><div style="font-size:28px;font-weight:800" id="dRate"></div></div>
+        <div style="text-align:right"><div class="dim">Paying customers</div><div style="font-size:28px;font-weight:800" class="v cyan" id="dActive"></div></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Total commission</div>
-        <div class="stat-value green" id="statTotal">—</div>
-        <div class="stat-sub">gross earned (all time)</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Commission rate</div>
-        <div class="stat-value"       id="statRate">12%</div>
-        <div class="stat-sub">per successful sale</div>
+      <div class="bar"><i id="dBar" style="width:0"></i></div>
+      <div class="dim" id="dNext"></div>
+
+      <div class="grid">
+        <div class="stat"><div class="l">Link clicks</div><div class="v cyan" id="dClicks">—</div><div class="s">last 30 days</div></div>
+        <div class="stat"><div class="l">E-mail leads</div><div class="v cyan" id="dLeads">—</div><div class="s">download link sent to a phone visitor</div></div>
+        <div class="stat"><div class="l">Sign-ups</div><div class="v cyan" id="dSignups">—</div><div class="s">accounts linked to you</div></div>
+        <div class="stat"><div class="l">Customers</div><div class="v green" id="dConv">—</div><div class="s">ever paid</div></div>
       </div>
     </div>
 
-    <hr />
-
-    <div class="payout-row">
-      <div>
-        <div class="payout-label">Pending payout</div>
-        <div class="payout-sub">Settled manually every month.</div>
+    <div class="card">
+      <h2>Earnings</h2>
+      <div class="grid">
+        <div class="stat"><div class="l">Earned</div><div class="v green" id="eTotal">—</div><div class="s">all time</div></div>
+        <div class="stat"><div class="l">Paid out</div><div class="v" id="ePaid">—</div><div class="s">transferred to you</div></div>
+        <div class="stat"><div class="l">Pending</div><div class="v amber" id="ePending">—</div><div class="s" id="eHold"></div></div>
+        <div class="stat"><div class="l">Payable now</div><div class="v amber" id="ePayable">—</div><div class="s" id="eMin"></div></div>
       </div>
-      <div class="payout-value" id="statPending">—</div>
+
+      <div style="margin-top:18px" class="row">
+        <div><div style="font-weight:700" id="cTitle"></div><div class="dim" id="cText"></div></div>
+        <button class="ghost" id="cBtn" type="button"></button>
+      </div>
+      <div class="strip" id="cMsg"></div>
+      <div class="payouts" id="payouts"></div>
     </div>
-  </div>
+  </section>
 
-  <p class="note">
-    Questions? <a href="mailto:JarvQuant@gmail.com">JarvQuant@gmail.com</a>
-  </p>
-
+  <p class="note">Questions? <a href="mailto:JarvQuant@gmail.com">JarvQuant@gmail.com</a> · <a href="/partner/terms.html">Partner terms</a> · <a href="/impressum/">Impressum</a> · <a href="/datenschutz/">Datenschutz</a></p>
 </div>
+
 <script>
-  const API = "https://jarvquant-api.onrender.com";
+  const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+    ? "http://localhost:8765" : "https://jarvquant-api.onrender.com";
+  const SITE = "jarvquant.com";
+  const $ = id => document.getElementById(id);
+  const KEY = "jq_partner_session";
 
-  // Pre-fill code from ?code= param (but never pre-fill PIN)
-  const params = new URLSearchParams(location.search);
-  const preCode = params.get("code") || "";
-  if (preCode) document.getElementById("codeInput").value = preCode.toUpperCase();
+  // Payout countries Stripe Connect supports for us; partners elsewhere can write to us.
+  const COUNTRIES = [
+    ["DE","Germany"],["AT","Austria"],["CH","Switzerland"],["NL","Netherlands"],["BE","Belgium"],["FR","France"],
+    ["ES","Spain"],["IT","Italy"],["PT","Portugal"],["IE","Ireland"],["LU","Luxembourg"],["PL","Poland"],
+    ["CZ","Czechia"],["SK","Slovakia"],["HU","Hungary"],["RO","Romania"],["BG","Bulgaria"],["HR","Croatia"],
+    ["SI","Slovenia"],["GR","Greece"],["CY","Cyprus"],["MT","Malta"],["DK","Denmark"],["SE","Sweden"],
+    ["FI","Finland"],["NO","Norway"],["EE","Estonia"],["LV","Latvia"],["LT","Lithuania"],["GB","United Kingdom"],
+    ["US","United States"],["CA","Canada"],["AU","Australia"],["NZ","New Zealand"],["SG","Singapore"],
+    ["HK","Hong Kong"],["JP","Japan"],["AE","United Arab Emirates"],["MX","Mexico"],["BR","Brazil"]
+  ];
+  const sel = $("suCountry");
+  COUNTRIES.forEach(([c, n]) => sel.add(new Option(n, c)));
+  const guess = (navigator.language || "").split("-")[1];
+  sel.value = COUNTRIES.some(([c]) => c === guess) ? guess : "DE";
 
-  // Enter key on either field triggers load
-  ["codeInput","pinInput"].forEach(id =>
-    document.getElementById(id).addEventListener("keydown", e => { if (e.key === "Enter") loadStats(); })
-  );
+  const eur = n => "€ " + (n ?? 0).toFixed(2).replace(".", ",");
+  const pct = r => `${+(r * 100).toFixed(1)} %`;
+  function strip(id, text, cls) { const el = $(id); el.className = "strip " + cls; el.textContent = text; }
+  function clear(id) { const el = $(id); el.className = "strip"; el.textContent = ""; }
 
-  function setStrip(msg, cls) {
-    const el = document.getElementById("strip");
-    el.className = "strip " + cls;
-    el.textContent = msg;
+  async function api(path, opts = {}) {
+    const headers = { "Content-Type": "application/json" };
+    const s = localStorage.getItem(KEY);
+    if (s) headers.Authorization = "Bearer " + s;
+    const res = await fetch(API + path, { ...opts, headers });
+    let body = null;
+    try { body = await res.json(); } catch {}
+    if (!res.ok) {
+      let msg = body && body.detail;
+      if (Array.isArray(msg)) msg = msg.map(d => d.msg.replace(/^Value error, /, "")).join(" · ");
+      const err = new Error(msg || `Error ${res.status}`);
+      err.status = res.status;
+      throw err;
+    }
+    return body;
   }
-  function hideStrip() {
-    const el = document.getElementById("strip");
-    el.className = "strip"; el.textContent = "";
+
+  // ── Tabs / public forms ──
+  function tab(which) {
+    $("tabSignup").classList.toggle("on", which === "signup");
+    $("tabLogin").classList.toggle("on", which === "login");
+    $("signupForm").hidden = which !== "signup";
+    $("loginForm").hidden = which !== "login";
   }
+  $("tabSignup").onclick = () => tab("signup");
+  $("tabLogin").onclick = () => tab("login");
+  $("suHandle").addEventListener("input", e => {
+    const h = e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, "");
+    e.target.value = h;
+    $("suPreview").textContent = `${SITE}/r/${h || "…"}`;
+  });
 
-  async function loadStats() {
-    const code = document.getElementById("codeInput").value.trim().toUpperCase();
-    const pin  = document.getElementById("pinInput").value.trim();
-    if (!code) { setStrip("Please enter your partner code.", "err"); return; }
-    if (!pin)  { setStrip("Please enter your PIN.", "err"); return; }
-
-    const btn     = document.getElementById("loadBtn");
-    const spinner = document.getElementById("spinner");
-    hideStrip();
-    btn.disabled = true;
-    spinner.style.display = "block";
-    document.getElementById("statsCard").style.display = "none";
-
+  $("signupForm").addEventListener("submit", async e => {
+    e.preventDefault(); clear("suMsg");
+    if (!$("suTerms").checked) return strip("suMsg", "Please accept the partner terms.", "err");
+    $("suBtn").disabled = true;
     try {
-      const res = await fetch(
-        `${API}/partner/stats?code=${encodeURIComponent(code)}&pin=${encodeURIComponent(pin)}`
-      );
-      if (!res.ok) {
-        setStrip(
-          res.status === 401
-            ? "Invalid code or PIN. Please check and try again."
-            : `Error ${res.status} — please try again.`,
-          "err"
-        );
-        return;
+      await api("/partner/signup", { method: "POST", body: JSON.stringify({
+        name: $("suName").value, email: $("suEmail").value, handle: $("suHandle").value,
+        password: $("suPass").value, country: $("suCountry").value, accept_terms: true }) });
+      strip("suMsg", `Almost done! We sent a confirmation link to ${$("suEmail").value}. Click it to activate your link.`, "ok");
+      $("signupForm").querySelectorAll("input,select").forEach(i => i.disabled = true);
+    } catch (err) {
+      strip("suMsg", err.message, "err");
+      $("suBtn").disabled = false;
+    }
+  });
+
+  $("loginForm").addEventListener("submit", async e => {
+    e.preventDefault(); clear("liMsg");
+    $("liBtn").disabled = true;
+    try {
+      const s = await api("/partner/login", { method: "POST", body: JSON.stringify({
+        login: $("liLogin").value, password: $("liPass").value }) });
+      localStorage.setItem(KEY, s.token);
+      await showDashboard();
+    } catch (err) {
+      strip("liMsg", err.message, "err");
+    } finally { $("liBtn").disabled = false; }
+  });
+
+  // ── Dashboard ──
+  async function showDashboard() {
+    let d;
+    try { d = await api("/partner/me"); }
+    catch (err) {
+      if (err.status === 401) { localStorage.removeItem(KEY); return showPublic(); }
+      throw err;
+    }
+    $("publicView").hidden = true; $("dashView").hidden = false; $("logoutBtn").hidden = false;
+    $("dName").textContent = d.name;
+    $("dLink").value = d.link.replace(/^https?:\/\/(www\.)?/, "");
+    $("dRate").textContent = pct(d.commission_rate);
+    $("dActive").textContent = d.active_customers;
+    const next = d.tier.next;
+    if (next) {
+      const prevNeed = next.customers === 10 ? 0 : 10;
+      $("dBar").style.width = Math.min(100, (d.active_customers - prevNeed) / (next.customers - prevNeed) * 100) + "%";
+      $("dNext").textContent = `${next.missing} more paying customer${next.missing === 1 ? "" : "s"} to ${pct(next.rate)}.`;
+    } else {
+      $("dBar").style.width = "100%";
+      $("dNext").textContent = "Top tier reached. Thank you!";
+    }
+    $("dClicks").textContent = d.clicks_30d;
+    $("dLeads").textContent = d.leads;
+    $("dSignups").textContent = d.signups;
+    $("dConv").textContent = d.paid_conversions;
+    $("eTotal").textContent = eur(d.total_commission_eur);
+    $("ePaid").textContent = eur(d.paid_out_eur);
+    $("ePending").textContent = eur(d.pending_payout_eur);
+    $("ePayable").textContent = eur(d.payable_now_eur);
+    $("eHold").textContent = `payable ${d.payout_rules.hold_days} days after each payment`;
+    $("eMin").textContent = `paid monthly from ${eur(d.payout_rules.min_eur)}`;
+
+    const c = d.connect.status;
+    const copy = {
+      none: ["Set up payouts", "Connect your bank account with Stripe (takes ~5 minutes).", "Set up"],
+      incomplete: ["Finish payout setup", "Stripe still needs a few details from you.", "Continue"],
+      active: ["Payouts active ✓", "We transfer your earnings automatically each month.", "Stripe dashboard"],
+    }[c] || ["Payouts", "", "Open"];
+    [$("cTitle").textContent, $("cText").textContent, $("cBtn").textContent] = copy;
+    $("cBtn").onclick = async () => {
+      clear("cMsg"); $("cBtn").disabled = true;
+      try {
+        const r = await api(c === "active" ? "/partner/connect/dashboard" : "/partner/connect", { method: "POST" });
+        location.href = r.url;
+      } catch (err) { strip("cMsg", err.message, "err"); $("cBtn").disabled = false; }
+    };
+
+    $("payouts").innerHTML = "";
+    d.payouts.forEach(p => {
+      const row = document.createElement("div");
+      row.innerHTML = `<span></span><span><b></b> <span class="badge"></span></span>`;
+      row.children[0].textContent = p.period;
+      row.querySelector("b").textContent = eur(p.amount_eur);
+      const b = row.querySelector(".badge"); b.textContent = p.status; b.classList.add(p.status);
+      $("payouts").appendChild(row);
+    });
+  }
+
+  function showPublic() {
+    $("publicView").hidden = false; $("dashView").hidden = true; $("logoutBtn").hidden = true;
+  }
+  $("logoutBtn").onclick = () => { localStorage.removeItem(KEY); showPublic(); };
+  $("copyBtn").onclick = async () => {
+    try { await navigator.clipboard.writeText("https://www." + $("dLink").value); } catch {}
+    $("copyBtn").textContent = "Copied ✓"; setTimeout(() => $("copyBtn").textContent = "Copy", 1500);
+  };
+
+  // ── Entry: e-mail confirmation, Stripe return, saved session ──
+  (async () => {
+    const q = new URLSearchParams(location.search);
+    const verify = q.get("verify");
+    history.replaceState(null, "", location.pathname);
+    if (verify) {
+      try {
+        const s = await api("/partner/verify", { method: "POST", body: JSON.stringify({ token: verify }) });
+        localStorage.setItem(KEY, s.token);
+      } catch (err) {
+        tab("login");
+        strip("liMsg", err.message + " — if you already confirmed, just log in.", "err");
       }
-      renderStats(await res.json());
-    } catch {
-      setStrip("Network error — please try again.", "err");
-    } finally {
-      btn.disabled = false;
-      spinner.style.display = "none";
     }
-  }
-
-  function fmt(eur) {
-    return "€ " + (eur ?? 0).toFixed(2).replace(".", ",");
-  }
-
-  function renderStats(data) {
-    document.getElementById("partnerName").textContent = data.name || data.code;
-    document.getElementById("partnerCode").textContent = data.code;
-    document.getElementById("statSignups").textContent     = data.signups ?? 0;
-    document.getElementById("statConversions").textContent = data.paid_conversions ?? 0;
-    document.getElementById("statTotal").textContent       = fmt(data.total_commission_eur);
-    document.getElementById("statPending").textContent     = fmt(data.pending_payout_eur);
-    if (typeof data.commission_rate === "number") {
-      document.getElementById("statRate").textContent = `${+(data.commission_rate * 100).toFixed(2)}%`;
+    if (q.get("code")) { tab("login"); $("liLogin").value = q.get("code"); }
+    if (localStorage.getItem(KEY)) {
+      await showDashboard();
+      if (q.get("connect") === "refresh") $("cBtn").click();
     }
-    document.getElementById("statsCard").style.display = "block";
-    hideStrip();
-  }
+  })();
 </script>
 </body>
 </html>

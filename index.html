@@ -54,7 +54,7 @@
         "Grand Archive: 300+ strategy playbooks, most with checklists and error patterns (opening range, liquidity sweeps, order flow, options and more)",
         "VANTA AI Coach: dedicated trader personality for ruthless error analysis and psychology support",
         "Multi-language interface (English and German)",
-        "Transparent partner program: 12% standard commission per sale (negotiable) and a live dashboard for every partner",
+        "Open partner program: 15-25% recurring commission, a personal link and automatic monthly payouts",
         "Flexible data import via CSV from MT5 and TradingView, or Parquet format",
         "Your trades and journals stay on your PC; VANTA only sends what you ask about to the AI provider you choose, or runs fully local"
       ],
@@ -201,7 +201,7 @@
           "name": "Does JarvQuant have a partner or affiliate program?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. JarvQuant runs a transparent partner program. Partners receive a unique referral code and a 12% standard commission (negotiable) on every sale by users who registered with that code. Attribution happens at signup so the partner earns commission on any future upgrade, even if the user stays on the free tier for weeks or months. Each partner has a dashboard at jarvquant.com/partner (partner code and PIN) with live sign-ups, paid conversions, and pending payouts."
+            "text": "Yes. Anyone can join the JarvQuant partner program at jarvquant.com/partner and gets a personal link (jarvquant.com/r/name). Partners earn 15% of every payment their referred customers make, 20% from 10 paying customers and 25% from 25, on renewals too, not just the first sale. Visitors are attributed by link, so nobody has to type a code, and phone visitors keep the referral when they install on their PC later. The live dashboard shows clicks, sign-ups, paying customers and earnings, and payouts go out automatically every month via Stripe."
           }
         },
         {
@@ -667,6 +667,8 @@
           <ul>
             <li><a href="/partner/" data-i18n="footer.partner">Partner program</a></li>
             <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
+            <li><a href="/impressum/" data-i18n="footer.imprint">Legal notice</a></li>
+            <li><a href="/datenschutz/" data-i18n="footer.privacy">Privacy</a></li>
           </ul>
         </div>
         <div>
@@ -687,7 +689,7 @@
     </div>
   </footer>
 
-  <script type="module" src="site.js?v=2"></script>
+  <script type="module" src="site.js?v=3"></script>
   <script type="module" src="motion.js?v=1"></script>
   <!-- Privacy-friendly page-view beacon (no cookies, no PII) -->
   <script>
@@ -701,5 +703,6 @@
       else fetch(_api, { method: "POST", body: _pv, keepalive: true });
     } catch (e) {}
   </script>
+  <script src="/ref.js?v=1" defer></script>
 </body>
 </html>
