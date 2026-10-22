@@ -507,6 +507,10 @@ function countUp(el, dur = 1400) {
   requestAnimationFrame(tick);
 }
 
+// The markup carries the real numbers for crawlers and link previews; with
+// motion on they start at zero and count up when they come into view.
+if (!REDUCED) document.querySelectorAll("[data-count]").forEach((el) => { el.textContent = "0" + (el.dataset.suffix || ""); });
+
 // ── The loop: sticky scroll story ───────────────────────────────────────
 const scenes = [...document.querySelectorAll(".scene")];
 const steps = [...document.querySelectorAll(".step")];
