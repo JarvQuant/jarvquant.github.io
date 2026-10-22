@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Daily Chart Challenge: Long or Short? | JarvQuant</title>
+  <meta name="description" content="Five real NAS100 charts a day. Call long or short, then watch what really happened. Free in the browser, no sign-up." />
+  <link rel="canonical" href="https://www.jarvquant.com/play/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.jarvquant.com/play/" />
+  <meta property="og:title" content="Long or short? The JarvQuant Daily Chart Challenge" />
+  <meta property="og:description" content="Five real charts a day. Call the next move, then watch what really happened." />
+  <meta property="og:image" content="https://www.jarvquant.com/assets/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#08090c" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="/assets/favicon.png?v=8" type="image/png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="JQ Daily" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="play.css?v=1" />
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <a class="brand" href="/?ref=play" aria-label="JarvQuant home">
+        <svg class="brand-mark" viewBox="-2 -26 214 214" aria-hidden="true"><rect x="1" y="-23" width="208" height="208" rx="48" fill="#0F1217" stroke="#262c36" stroke-width="6"/><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="21"><path d="M62 54 V120 A22 22 0 0 1 18 120" stroke="#33C6E3"/><path d="M92 143 H128 A52 52 0 1 0 103.6 136.9" stroke="#E83CF0"/><path d="M126 89 L174 137 Q180 143 188 143 H198" stroke="#E83CF0"/></g><circle cx="62" cy="22" r="13" fill="#33C6E3"/></svg>
+        <span>JarvQuant</span>
+      </a>
+      <div class="top-right">
+        <span class="streak mono" id="streak" hidden><span aria-hidden="true">🔥</span> <b id="streakN">0</b></span>
+        <button class="chip mono" id="langBtn" type="button">DE</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Intro -->
+      <section class="screen intro" id="intro">
+        <div class="eyebrow mono"><span class="live-dot"></span><span data-t="eyebrow">Daily chart challenge</span></div>
+        <h1 data-t="title">Long or short?</h1>
+        <p class="sub" data-t="sub">Five real NAS100 charts a day. Call the next move, then watch what really happened.</p>
+        <button class="btn btn-primary btn-lg" id="startBtn" type="button">Start</button>
+        <p class="fine" data-t="fine">Free · no sign-up · new charts every day at midnight</p>
+        <p class="err" id="loadErr" hidden><span data-t="loadErr">Couldn't load today's charts.</span> <button class="link" id="retryBtn" type="button" data-t="retry">Try again</button></p>
+      </section>
+
+      <!-- Game -->
+      <section class="screen game" id="game" hidden>
+        <div class="hud">
+          <span class="mono" id="hudLabel"></span>
+          <span class="dots" id="dots" aria-hidden="true"></span>
+          <button class="link mono" id="toResults" type="button" hidden data-t="back">Results</button>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chart" aria-label="Price chart"></canvas>
+          <div class="meta mono" id="meta"></div>
+        </div>
+        <p class="verdict" id="verdict" aria-live="polite"></p>
+        <div class="actions" id="pickRow">
+          <button class="pick long" id="longBtn" type="button"><span aria-hidden="true">▲</span> <span data-t="long">Long</span></button>
+          <button class="pick short" id="shortBtn" type="button"><span aria-hidden="true">▼</span> <span data-t="short">Short</span></button>
+        </div>
+        <div class="actions" id="nextRow" hidden>
+          <button class="btn btn-primary btn-lg btn-block" id="nextBtn" type="button">Next</button>
+        </div>
+      </section>
+
+      <!-- Result -->
+      <section class="screen done" id="done" hidden>
+        <div class="mono label" id="doneLabel"></div>
+        <div class="score"><span id="scoreN">0</span><small>/5</small></div>
+        <div class="grid" id="grid" aria-hidden="true"></div>
+        <h2 id="doneTitle"></h2>
+        <p class="streak-line mono" id="streakLine"></p>
+        <div class="row">
+          <button class="btn btn-primary" id="shareBtn" type="button" data-t="share">Share result</button>
+          <button class="btn btn-secondary" id="practiceBtn" type="button" data-t="more">Practise more</button>
+        </div>
+        <p class="countdown mono"><span data-t="nextIn">Next challenge in</span> <b id="countdown">--:--:--</b></p>
+        <button class="btn btn-secondary btn-block" id="installBtn" type="button" hidden data-t="install">Add to home screen</button>
+        <p class="hint" id="iosHint" hidden data-t="ios"></p>
+
+        <div class="cta">
+          <h3 data-t="ctaTitle">Train this on 9 years of data</h3>
+          <p data-t="ctaBody">JarvQuant replays real markets bar by bar on your PC and shows you after every session what costs you money. Free plan, no card.</p>
+          <div class="row">
+            <a class="btn btn-primary" id="ctaMain" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe" data-t="ctaDownload">Download for Windows</a>
+            <a class="btn btn-secondary" href="/?ref=play" data-t="ctaWhat">What is JarvQuant?</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span data-t="foot">Real historical NAS100 data. A practice game, not financial advice.</span>
+      <a href="/?ref=play">jarvquant.com</a>
+    </footer>
+  </div>
+
+  <script type="module" src="play.js?v=1"></script>
+  <!-- Privacy-friendly page-view beacon (no cookies, no PII), same as the landing page -->
+  <script>
+    try {
+      var _qref = new URLSearchParams(location.search).get("ref");
+      var _pv = JSON.stringify({ path: location.pathname, ref: _qref || document.referrer || "" });
+      var _api = "https://jarvquant-api.onrender.com/v";
+      if (navigator.sendBeacon) navigator.sendBeacon(_api, _pv);
+      else fetch(_api, { method: "POST", body: _pv, keepalive: true });
+    } catch (e) {}
+  </script>
+</body>
+</html>
