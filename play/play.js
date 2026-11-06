@@ -2,7 +2,7 @@
 // short, then the hidden bars play out. Rounds are static JSON built by
 // tools/build_daily.py; progress and the streak stay in this browser only.
 
-const EPOCH = Date.UTC(2026, 9, 22); // the local date that is Daily #1
+const EPOCH = Date.UTC(2026, 10, 6); // the local date that is Daily #1
 const POOL = 365; // number of files in days/
 const ROUNDS = 5;
 const KEY = "jq_play";
