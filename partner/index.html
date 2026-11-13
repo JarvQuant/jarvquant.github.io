@@ -252,9 +252,12 @@
     document.getElementById("statsCard").style.display = "none";
 
     try {
-      const res = await fetch(
-        `${API}/partner/stats?code=${encodeURIComponent(code)}&pin=${encodeURIComponent(pin)}`
-      );
+      // Code and PIN go in the body: a URL ends up in logs and browser history.
+      const res = await fetch(`${API}/partner/stats`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, pin }),
+      });
       if (!res.ok) {
         setStrip(
           res.status === 401
