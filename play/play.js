@@ -1,12 +1,12 @@
 // Daily Chart Challenge: five real NAS100 charts a day. The player calls long or
 // short, then the hidden bars play out. Rounds are static JSON built by
 // tools/build_daily.py; progress and the streak stay in this browser only.
+import { count } from "/count.js?v=1";
 
 const EPOCH = Date.UTC(2026, 10, 6); // the local date that is Daily #1
 const POOL = 365; // number of files in days/
 const ROUNDS = 5;
 const KEY = "jq_play";
-const BEACON = "https://jarvquant-api.onrender.com/v";
 const SITE_URL = "https://www.jarvquant.com/?ref=play";
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const MOBILE = matchMedia("(pointer: coarse)").matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -138,10 +138,7 @@ const TODAY = todayNumber();
 const liveStreak = () => (state.last >= TODAY - 1 ? state.streak : 0);
 
 function beacon(path) {
-  try {
-    const body = JSON.stringify({ path, ref: "" });
-    if (navigator.sendBeacon) navigator.sendBeacon(BEACON, body);
-  } catch (e) {}
+  count(path);                  // off until the operator decides (count.js)
 }
 
 // ── Rounds ──────────────────────────────────────────────────────────────
