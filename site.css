@@ -439,3 +439,9 @@ h1, h2, h3 { margin: 0; font-weight: 650; letter-spacing: -0.03em; }
 .footer-bottom { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; color: var(--muted); font-size: 13px; }
 .footer-bottom p { max-width: 720px; margin: 0; font-size: 13px; }
 @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-grid > div:first-child { grid-column: 1 / -1; } }
+
+/* Legal links in the footer: imprint, privacy, terms, withdrawal policy, risk notice, and the two functions. */
+.footer-legal { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 28px; font-size: 13px; }
+.footer-legal a { color: var(--muted); text-decoration: none; }
+.footer-legal a.strong { color: var(--text-2); font-weight: 600; }
+.footer-legal a:hover { color: var(--accent); }

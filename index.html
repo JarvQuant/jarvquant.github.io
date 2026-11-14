@@ -265,7 +265,7 @@
   </script>
 
   <link rel="stylesheet" href="/assets/fonts/fonts.css?v=1" />
-  <link rel="stylesheet" href="site.css?v=2" />
+  <link rel="stylesheet" href="site.css?v=3" />
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -594,7 +594,7 @@
           </div>
         </div>
 
-        <p class="fineprint" data-i18n="pricing.fine">Access starts right away: before you pay, you confirm that it may, which ends the 14-day right of withdrawal. You can cancel any subscription at any time to stop future billing, and access stays active until the end of the current billing period.</p>
+        <p class="fineprint" data-i18n="pricing.fine">Before you pay, the app shows you an overview with price, term and cancellation. You have a 14-day right of withdrawal from the conclusion of the contract, also once you use your access. Subscriptions can be cancelled at any time with effect from the end of the billing period.</p>
       </div>
     </section>
 
@@ -677,6 +677,15 @@
           </ul>
         </div>
       </div>
+      <nav class="footer-legal" aria-label="Legal">
+        <a href="/impressum.html" data-legal data-i18n="footer.imprint">Imprint</a>
+        <a href="/datenschutz.html" data-legal data-i18n="footer.privacy">Privacy</a>
+        <a href="/agb.html" data-legal data-i18n="footer.terms">Terms</a>
+        <a href="/widerrufsbelehrung.html" data-legal data-i18n="footer.withdrawal_policy">Withdrawal policy</a>
+        <a href="/risikohinweise.html" data-legal data-i18n="footer.risk">Risk notice</a>
+        <a href="/kuendigen.html" data-legal class="strong" data-i18n="footer.cancel">Cancel contracts here</a>
+        <a href="/widerrufen.html" data-legal class="strong" data-i18n="footer.withdraw">Withdraw from contract</a>
+      </nav>
       <div class="footer-bottom">
         <span>© <span id="year">2026</span> JarvQuant</span>
         <p data-i18n="footer.disclaimer">JarvQuant is a simulation and training tool. Nothing on this site or in the app is financial advice. Trading involves substantial risk of loss.</p>
@@ -684,9 +693,9 @@
     </div>
   </footer>
 
-  <script type="module" src="site.js?v=2"></script>
+  <script type="module" src="site.js?v=3"></script>
   <script type="module" src="motion.js?v=1"></script>
-  <!-- Privacy-friendly page-view beacon (no cookies, no PII) -->
+  <!-- Page-view beacon: path and referrer, no cookies (see the privacy notice) -->
   <script>
     try {
       // Prefer an explicit ?ref= tag (e.g. paid ad links) over document.referrer,

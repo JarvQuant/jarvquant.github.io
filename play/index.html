@@ -21,6 +21,7 @@
   <meta name="apple-mobile-web-app-title" content="JQ Daily" />
   <link rel="stylesheet" href="/assets/fonts/fonts.css?v=1" />
   <link rel="stylesheet" href="play.css?v=1" />
+  <link rel="stylesheet" href="/legal/legal.css?v=1">
 </head>
 <body>
   <div class="app">
@@ -96,11 +97,20 @@
     <footer class="foot">
       <span data-t="foot">Real historical NAS100 data. A practice game, not financial advice.</span>
       <a href="/?ref=play">jarvquant.com</a>
+      <nav class="footer-legal" aria-label="Legal">
+        <a href="/impressum.html" data-legal>Imprint</a>
+        <a href="/datenschutz.html" data-legal>Privacy</a>
+        <a href="/agb.html" data-legal>Terms</a>
+        <a href="/widerrufsbelehrung.html" data-legal>Withdrawal policy</a>
+        <a href="/risikohinweise.html" data-legal>Risk notice</a>
+        <a href="/kuendigen.html" data-legal class="strong">Cancel contracts here</a>
+        <a href="/widerrufen.html" data-legal class="strong">Withdraw from contract</a>
+      </nav>
     </footer>
   </div>
 
   <script type="module" src="play.js?v=1"></script>
-  <!-- Privacy-friendly page-view beacon (no cookies, no PII), same as the landing page -->
+  <!-- Page-view beacon: path and referrer, no cookies, same as the landing page -->
   <script>
     try {
       var _qref = new URLSearchParams(location.search).get("ref");

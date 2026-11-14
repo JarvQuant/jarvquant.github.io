@@ -92,7 +92,7 @@ const SITE = {
     "pricing.kicker": "Pricing",
     "pricing.title": "Start free. Go deeper when you're ready.",
     "pricing.sub": "No credit card to start. Paid plans and a 7-day Elite trial are available inside the app.",
-    "pricing.fine": "Access starts right away: before you pay, you confirm that it may, which ends the 14-day right of withdrawal. You can cancel any subscription at any time to stop future billing, and access stays active until the end of the current billing period.",
+    "pricing.fine": "Before you pay, the app shows you an overview with price, term and cancellation. You have a 14-day right of withdrawal from the conclusion of the contract, also once you use your access. Subscriptions can be cancelled at any time with effect from the end of the billing period.",
     "plan.per_month": "/ month",
     "plan.cta_inapp": "Download and upgrade in-app",
     "plan.cta_trial": "Try Elite free for 7 days",
@@ -129,6 +129,13 @@ const SITE = {
     "footer.play": "Daily Chart Challenge",
     "footer.releases": "Release notes",
     "footer.partner": "Partner program",
+    "footer.imprint": "Imprint",
+    "footer.privacy": "Privacy",
+    "footer.terms": "Terms",
+    "footer.withdrawal_policy": "Withdrawal policy",
+    "footer.risk": "Risk notice",
+    "footer.cancel": "Cancel contracts here",
+    "footer.withdraw": "Withdraw from contract",
     "footer.disclaimer": "JarvQuant is a simulation and training tool. Nothing on this site or in the app is financial advice. Trading involves substantial risk of loss.",
   },
 
@@ -220,7 +227,7 @@ const SITE = {
     "pricing.kicker": "Preise",
     "pricing.title": "Starte kostenlos. Geh tiefer, wenn du so weit bist.",
     "pricing.sub": "Keine Kreditkarte zum Start. Bezahlpläne und eine 7-tägige Elite-Testphase gibt es direkt in der App.",
-    "pricing.fine": "Der Zugang startet sofort: Vor dem Bezahlen bestätigst du das, damit endet das 14-tägige Widerrufsrecht. Du kannst jedes Abo jederzeit kündigen, um künftige Abbuchungen zu stoppen. Der Zugang bleibt bis zum Ende des laufenden Abrechnungszeitraums aktiv.",
+    "pricing.fine": "Vor dem Bezahlen zeigt dir die App eine Übersicht mit Preis, Laufzeit und Kündigung. Du hast ein Widerrufsrecht von 14 Tagen ab Vertragsschluss, auch wenn du den Zugang schon nutzt. Abos kannst du jederzeit zum Ende des Abrechnungszeitraums kündigen.",
     "plan.per_month": "/ Monat",
     "plan.cta_inapp": "Herunterladen und in der App upgraden",
     "plan.cta_trial": "Elite 7 Tage gratis testen",
@@ -257,6 +264,13 @@ const SITE = {
     "footer.play": "Tägliche Chart-Challenge",
     "footer.releases": "Release Notes",
     "footer.partner": "Partnerprogramm",
+    "footer.imprint": "Impressum",
+    "footer.privacy": "Datenschutz",
+    "footer.terms": "AGB",
+    "footer.withdrawal_policy": "Widerrufsbelehrung",
+    "footer.risk": "Risikohinweise",
+    "footer.cancel": "Verträge hier kündigen",
+    "footer.withdraw": "Vertrag widerrufen",
     "footer.disclaimer": "JarvQuant ist ein Simulations- und Trainingswerkzeug. Nichts auf dieser Seite oder in der App ist eine Finanzberatung. Trading ist mit erheblichem Verlustrisiko verbunden.",
   },
 };
@@ -268,7 +282,17 @@ function apply(lang) {
     if (v !== undefined) el.textContent = v;
   });
   document.documentElement.lang = lang;
+  legalLinks(lang);
   document.dispatchEvent(new CustomEvent("jq:lang", { detail: lang }));
+}
+
+// The legal pages are German; ?lang=en shows the English versions.
+function legalLinks(lang) {
+  document.querySelectorAll("a[data-legal]").forEach((a) => {
+    const url = new URL(a.getAttribute("href"), location.origin);
+    if (lang === "de") url.searchParams.delete("lang"); else url.searchParams.set("lang", "en");
+    a.setAttribute("href", url.pathname + url.search);
+  });
 }
 
 const select = document.getElementById("langSelect");
@@ -281,6 +305,7 @@ if (select) {
   });
 }
 if (lang !== "en") apply(lang);
+else legalLinks(lang);
 
 const year = document.getElementById("year");
 if (year) year.textContent = String(new Date().getFullYear());

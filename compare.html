@@ -413,6 +413,7 @@
       .legend { gap: 14px; font-size: 11px; }
     }
   </style>
+  <link rel="stylesheet" href="/legal/legal.css?v=1">
 </head>
 
 <body>
@@ -745,8 +746,7 @@
       </a>
       <span class="cta-note">Windows · one-click installer</span>
       <p style="margin-top:18px; max-width:46ch; margin-left:auto; margin-right:auto; font:500 11px/1.55 var(--mono); color:var(--fg-dim);">
-        Access starts right away: before you pay, you confirm that it may, which ends the 14-day right of withdrawal. You can cancel any subscription at any time to stop future billing, and access stays active until the end of the current billing period.
-      </p>
+        Before you pay, the app shows you an overview with price, term and cancellation. You have a 14-day right of withdrawal from the conclusion of the contract, also once you use your access. Subscriptions can be cancelled at any time with effect from the end of the billing period.</p>
     </section>
 
   </main>
@@ -755,9 +755,18 @@
     <a href="/">JarvQuant</a> &nbsp;·&nbsp; <a href="/">Back to Platform</a>
     &nbsp;·&nbsp; <a href="/partner/">Partner Dashboard</a>
     &nbsp;·&nbsp; Checked October 2026 against each product's public pages and current reviews. Plans change often, so check the vendor before you buy.
+    <nav class="footer-legal" aria-label="Legal">
+        <a href="/impressum.html" data-legal>Imprint</a>
+        <a href="/datenschutz.html" data-legal>Privacy</a>
+        <a href="/agb.html" data-legal>Terms</a>
+        <a href="/widerrufsbelehrung.html" data-legal>Withdrawal policy</a>
+        <a href="/risikohinweise.html" data-legal>Risk notice</a>
+        <a href="/kuendigen.html" data-legal class="strong">Cancel contracts here</a>
+        <a href="/widerrufen.html" data-legal class="strong">Withdraw from contract</a>
+      </nav>
   </footer>
 
-  <!-- Privacy-friendly page-view beacon (no cookies, no PII) -->
+  <!-- Page-view beacon: path and referrer, no cookies (see the privacy notice) -->
   <script>
     try {
       var _pv = JSON.stringify({ path: location.pathname, ref: document.referrer || "" });
