@@ -367,7 +367,7 @@ async function pageDashboard() {
   cards.push(head);
 
   cards.push(el("div", { class: "card" }, el("h2", { text: "Your standing" }), el("div", { class: "grid" },
-    row("Qualified customers", s.qualified_customers, "cyan"), row("Sign-ups with your code", s.signups),
+    row("Qualified customers", s.qualified_customers, "cyan"), s.signups == null ? null : row("Sign-ups with your code", s.signups),
     row("Tier", s.tier === "legacy" ? "Earlier programme" : (s.tier || "–")), row("Current commission rate", pct(s.rate_bp), "green")),
     el("p", { class: "dim", text: `Counted for your tier: ${s.counted_for_tier}.` + (s.next_tier ? ` Next tier "${s.next_tier.tier}" from ${s.next_tier.from_customers} qualified customers: ${pct(s.next_tier.rate_bp)}.` : "") }),
     s.agreement ? el("p", { class: "dim", text: `Individual agreement in force: ${pct(s.agreement.rate_bp)} (${s.agreement.scope || "agreed scope"}${s.agreement.valid_from ? ", from " + day(s.agreement.valid_from) : ""}${s.agreement.valid_to ? " to " + day(s.agreement.valid_to) : ""}).` }) : null));
@@ -386,8 +386,9 @@ async function pageDashboard() {
       : table(["Month", "Bookings"], d.months.map((m) => [month(m.month), m.bookings]))) : el("p", { class: "dim", text: "No bookings yet." }),
     detailed ? null : el("p", { class: "dim", text: `Amounts and states of single bookings, and corrections, are shown from ${d.bookings.detail_from_qualified_customers} qualified customers on, so that no booking can be traced to one person. The totals above are always complete.` })));
 
-  const rows = d.bookings.rows.map((b) => detailed ? [month(b.month), PRODUCTS[b.product] || b.product || "", b.entry === "booking" ? (KINDS[b.payment_kind] || "") : (b.entry === "correction" ? "correction" : "taken back"), b.rate_bp === undefined ? "" : pct(b.rate_bp), money(b.amount_cents), b.state ? (STATES[b.state] || b.state) : ""] : [month(b.month), PRODUCTS[b.product] || b.product || ""]);
-  cards.push(el("div", { class: "card" }, el("h2", { text: "Your bookings" }), rows.length ? table(detailed ? ["Month", "Product", "Payment", "Rate", "Amount", "State"] : ["Month", "Product"], rows) : el("p", { class: "dim", text: "No bookings yet." })));
+  const rows = d.bookings.rows.map((b) => [month(b.month), PRODUCTS[b.product] || b.product || "", b.entry === "booking" ? (KINDS[b.payment_kind] || "") : (b.entry === "correction" ? "correction" : "taken back"), b.rate_bp === undefined ? "" : pct(b.rate_bp), money(b.amount_cents), b.state ? (STATES[b.state] || b.state) : ""]);
+  cards.push(el("div", { class: "card" }, el("h2", { text: "Your bookings" }), !detailed ? el("p", { class: "dim", text: `Single bookings are listed from ${d.bookings.detail_from_qualified_customers} qualified customers on. Until then you see the number of bookings per month above.` })
+    : rows.length ? table(["Month", "Product", "Payment", "Rate", "Amount", "State"], rows) : el("p", { class: "dim", text: "No bookings yet." })));
 
   cards.push(el("div", { class: "card" }, el("h2", { text: "Payouts" }),
     d.payouts.length ? table(["Period", "Amount", "How", "Status"], d.payouts.map((p) => [p.period, money(p.amount_cents), WAY[p.way] || p.way, p.meaning || p.status])) : el("p", { class: "dim", text: "No payouts yet." })));
