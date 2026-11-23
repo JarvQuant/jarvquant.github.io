@@ -16,6 +16,8 @@ What it checks (owner rules for the partner area and the legal pages):
   indexing    every page that shows the operator's personal details says noindex in its initial HTML, is not blocked
               in robots.txt (the crawler must be able to read it) and is in no sitemap; the product pages stay
               indexable; no address or phone number in structured data or tel: links
+  direct      every legal page has its text links in its own HTML (tools/legal_direct.py), the same copy host as legal.js,
+              and something to read without scripts. With --release a missing copy host is a problem, not a note
 Standard library only; run it from anywhere.
 """
 from __future__ import annotations
@@ -24,6 +26,9 @@ import json
 import re
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import legal_direct  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 PROD_API = "https://jarvquant-api.onrender.com"
@@ -260,6 +265,22 @@ def check_indexing() -> None:
             fail("sitemap.xml", f"does not list the product page /{path}")
 
 
+def check_direct(release: bool) -> None:
+    copy = legal_direct.copy_host()
+    if copy and not legal_direct.valid(copy):
+        fail("legal/legal.js", f"COPY is not a usable host: {copy}")
+    if not copy:
+        why = "no copy of the legal documents set: without the API only the links to the API and the mail address remain"
+        fail("legal/legal.js", why) if release else notes.append(f"legal/legal.js: {why}")
+    for page in legal_direct.PAGES:
+        t = (ROOT / page).read_text(encoding="utf-8").replace("\r\n", "\n")
+        if legal_direct.block(page, copy) not in t:
+            fail(page, "direct links missing or not as tools/legal_direct.py writes them")
+        static = re.sub(r"<script\b.*?</script>|<noscript>.*?</noscript>", "", t, flags=re.S)
+        if "<h1>" not in static or "legal-direct" not in static:
+            fail(page, "nothing to read without scripts")
+
+
 def check_partner_pages() -> None:
     for page in ("index", "signup", "verify", "login", "forgot", "reset", "dashboard", "invitation", "stats", "terms"):
         p = ROOT / "partner" / f"{page}.html"
@@ -283,6 +304,7 @@ def main() -> int:
             check_claims(rel, text)
     check_legal()
     check_indexing()
+    check_direct("--release" in sys.argv[1:])
     check_partner_pages()
     for n in sorted(set(notes)):
         print("note:", n)

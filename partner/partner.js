@@ -349,6 +349,27 @@ function pageForgot() {
 
 function bounce() { session.clear(); location.replace("/partner/login.html"); }
 
+// The unchanged text this partner accepted (older versions are public only without the operator's details).
+function acceptedTerms() {
+  const out = el("div", {});
+  const button = el("button", { class: "sec", type: "button", id: "accepted", text: "Read what you accepted" });
+  button.addEventListener("click", () => submitting(button, async () => {
+    const list = await call("/partner/terms/accepted", { auth: true });
+    if (list.status === 401) return bounce();
+    const rows = (list.body && list.body.accepted) || [];
+    if (list.status !== 200 || !rows.length) return out.replaceChildren(el("p", { class: "sub", text: explain(list, "The text cannot be loaded right now.") }));
+    const kids = [];
+    for (const row of rows) {
+      const r = await call("/partner/terms/accepted/" + encodeURIComponent(row.id), { auth: true });
+      if (r.status === 401) return bounce();
+      kids.push(el("p", { class: "dim", text: `Version ${row.version} (${row.language}), accepted on ${day(row.accepted_at)}` }));
+      kids.push(r.status === 200 && r.body ? el("pre", { class: "accepted-text", text: r.body.content }) : el("p", { class: "sub", text: explain(r, "The text cannot be loaded right now.") }));
+    }
+    out.replaceChildren(...kids);
+  }));
+  return el("div", {}, button, out);
+}
+
 async function pageDashboard() {
   mount(el("div", { class: "card" }, el("h1", { text: "Partner dashboard" }), el("p", { class: "dim", text: "Loading … (the server can take up to a minute on the first call)" }), strip()));
   const r = await call("/partner/me", { auth: true });
@@ -407,7 +428,8 @@ async function pageDashboard() {
   const t = d.terms;
   cards.push(el("div", { class: "card" }, el("h2", { text: "Partner terms" }),
     el("p", { class: "dim", text: t.accepted ? `You accepted version ${t.accepted.version} (${t.accepted.language}) on ${day(t.accepted.accepted_at)}.` + (t.accepted_is_current ? "" : " A newer version has been published.") : "You have not accepted the partner terms yet." }),
-    (t.published || []).length ? el("p", { class: "dim" }, termsLink("Read the current partner terms")) : null));
+    (t.published || []).length ? el("p", { class: "dim" }, termsLink("Read the current partner terms")) : null,
+    t.accepted ? acceptedTerms() : null));
 
   const n = d.notices || {};
   if ((n.exclusions || []).length || n.tier_model) {

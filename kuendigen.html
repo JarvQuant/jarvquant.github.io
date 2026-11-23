@@ -7,11 +7,22 @@
   <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/assets/fonts/fonts.css">
   <link rel="stylesheet" href="/site.css?v=3">
-  <link rel="stylesheet" href="/legal/legal.css?v=1">
+  <link rel="stylesheet" href="/legal/legal.css?v=2">
 </head>
 <body class="legal-page">
-  <div id="legal" class="legal-page" data-form="cancellation"></div>
-  <noscript><p style="padding:16px">Diese Seite braucht JavaScript. / This page needs JavaScript.</p></noscript>
-  <script type="module" src="/legal/legal.js?v=1"></script>
+  <div id="legal" class="legal-page" data-form="cancellation">
+    <main class="legal-main">
+      <h1>Verträge hier kündigen / <span lang="en">Cancel contracts here</span></h1>
+      <p class="legal-status">Das Formular wird geladen. / The form is loading.</p>
+      <noscript><p class="legal-status">Ohne JavaScript nutzen Sie bitte die Angaben unten. / Without JavaScript please use the details below.</p></noscript>
+    </main>
+  </div>
+  <!-- legal-direct:start (tools/legal_direct.py) -->
+  <footer class="legal-direct">
+    <p lang="de">Erscheint hier kein Formular oder lässt es sich nicht absenden, können Sie formlos per E-Mail kündigen: <a href="mailto:JarvQuant@gmail.com">JarvQuant@gmail.com</a></p>
+    <p lang="en">If no form appears here or it cannot be sent, you can cancel informally by e-mail: <a href="mailto:JarvQuant@gmail.com">JarvQuant@gmail.com</a></p>
+  </footer>
+  <!-- legal-direct:end -->
+  <script type="module" src="/legal/legal.js?v=2"></script>
 </body>
 </html>

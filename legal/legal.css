@@ -53,3 +53,8 @@
   body { background: #fff; color: #000; }
   .legal-statement { background: #fff; color: #000; border: 1px solid #999; }
 }
+
+/* Direct links of the legal pages (tools/legal_direct.py): always there, also without scripts and without the API. */
+.legal-direct { max-width: 760px; margin: 0 auto; padding: 0 16px 48px; font-size: 13px; line-height: 1.6; opacity: 0.85; }
+.legal-direct p { margin: 4px 0; overflow-wrap: anywhere; }
+.legal-notice { border-left: 3px solid currentColor; padding: 4px 0 4px 12px; opacity: 0.9; }

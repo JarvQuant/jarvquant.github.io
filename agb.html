@@ -10,11 +10,22 @@
   <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/assets/fonts/fonts.css">
   <link rel="stylesheet" href="/site.css?v=3">
-  <link rel="stylesheet" href="/legal/legal.css?v=1">
+  <link rel="stylesheet" href="/legal/legal.css?v=2">
 </head>
 <body class="legal-page">
-  <div id="legal" class="legal-page" data-doc="terms"></div>
-  <noscript><p style="padding:16px">Diese Seite braucht JavaScript. / This page needs JavaScript.</p></noscript>
-  <script type="module" src="/legal/legal.js?v=1"></script>
+  <div id="legal" class="legal-page" data-doc="terms">
+    <main class="legal-main">
+      <h1>AGB / <span lang="en">Terms</span></h1>
+      <p class="legal-status">Der Text wird geladen. / The text is loading.</p>
+      <noscript><p class="legal-status">Ohne JavaScript nutzen Sie bitte die Angaben unten. / Without JavaScript please use the details below.</p></noscript>
+    </main>
+  </div>
+  <!-- legal-direct:start (tools/legal_direct.py) -->
+  <footer class="legal-direct">
+    <p>Direkt zum Text (ohne JavaScript) / plain text (no JavaScript): <a href="https://jarvquant-api.onrender.com/legal/pages/terms.de.html" hreflang="de" rel="noopener">AGB</a> · <a href="https://jarvquant-api.onrender.com/legal/pages/terms.en.html" hreflang="en" rel="noopener">Terms</a></p>
+    <p>Kontakt / contact: <a href="mailto:JarvQuant@gmail.com">JarvQuant@gmail.com</a></p>
+  </footer>
+  <!-- legal-direct:end -->
+  <script type="module" src="/legal/legal.js?v=2"></script>
 </body>
 </html>

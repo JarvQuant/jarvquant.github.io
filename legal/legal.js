@@ -7,6 +7,11 @@
 const LOCAL = ["localhost", "127.0.0.1"].includes(location.hostname);
 const API = LOCAL ? "http://127.0.0.1:8000" : "https://jarvquant-api.onrender.com";
 const TIMEOUT_MS = 90000;            // a sleeping server needs up to a minute to answer
+// A static copy of the documents in force on another host (backend/tools/legal_copy.py), used when the API is slow or
+// does not answer. Empty: none yet. Written by tools/legal_direct.py, together with the links in the pages.
+const COPY = "";
+const COPY_AFTER_MS = 2500;
+const COPY_TIMEOUT_MS = 10000;
 
 const T = {
   de: {
@@ -14,7 +19,9 @@ const T = {
     other: "English",
     loading: "Wird geladen … (der Server kann beim ersten Aufruf bis zu einer Minute brauchen)",
     not_published: "Dieses Dokument ist noch nicht veröffentlicht.",
-    unreachable: "Der Server antwortet gerade nicht. Bitte versuchen Sie es in einer Minute erneut.",
+    unreachable: "Der Server antwortet gerade nicht. Bitte versuchen Sie es in einer Minute erneut oder nutzen Sie die direkten Links unten auf dieser Seite.",
+    copy_note: "Der Hauptserver antwortet gerade nicht; Sie sehen die zuletzt gesicherte geltende Fassung.",
+    withheld: "Der Text dieser früheren Fassung wird öffentlich nicht angezeigt.",
     version: "Fassung", valid_from: "gültig seit", older: "Frühere Fassungen", superseded: "nicht mehr in Kraft",
     imprint: "Impressum", privacy: "Datenschutz", terms: "AGB", withdrawal_policy: "Widerrufsbelehrung",
     risk: "Risikohinweise", cancel: "Verträge hier kündigen", withdraw: "Vertrag widerrufen",
@@ -52,7 +59,9 @@ const T = {
     other: "Deutsch",
     loading: "Loading … (the server may need up to a minute on the first request)",
     not_published: "This document is not published yet.",
-    unreachable: "The server is not answering right now. Please try again in a minute.",
+    unreachable: "The server is not answering right now. Please try again in a minute or use the direct links at the bottom of this page.",
+    copy_note: "The main server is not answering right now; you see the last saved version in force.",
+    withheld: "The text of this earlier version is not shown publicly.",
     version: "Version", valid_from: "in force since", older: "Earlier versions", superseded: "no longer in force",
     imprint: "Imprint", privacy: "Privacy", terms: "Terms", withdrawal_policy: "Withdrawal policy",
     risk: "Risk notice", cancel: "Cancel contracts here", withdraw: "Withdraw from contract",
@@ -129,6 +138,7 @@ async function call(path, options = {}) {
 function frame(titleText) {
   document.documentElement.lang = L;
   const root = document.getElementById("legal");
+  root.replaceChildren();                        // what stands in the HTML while this script has not run
   const switchTo = L === "de" ? "en" : "de";
   const params = new URLSearchParams(location.search);
   params.set("lang", switchTo);
@@ -149,31 +159,103 @@ function frame(titleText) {
 
 // ── documents ──────────────────────────────────────────────────────────────
 
-async function showDocuments(types) {
-  const main = frame(null);
-  for (const type of types) await showDocument(type, main, types.length > 1);
+// Only what the server's own renderer makes (backend services/legal/render.py); anything else becomes plain text.
+const TAGS = new Set(["H1", "H2", "H3", "P", "BR", "UL", "LI", "A", "STRONG", "HR"]);
+
+function cleaned(markup) {
+  const out = document.createDocumentFragment();
+  const walk = (from, to) => {
+    for (const node of from.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE) { to.append(node.textContent); continue; }
+      if (node.nodeType !== Node.ELEMENT_NODE) continue;
+      if (!TAGS.has(node.tagName)) { to.append(node.textContent); continue; }
+      const copy = document.createElement(node.tagName);
+      if (node.tagName === "A") {
+        const href = node.getAttribute("href") || "";
+        if (/^(https:\/\/|mailto:|\/(?!\/))/.test(href) || (LOCAL && href.startsWith("http://localhost"))) copy.setAttribute("href", href);
+        copy.setAttribute("rel", "noopener");
+      }
+      walk(node, copy);
+      to.append(copy);
+    }
+  };
+  walk(new DOMParser().parseFromString(markup, "text/html").body, out);
+  return out;
 }
 
-async function showDocument(type, main, several) {
-  const status = el("p", { class: "legal-status", text: t("loading") });
-  main.append(status);
+const usable = (answer) => Boolean(answer && answer.status === 200 && answer.body && answer.body.version
+  && (answer.body.html || answer.body.details === "withheld"));
+
+async function fromCopy(type) {
+  if (!COPY) return null;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), COPY_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${COPY}/${type}.${L}.json`, { signal: ctrl.signal, credentials: "omit" });
+    const body = await response.json();
+    return response.status === 200 && body.type === type && body.language === L && body.status === "published" && body.html
+      ? { status: 200, body } : null;
+  } catch (e) {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function showDocuments(types) {
+  const main = frame(null);
+  // One place per document, filled independently: a slow answer for one never holds up the other.
+  return Promise.all(types.map((type) => {
+    const place = el("section", { class: "legal-part" });
+    main.append(place);
+    return showDocument(type, place, types.length > 1);
+  }));
+}
+
+async function showDocument(type, place, several) {
+  place.append(el("p", { class: "legal-status", role: "status", text: t("loading") }));
   const wanted = new URLSearchParams(location.search).get("version");
   const path = wanted ? `/legal/documents/${type}/versions/${encodeURIComponent(wanted)}?lang=${L}`
                       : `/legal/documents/${type}?lang=${L}`;
-  let answer;
-  try { answer = await call(path); } catch (e) { status.textContent = t("unreachable"); return; }
-  if (answer.status === 404) { status.textContent = t("not_published"); return; }
-  if (answer.status !== 200 || !answer.body) { status.textContent = t("unreachable"); return; }
-  const doc = answer.body;
-  status.remove();
+  let shown = null;                              // null | "copy" | "api"
+  const api = call(path).catch(() => null);
+  const copy = wanted || !COPY ? Promise.resolve(null)
+    : Promise.race([api.then((a) => usable(a) ? "enough" : "now"), new Promise((r) => setTimeout(r, COPY_AFTER_MS, "now"))])
+        .then((go) => go === "now" ? fromCopy(type) : null)
+        .then((c) => { if (c && shown === null) { shown = "copy"; render(type, place, c.body, several, true); } return c; });
+  const answer = await api;
+  if (usable(answer)) {
+    const same = shown === "copy" && place.dataset.version === answer.body.version;
+    shown = "api";
+    if (same) place.querySelector(".legal-copy-note")?.remove();          // same text: nothing moves under the reader
+    else render(type, place, answer.body, several, false);
+    await older(type, place);
+    return;
+  }
+  await copy;
+  if (shown === null) {
+    place.replaceChildren(el("p", { class: "legal-status", role: "status",
+      text: t(answer && answer.status === 404 ? "not_published" : "unreachable") }));
+  }
+}
+
+function render(type, place, doc, several, isCopy) {
+  place.replaceChildren();
+  place.dataset.version = doc.version;
   if (!several || type === "withdrawal_policy") document.title = `${doc.title} · JarvQuant`;
-  if (type === "withdrawal_form") main.append(el("hr", { id: "formular" }));
+  if (type === "withdrawal_form") place.append(el("hr", { id: "formular" }));
   const meta = `${t("version")} ${doc.version}` + (doc.valid_from ? ` · ${t("valid_from")} ${doc.valid_from.slice(0, 10)}` : "")
     + (doc.status === "superseded" ? ` · ${t("superseded")}` : "");
-  main.append(el("p", { class: "legal-meta", text: meta }));
+  place.append(el("p", { class: "legal-meta", text: meta }));
+  if (isCopy) place.append(el("p", { class: "legal-meta legal-copy-note", text: t("copy_note") }));
+  if (doc.notice) place.append(el("p", { class: "legal-notice", text: doc.notice }));
   const body = el("article", { class: "legal-doc" });
-  body.innerHTML = doc.html;          // made by the server from its own text, everything in it escaped first
-  main.append(body);
+  if (doc.details === "withheld") body.append(el("p", { text: t("withheld") }));
+  else body.append(cleaned(doc.html));
+  place.append(body);
+}
+
+async function older(type, place) {
   try {
     const versions = await call(`/legal/documents/${type}/versions?lang=${L}`);
     const rows = (versions.body && versions.body.versions) || [];
@@ -185,7 +267,7 @@ async function showDocument(type, main, several) {
         list.append(el("li", {}, el("a", { href: `${location.pathname}?${q}`, text: `${v.version}` }),
           document.createTextNode(v.valid_from ? ` (${v.valid_from.slice(0, 10)})` : "")));
       }
-      main.append(el("h2", { text: t("older") }), list);
+      place.append(el("h2", { text: t("older") }), list);
     }
   } catch (e) { /* the document itself is there */ }
 }
