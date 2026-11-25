@@ -1,8 +1,8 @@
 # JarvQuant
 
 > A desktop trading simulator and training environment for retail traders. Practice
-> stocks, futures, forex and options against historical and synthetic markets before
-> risking real money. Windows, free tier available, offline-capable.
+> stocks, futures, forex and options against historical data you import yourself and synthetic
+> markets before risking real money. JarvQuant ships no market data. Windows, free tier available, offline-capable.
 
 JarvQuant is built and maintained by one independent developer. It is not a broker,
 not a signal service and not a course. It is the practice environment traders use
