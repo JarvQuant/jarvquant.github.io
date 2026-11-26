@@ -2,114 +2,116 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Daily Chart Challenge: Long or Short? | JarvQuant</title>
-  <meta name="description" content="Five real NAS100 charts a day. Call long or short, then watch what really happened. Free in the browser, no sign-up." />
-  <link rel="canonical" href="https://www.jarvquant.com/play/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.jarvquant.com/play/" />
-  <meta property="og:title" content="Long or short? The JarvQuant Daily Chart Challenge" />
-  <meta property="og:description" content="Five real charts a day. Call the next move, then watch what really happened." />
-  <meta property="og:image" content="https://www.jarvquant.com/assets/og-image.png" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="theme-color" content="#08090c" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="/assets/favicon.png?v=8" type="image/png" />
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="JQ Daily" />
-  <link rel="stylesheet" href="/assets/fonts/fonts.css?v=1" />
-  <link rel="stylesheet" href="play.css?v=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daily Chart Challenge paused · JarvQuant</title>
+  <meta name="description" content="The Daily Chart Challenge is paused for now." />
+  <meta name="robots" content="noindex,follow" />
+  <link rel="canonical" href="https://www.jarvquant.com/" />
+  <meta name="theme-color" content="#0a0d18" />
+  <link rel="icon" href="/assets/favicon.png" type="image/png" />
   <link rel="stylesheet" href="/legal/legal.css?v=1">
+  <style>
+    :root{
+      --bg: #0a0d18;
+      --fg: rgba(245, 247, 255, 0.96);
+      --fg-body: rgba(245, 247, 255, 0.82);
+      --fg-dim: rgba(245, 247, 255, 0.66);
+      --hair: rgba(245, 247, 255, 0.14);
+      --c2: #22D3EE;
+      --muted: rgba(245, 247, 255, 0.66);
+      --text-2: rgba(245, 247, 255, 0.82);
+      --accent: #22D3EE;
+      --radius: 14px;
+    }
+    *{ box-sizing: border-box; margin: 0; padding: 0; }
+    html, body{ height: 100%; }
+    body{
+      background: var(--bg);
+      color: var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      background-image:
+        radial-gradient(900px 520px at 50% 10%, rgba(34,211,238,0.10), transparent 62%),
+        radial-gradient(1100px 900px at 18% 38%, rgba(109,40,217,0.08), transparent 70%),
+        radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,0.00), rgba(0,0,0,0.58));
+    }
+    .card{
+      max-width: 500px; width: 100%;
+      background: rgba(15, 20, 30, 0.85);
+      border: 1px solid var(--hair);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      text-align: center;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 80px rgba(0,0,0,.55);
+    }
+    .badge{
+      display: inline-block; margin-bottom: 18px; padding: 4px 12px;
+      border: 1px solid rgba(34,211,238,0.45); border-radius: 999px;
+      color: var(--c2); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    h1{ font-size: 24px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em; }
+    p{ color: var(--fg-body); font-size: 15px; line-height: 1.6; margin-bottom: 12px; }
+    .dim{ color: var(--fg-dim); font-size: 13px; }
+    .row{ display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 22px; }
+    a.btn{
+      display: inline-block; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-size: 14px;
+      color: var(--fg); border: 1px solid var(--hair);
+    }
+    a.btn.primary{ background: linear-gradient(90deg, #6D28D9, #22D3EE); border: none; color: #fff; }
+    a.btn:focus-visible{ outline: 2px solid var(--c2); outline-offset: 2px; }
+    .lang{ margin-top: 18px; font-size: 12px; color: var(--fg-dim); }
+    .lang a{ color: var(--fg-dim); }
+    .card .footer-legal{ justify-content: center; margin-top: 22px; }
+  </style>
 </head>
 <body>
-  <div class="app">
-    <header class="top">
-      <a class="brand" href="/?ref=play" aria-label="JarvQuant home">
-        <svg class="brand-mark" viewBox="-2 -26 214 214" aria-hidden="true"><rect x="1" y="-23" width="208" height="208" rx="48" fill="#0F1217" stroke="#262c36" stroke-width="6"/><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="21"><path d="M62 54 V120 A22 22 0 0 1 18 120" stroke="#33C6E3"/><path d="M92 143 H128 A52 52 0 1 0 103.6 136.9" stroke="#E83CF0"/><path d="M126 89 L174 137 Q180 143 188 143 H198" stroke="#E83CF0"/></g><circle cx="62" cy="22" r="13" fill="#33C6E3"/></svg>
-        <span>JarvQuant</span>
-      </a>
-      <div class="top-right">
-        <span class="streak mono" id="streak" hidden><span aria-hidden="true">🔥</span> <b id="streakN">0</b></span>
-        <button class="chip mono" id="langBtn" type="button">DE</button>
-      </div>
-    </header>
-
-    <main>
-      <!-- Intro -->
-      <section class="screen intro" id="intro">
-        <div class="eyebrow mono"><span class="live-dot"></span><span data-t="eyebrow">Daily chart challenge</span></div>
-        <h1 data-t="title">Long or short?</h1>
-        <p class="sub" data-t="sub">Five real NAS100 charts a day. Call the next move, then watch what really happened.</p>
-        <button class="btn btn-primary btn-lg" id="startBtn" type="button">Start</button>
-        <p class="fine" data-t="fine">Free · no sign-up · new charts every day at midnight</p>
-        <p class="err" id="loadErr" hidden><span data-t="loadErr">Couldn't load today's charts.</span> <button class="link" id="retryBtn" type="button" data-t="retry">Try again</button></p>
-      </section>
-
-      <!-- Game -->
-      <section class="screen game" id="game" hidden>
-        <div class="hud">
-          <span class="mono" id="hudLabel"></span>
-          <span class="dots" id="dots" aria-hidden="true"></span>
-          <button class="link mono" id="toResults" type="button" hidden data-t="back">Results</button>
-        </div>
-        <div class="chart-wrap">
-          <canvas id="chart" aria-label="Price chart"></canvas>
-          <div class="meta mono" id="meta"></div>
-        </div>
-        <p class="verdict" id="verdict" aria-live="polite"></p>
-        <div class="actions" id="pickRow">
-          <button class="pick long" id="longBtn" type="button"><span aria-hidden="true">▲</span> <span data-t="long">Long</span></button>
-          <button class="pick short" id="shortBtn" type="button"><span aria-hidden="true">▼</span> <span data-t="short">Short</span></button>
-        </div>
-        <div class="actions" id="nextRow" hidden>
-          <button class="btn btn-primary btn-lg btn-block" id="nextBtn" type="button">Next</button>
-        </div>
-      </section>
-
-      <!-- Result -->
-      <section class="screen done" id="done" hidden>
-        <div class="mono label" id="doneLabel"></div>
-        <div class="score"><span id="scoreN">0</span><small>/5</small></div>
-        <div class="grid" id="grid" aria-hidden="true"></div>
-        <h2 id="doneTitle"></h2>
-        <p class="streak-line mono" id="streakLine"></p>
-        <div class="row">
-          <button class="btn btn-primary" id="shareBtn" type="button" data-t="share">Share result</button>
-          <button class="btn btn-secondary" id="practiceBtn" type="button" data-t="more">Practise more</button>
-        </div>
-        <p class="countdown mono"><span data-t="nextIn">Next challenge in</span> <b id="countdown">--:--:--</b></p>
-        <button class="btn btn-secondary btn-block" id="installBtn" type="button" hidden data-t="install">Add to home screen</button>
-        <p class="hint" id="iosHint" hidden data-t="ios"></p>
-
-        <div class="cta">
-          <h3 data-t="ctaTitle">Train this on 9 years of data</h3>
-          <p data-t="ctaBody">JarvQuant replays real markets bar by bar on your PC and shows you after every session what costs you money. Free plan, no card.</p>
-          <div class="row">
-            <a class="btn btn-primary" id="ctaMain" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe" data-t="ctaDownload">Download for Windows</a>
-            <a class="btn btn-secondary" href="/?ref=play" data-t="ctaWhat">What is JarvQuant?</a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="foot">
-      <span data-t="foot">Real historical NAS100 data. A practice game, not financial advice.</span>
-      <a href="/?ref=play">jarvquant.com</a>
-      <nav class="footer-legal" aria-label="Legal">
-        <a href="/impressum.html" data-legal>Imprint</a>
-        <a href="/datenschutz.html" data-legal>Privacy</a>
-        <a href="/agb.html" data-legal>Terms</a>
-        <a href="/widerrufsbelehrung.html" data-legal>Withdrawal policy</a>
-        <a href="/risikohinweise.html" data-legal>Risk notice</a>
-        <a href="/kuendigen.html" data-legal class="strong">Cancel contracts here</a>
-        <a href="/widerrufen.html" data-legal class="strong">Withdraw from contract</a>
-      </nav>
-    </footer>
-  </div>
-
-  <script type="module" src="play.js?v=1"></script>
+  <main class="card">
+    <div class="badge" data-t="badge">Paused</div>
+    <h1 data-t="title">The Daily Chart Challenge is paused.</h1>
+    <p data-t="body">We have taken the Daily Chart Challenge offline for now while we rework it. Your streak and results stay in your browser.</p>
+    <p class="dim" data-t="installed">JarvQuant 2.0 is coming soon.</p>
+    <div class="row">
+      <a class="btn primary" href="https://discord.gg/fYWSz2NpaC" target="_blank" rel="noreferrer" data-t="discord">Get notified on Discord</a>
+      <a class="btn" href="/" data-t="home">Back to the homepage</a>
+    </div>
+    <div class="lang"><a href="#" id="toEn">English</a> · <a href="#" id="toDe">Deutsch</a></div>
+    <nav class="footer-legal" aria-label="Legal">
+      <a href="/impressum.html" data-legal>Imprint</a>
+      <a href="/datenschutz.html" data-legal>Privacy</a>
+      <a href="/agb.html" data-legal>Terms</a>
+      <a href="/widerrufsbelehrung.html" data-legal>Withdrawal policy</a>
+      <a href="/risikohinweise.html" data-legal>Risk notice</a>
+      <a href="/kuendigen.html" data-legal class="strong">Cancel contracts here</a>
+      <a href="/widerrufen.html" data-legal class="strong">Withdraw from contract</a>
+    </nav>
+  </main>
+  <script>
+    const T = {
+      en: { badge: "Paused", title: "The Daily Chart Challenge is paused.",
+            body: "We have taken the Daily Chart Challenge offline for now while we rework it. Your streak and results stay in your browser.",
+            installed: "JarvQuant 2.0 is coming soon.",
+            discord: "Get notified on Discord", home: "Back to the homepage", doc: "Daily Chart Challenge paused · JarvQuant" },
+      de: { badge: "Pausiert", title: "Die Daily Chart Challenge pausiert.",
+            body: "Wir haben die Daily Chart Challenge vorübergehend offline genommen und überarbeiten sie. Deine Serie und Ergebnisse bleiben in deinem Browser.",
+            installed: "JarvQuant 2.0 erscheint in Kürze.",
+            discord: "Auf Discord benachrichtigen lassen", home: "Zur Startseite", doc: "Daily Chart Challenge pausiert · JarvQuant" }
+    };
+    function show(code) {
+      const t = T[code] || T.en;
+      document.documentElement.lang = code;
+      document.querySelectorAll("[data-t]").forEach((el) => { el.textContent = t[el.dataset.t]; });
+      document.title = t.doc;
+      try { localStorage.setItem("jq_lang", code); } catch (e) {}
+    }
+    let code = "";
+    try { code = (localStorage.getItem("jq_lang") || "").toLowerCase(); } catch (e) {}
+    if (!T[code]) code = (navigator.language || "en").toLowerCase().startsWith("de") ? "de" : "en";
+    show(code);
+    document.getElementById("toEn").addEventListener("click", (e) => { e.preventDefault(); show("en"); });
+    document.getElementById("toDe").addEventListener("click", (e) => { e.preventDefault(); show("de"); });
+  </script>
   <!-- Page counts: off until the operator decides (count.js); no cookies, no IDs -->
   <script type="module">import { count } from "/count.js?v=1"; count();</script>
 </body>

@@ -43,7 +43,8 @@ LEGAL_PAGES = ["impressum.html", "datenschutz.html", "agb.html", "widerrufsbeleh
 # data-doc; ?lang=en and ?version=... are the same file, so one tag covers the English and the older versions.
 PERSONAL_DOCS = {"imprint", "privacy", "terms", "withdrawal_policy", "withdrawal_form", "partner_terms"}
 PERSONAL_PAGES = {"impressum.html", "datenschutz.html", "agb.html", "widerrufsbelehrung.html", "partner/terms.html"}
-INDEXABLE = ["index.html", "compare.html", "play/index.html"]
+# play/index.html is a noindex notice while the Daily Chart Challenge is paused (7f983ca); back in this list with the game.
+INDEXABLE = ["index.html", "compare.html"]
 SITE = "https://www.jarvquant.com"
 REMOVED = [r"partner/(?:imprint|privacy|impressum|datenschutz)\.html", r"/partner/click"]
 QUERY_TOKEN_ALLOWED = {"auth/verify/index.html": "customer e-mail confirmation of the app, not the partner area"}
