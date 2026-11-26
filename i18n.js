@@ -47,8 +47,8 @@ export const I18N = {
     "addon.body": "The full simulation suite. Options Sim with live chains, Greeks, IV modeling and DTE tracking. Syndex synthetic market engine. Five additional synthetic markets: Volatex, Tempus, Chronus, Atlas, Kairos. Add it to Pro; Architect already includes it.",
 
     "lifetime.tag": "FOUNDERS · LIMITED 200",
-    "lifetime.name": "Lifetime Access",
-    "lifetime.body": "Elite plan including PANTHEON, forever. All future tiers and add-ons included at no extra cost. One payment, never charged again. Hard cap at 200 seats. Founders rate locked for life.",
+    "lifetime.name": "Founder",
+    "lifetime.body": "Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats.",
     "lifetime.note": "one-time",
 
 
@@ -106,8 +106,8 @@ export const I18N = {
     "addon.body": "Die komplette Simulations-Suite. Options Sim mit Live-Chains, Greeks, IV-Modeling und DTE-Tracking. Syndex synthetische Market Engine. Fünf zusätzliche synthetische Märkte: Volatex, Tempus, Chronus, Atlas, Kairos. Zu Pro dazubuchbar, in Architect schon enthalten.",
 
     "lifetime.tag": "FOUNDERS · LIMITIERT 200",
-    "lifetime.name": "Lifetime Access",
-    "lifetime.body": "Elite inklusive PANTHEON, für immer. Alle zukünftigen Tiers und Add-Ons inklusive. Eine Zahlung, nie wieder abgerechnet. Limitiert auf 200 Plätze.",
+    "lifetime.name": "Founder",
+    "lifetime.body": "Einmal zahlen. Unbefristet nutzen. Alles aus Architect zum Kaufzeitpunkt, PANTHEON mit allen Märkten und KAIROS, dazu ein Offline-Zertifikat, das ohne unseren Server funktioniert. Updates und bevorzugter Support, solange JarvQuant aktiv gepflegt wird. KI-, Marktdaten- und Brokerdienste Dritter nicht enthalten. 200 Plätze.",
     "lifetime.note": "einmalig",
 
 
