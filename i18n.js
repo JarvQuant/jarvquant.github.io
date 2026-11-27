@@ -51,6 +51,23 @@ export const I18N = {
     "lifetime.body": "Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats.",
     "lifetime.note": "one-time",
 
+    // 2.0 intro (intro.js). Every line is taken from the 2.0.0 release notes.
+    // intro.wall: one entry per changelog line, separated by |
+    "intro.pre": "1.1 was the warm-up.",
+    "intro.c1.big": "16",
+    "intro.c1.line": "new drawing tools.",
+    "intro.c1.punch": "Yes, Fibonacci too.",
+    "intro.c2.big": "FREE",
+    "intro.c2.line": "trading journal.",
+    "intro.c2.punch": "Your excuses just expired.",
+    "intro.c3.big": "NEW",
+    "intro.c3.line": "look, everywhere.",
+    "intro.c3.punch": "It finally looks the part.",
+    "intro.more": "The changelog needs a scroll bar.",
+    "intro.fin": "The biggest update since launch. Your move.",
+    "intro.skip": "Skip intro",
+    "intro.wall": "Trend line|Ray|Horizontal line|Vertical line|Rectangle|Support and resistance zone|Fibonacci retracement|Price range|Date range|Long position with risk and reward|Short position with risk and reward|Text note|Arrow|Freehand|Eraser|Magnet snaps to OHLC|Undo and redo|Drawings saved per symbol|Replay never shows the future|Synthetic tick mode|Journal free on every plan|Tradovate import|NinjaTrader import|TopstepX import|MetaTrader import|Paste a table|Prop account tracker|Note on every trade|Share cards in five formats|MetaTrader 5 sync|Option chain follows every tick|Resting limit orders|OCO pairs|Working-order list|One money model|Trailing drawdown|Challenge presets|Grouped sidebar|One top bar|Boards that fit one screen|Keyboard focus ring|Fits 1024 px windows|Back up data|Restore backup|Signed updates|Language switch without restart|Decimal comma accepted|Log out everywhere|Usage statistics off by default|Copy of your data",
+
 
 
     // Mobile positioning copy
@@ -109,6 +126,23 @@ export const I18N = {
     "lifetime.name": "Founder",
     "lifetime.body": "Einmal zahlen. Unbefristet nutzen. Alles aus Architect zum Kaufzeitpunkt, PANTHEON mit allen Märkten und KAIROS, dazu ein Offline-Zertifikat, das ohne unseren Server funktioniert. Updates und bevorzugter Support, solange JarvQuant aktiv gepflegt wird. KI-, Marktdaten- und Brokerdienste Dritter nicht enthalten. 200 Plätze.",
     "lifetime.note": "einmalig",
+
+    // 2.0 intro (intro.js)
+    // intro.wall: one entry per changelog line, separated by |
+    "intro.pre": "1.1 war das Aufwärmen.",
+    "intro.c1.big": "16",
+    "intro.c1.line": "neue Zeichenwerkzeuge.",
+    "intro.c1.punch": "Ja, auch Fibonacci.",
+    "intro.c2.big": "GRATIS",
+    "intro.c2.line": "Trading-Journal.",
+    "intro.c2.punch": "Deine Ausreden sind abgelaufen.",
+    "intro.c3.big": "NEU",
+    "intro.c3.line": "gestaltet, überall.",
+    "intro.c3.punch": "Sieht endlich auch danach aus.",
+    "intro.more": "Das Changelog braucht eine Scrollleiste.",
+    "intro.fin": "Das größte Update seit dem Start. Du bist dran.",
+    "intro.skip": "Intro überspringen",
+    "intro.wall": "Trendlinie|Strahl|Horizontale Linie|Vertikale Linie|Rechteck|Unterstützungs- und Widerstandszone|Fibonacci-Retracement|Preisspanne|Zeitspanne|Long-Position mit Chance und Risiko|Short-Position mit Chance und Risiko|Textnotiz|Pfeil|Freihand|Radierer|Magnet rastet auf OHLC|Rückgängig und Wiederholen|Zeichnungen je Symbol gespeichert|Replay zeigt nie die Zukunft|Synthetischer Tick-Modus|Journal gratis in jedem Plan|Tradovate-Import|NinjaTrader-Import|TopstepX-Import|MetaTrader-Import|Tabelle einfügen|Prop-Konten im Blick|Notiz zu jedem Trade|Share Cards in fünf Formaten|MetaTrader-5-Sync|Optionskette folgt jedem Tick|Ruhende Limit-Orders|OCO-Paare|Liste offener Orders|Ein Geldmodell|Trailing Drawdown|Challenge-Vorlagen|Gruppierte Seitenleiste|Eine Kopfleiste|Boards auf einem Bildschirm|Sichtbarer Tastaturfokus|Passt in 1024 px|Daten sichern|Sicherung einspielen|Signierte Updates|Sprachwechsel ohne Neustart|Dezimalkomma erlaubt|Überall abmelden|Nutzungsstatistik standardmäßig aus|Kopie deiner Daten",
 
 
 

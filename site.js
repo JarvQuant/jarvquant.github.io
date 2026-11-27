@@ -1,7 +1,7 @@
 // Landing page behaviour: language switch, header state, mobile menu.
 // Plan/pricing strings come from the shared i18n.js dictionary; everything
 // written for this layout lives in SITE below. Motion lives in motion.js.
-import { I18N, resolveLang, setLang } from "./i18n.js?v=2";
+import { I18N, resolveLang, setLang } from "./i18n.js?v=3";
 
 const SITE = {
   en: {
@@ -16,6 +16,7 @@ const SITE = {
     "cta.discord": "Join the Discord",
 
     "hero.eyebrow": "Trading simulator for Windows",
+    "hero.badge": "New · 2.0",
     "hero.title": "Find the mistakes that cost you money.",
     "hero.lede": "Practise on your own market data with the future hidden. After every session JarvQuant shows you where you keep losing, so you fix it before you trade live.",
     "hero.meta1": "Free plan, no card required",
@@ -144,6 +145,7 @@ const SITE = {
     "cta.discord": "Discord beitreten",
 
     "hero.eyebrow": "Trading-Simulator für Windows",
+    "hero.badge": "Neu · 2.0",
     "hero.title": "Finde die Fehler, die dich Geld kosten.",
     "hero.lede": "Übe auf deinen eigenen Marktdaten, ohne die Zukunft zu sehen. Nach jeder Session zeigt dir JarvQuant, wo du immer wieder verlierst, damit du es abstellst, bevor du live tradest.",
     "hero.meta1": "Gratis-Plan, keine Karte nötig",

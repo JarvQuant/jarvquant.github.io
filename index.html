@@ -266,6 +266,11 @@
 
   <link rel="stylesheet" href="/assets/fonts/fonts.css?v=1" />
   <link rel="stylesheet" href="site.css?v=3" />
+  <link rel="stylesheet" href="intro.css?v=1" />
+  <link rel="modulepreload" href="intro.js?v=1" />
+  <!-- 2.0 intro: plays for arrivals from outside only, never with reduced motion, stores nothing.
+       If intro.js has not arrived after 3 seconds the curtain lifts by itself. -->
+  <script>(function(){try{var d=document.documentElement,n=performance.getEntriesByType("navigation")[0],r=document.referrer;if(matchMedia("(prefers-reduced-motion: reduce)").matches||location.hash||document.hidden||innerHeight<460||(n&&n.type==="back_forward"))return;if(r&&new URL(r).hostname.replace(/^www\./,"")===location.hostname.replace(/^www\./,""))return;d.classList.add("intro-on");setTimeout(function(){if(!d.classList.contains("intro-run"))d.classList.remove("intro-on")},3000);}catch(e){}})();</script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -321,7 +326,7 @@
       <div class="hero-chart" aria-hidden="true"><canvas id="heroChart"></canvas></div>
       <div class="wrap">
         <div class="hero-copy">
-          <div class="eyebrow fade-in" style="--d:.05s"><span class="live-dot"></span><span data-i18n="hero.eyebrow">Trading simulator for Windows</span></div>
+          <div class="eyebrow fade-in" style="--d:.05s"><span class="live-dot"></span><span data-i18n="hero.eyebrow">Trading simulator for Windows</span><span class="v2-chip" data-i18n="hero.badge">New · 2.0</span></div>
           <h1 class="split-words" id="heroTitle" data-i18n="hero.title">Find the mistakes that cost you money.</h1>
           <p class="lede fade-in" style="--d:.55s" data-i18n="hero.lede">Practise on your own market data with the future hidden. After every session JarvQuant shows you where you keep losing, so you fix it before you trade live.</p>
           <div class="hero-ctas fade-in" style="--d:.7s">
@@ -684,7 +689,8 @@
     </div>
   </footer>
 
-  <script type="module" src="site.js?v=5"></script>
+  <script type="module" src="intro.js?v=1"></script>
+  <script type="module" src="site.js?v=6"></script>
   <script type="module" src="motion.js?v=2"></script>
   <!-- Page counts: off until the operator decides (count.js); no cookies, no IDs -->
   <script type="module">import { count } from "/count.js?v=1"; count();</script>
