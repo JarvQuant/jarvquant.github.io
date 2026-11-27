@@ -44,7 +44,7 @@ export const I18N = {
 
     "addon.tag": "ADD-ON",
     "addon.name": "PANTHEON",
-    "addon.body": "The full simulation suite. Options Sim with live chains, Greeks, IV modeling and DTE tracking. Syndex synthetic market engine. Five additional synthetic markets: Volatex, Tempus, Chronus, Atlas, Kairos. Add it to Pro; Architect already includes it.",
+    "addon.body": "The full simulation suite. Options Sim with simulated option chains, Greeks, IV modeling and DTE tracking. Syndex synthetic market engine. Five additional synthetic markets: Volatex, Tempus, Chronus, Atlas, Kairos. Add it to Pro; Architect already includes it.",
 
     "lifetime.tag": "FOUNDERS · LIMITED 200",
     "lifetime.name": "Founder",
@@ -120,7 +120,7 @@ export const I18N = {
 
     "addon.tag": "ADD-ON",
     "addon.name": "PANTHEON",
-    "addon.body": "Die komplette Simulations-Suite. Options Sim mit Live-Chains, Greeks, IV-Modeling und DTE-Tracking. Syndex synthetische Market Engine. Fünf zusätzliche synthetische Märkte: Volatex, Tempus, Chronus, Atlas, Kairos. Zu Pro dazubuchbar, in Architect schon enthalten.",
+    "addon.body": "Die komplette Simulations-Suite. Options Sim mit simulierten Optionsketten, Greeks, IV-Modeling und DTE-Tracking. Syndex synthetische Market Engine. Fünf zusätzliche synthetische Märkte: Volatex, Tempus, Chronus, Atlas, Kairos. Zu Pro dazubuchbar, in Architect schon enthalten.",
 
     "lifetime.tag": "FOUNDERS · LIMITIERT 200",
     "lifetime.name": "Founder",
