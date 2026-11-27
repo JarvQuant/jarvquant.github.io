@@ -9,7 +9,7 @@ const API = LOCAL ? "http://127.0.0.1:8000" : "https://jarvquant-api.onrender.co
 const TIMEOUT_MS = 90000;            // a sleeping server needs up to a minute to answer
 // A static copy of the documents in force on another host (backend/tools/legal_copy.py), used when the API is slow or
 // does not answer. Empty: none yet. Written by tools/legal_direct.py, together with the links in the pages.
-const COPY = "";
+const COPY = "https://jarvquant-legal.pages.dev";
 const COPY_AFTER_MS = 2500;
 const COPY_TIMEOUT_MS = 10000;
 
