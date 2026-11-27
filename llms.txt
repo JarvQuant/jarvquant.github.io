@@ -10,9 +10,8 @@ between those things.
 
 ## What it does
 
-- **Market Replay**: Step through up to 9 years of included market history bar by bar (or watch each
-  candle form second by second in live-candle mode), or
-  load your own data (CSV, Parquet, MetaTrader 5). No hindsight: you only see what a
+- **Market Replay**: Step through market history bar by bar (or watch each candle form second by
+  second in live-candle mode) on data you import yourself (CSV, Parquet, MetaTrader 5). No hindsight: you only see what a
   trader would have seen at that moment.
 - **PANTHEON (Syndex)**: A synthetic options market with a full chain, Greeks, implied
   volatility surface and order book. Practise calls, puts, spreads, straddles, condors
@@ -36,17 +35,16 @@ their live results differ from their backtests.
 
 ## Pricing
 
-- Free tier: market replay, data import, journal (10 entries per type)
-- Pro: full journal, Strategy Builder, Prop Sim, Trade Autopsy, Grand Archive
+- Free tier: market replay, data import, trade journal without an entry limit
+- Pro: Strategy Builder, Prop Sim, Trade Autopsy, Grand Archive
 - Elite: adds PANTHEON options simulation, all synthetic markets and the VANTA AI coach
 - A 7-day Elite trial is available in-app; no payment details required.
 
 ## Platform
 
-Windows desktop application (PySide6). Installer and portable build published on
-GitHub Releases. Every release is scanned on VirusTotal and the result is linked
-publicly from the download page. The app is currently unsigned; a code-signing
-certificate is planned.
+Windows desktop application (PySide6). Installer published on GitHub Releases.
+The installer and the program are not yet code-signed for Windows; updates from
+inside the app are installed only when they match a signed manifest.
 
 ## Links
 

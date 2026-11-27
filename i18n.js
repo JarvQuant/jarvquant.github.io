@@ -20,14 +20,14 @@ export const I18N = {
     "plan.free.period": "Forever. No card.",
     "plan.free.f1": "Bar-by-bar market replay environment",
     "plan.free.f2": "Data import (CSV, Parquet, MT5)",
-    "plan.free.f3": "Trade journal: 10 entries rolling",
+    "plan.free.f3": "Trade journal, unlimited (Replay and live)",
     "plan.free.f4": "Live-candle replay, second by second",
     "plan.free.cta": "Download Free",
 
     "plan.pro.tag": "PRO",
     "plan.pro.flag": "MOST POPULAR",
     "plan.pro.period": "Billed monthly · cancel anytime",
-    "plan.pro.f1": "Unlimited journal entries",
+    "plan.pro.f1": "Practise any archive setup in Replay",
     "plan.pro.f2": "Strategy Builder with rules and constraints",
     "plan.pro.f3": "Prop firm challenge simulator with rule presets",
     "plan.pro.f4": "Backtesting engine",
@@ -48,7 +48,7 @@ export const I18N = {
 
     "lifetime.tag": "FOUNDERS · LIMITED 200",
     "lifetime.name": "Founder",
-    "lifetime.body": "Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats.",
+    "lifetime.body": "Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats. Not on sale at the moment.",
     "lifetime.note": "one-time",
 
     // 2.0 intro (intro.js). Every line is taken from the 2.0.0 release notes.
@@ -96,14 +96,14 @@ export const I18N = {
     "plan.free.period": "Für immer. Keine Karte.",
     "plan.free.f1": "Replay-first Chart-Environment",
     "plan.free.f2": "Daten-Imports",
-    "plan.free.f3": "Journal Lite: 10 Einträge rolling",
+    "plan.free.f3": "Trading-Journal, unbegrenzt (Replay und Live)",
     "plan.free.f4": "Live-Kerzen-Replay, Sekunde für Sekunde",
     "plan.free.cta": "Kostenlos Downloaden",
 
     "plan.pro.tag": "PRO",
     "plan.pro.flag": "MEISTGEWÄHLT",
     "plan.pro.period": "Monatlich abgerechnet · jederzeit kündbar",
-    "plan.pro.f1": "Unbegrenzte Journal-Einträge",
+    "plan.pro.f1": "Jedes Archiv-Setup im Replay üben",
     "plan.pro.f2": "Strategy Builder Sandbox",
     "plan.pro.f3": "Prop Sim mit Rule-Presets",
     "plan.pro.f4": "Backtesting",
@@ -124,7 +124,7 @@ export const I18N = {
 
     "lifetime.tag": "FOUNDERS · LIMITIERT 200",
     "lifetime.name": "Founder",
-    "lifetime.body": "Einmal zahlen. Unbefristet nutzen. Alles aus Architect zum Kaufzeitpunkt, PANTHEON mit allen Märkten und KAIROS, dazu ein Offline-Zertifikat, das ohne unseren Server funktioniert. Updates und bevorzugter Support, solange JarvQuant aktiv gepflegt wird. KI-, Marktdaten- und Brokerdienste Dritter nicht enthalten. 200 Plätze.",
+    "lifetime.body": "Einmal zahlen. Unbefristet nutzen. Alles aus Architect zum Kaufzeitpunkt, PANTHEON mit allen Märkten und KAIROS, dazu ein Offline-Zertifikat, das ohne unseren Server funktioniert. Updates und bevorzugter Support, solange JarvQuant aktiv gepflegt wird. KI-, Marktdaten- und Brokerdienste Dritter nicht enthalten. 200 Plätze. Derzeit nicht im Verkauf.",
     "lifetime.note": "einmalig",
 
     // 2.0 intro (intro.js)

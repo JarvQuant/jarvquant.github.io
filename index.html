@@ -59,11 +59,12 @@
         "Your trades and journals stay on your PC; VANTA only sends what you ask about to the AI provider you choose, or runs fully local"
       ],
       "screenshot": [
+        "https://www.jarvquant.com/assets/app-overview.webp",
         "https://www.jarvquant.com/assets/app-replay.webp",
+        "https://www.jarvquant.com/assets/app-journal.webp",
+        "https://www.jarvquant.com/assets/app-autopsy.webp",
         "https://www.jarvquant.com/assets/app-pantheon.webp",
-        "https://www.jarvquant.com/assets/app-session.webp",
-        "https://www.jarvquant.com/assets/app-builder.webp",
-        "https://www.jarvquant.com/assets/app-archive.webp"
+        "https://www.jarvquant.com/assets/app-builder.webp"
       ],
       "offers": [
         {
@@ -71,7 +72,7 @@
           "name": "Starter (Free)",
           "price": "0",
           "priceCurrency": "EUR",
-          "description": "Free forever, no credit card required. Includes bar-by-bar market replay, data imports, trade journal (10 entries rolling), and live-candle replay."
+          "description": "Free forever, no credit card required. Includes bar-by-bar market replay, data imports, an unlimited trade journal, and live-candle replay."
         },
         {
           "@type": "Offer",
@@ -84,7 +85,7 @@
             "priceCurrency": "EUR",
             "unitText": "MON"
           },
-          "description": "Unlimited journal entries. Strategy Builder with rules and constraints. Prop Firm Challenge Simulator. Backtesting engine. Algorithmic Trade Autopsy. 300+ strategy playbooks via the Grand Archive."
+          "description": "Strategy Builder with rules and constraints. Prop Firm Challenge Simulator. Backtesting engine. Algorithmic Trade Autopsy. 300+ strategy playbooks via the Grand Archive."
         },
         {
           "@type": "Offer",
@@ -152,7 +153,7 @@
           "name": "Is JarvQuant free?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. JarvQuant has a free Starter plan with no credit card required. It includes the bar-by-bar market replay environment, data imports, a trade journal with 10 entries rolling, and live-candle replay. Paid plans start at €39.99 per month for the Pro (Operator) tier, which unlocks unlimited journaling, Strategy Builder, backtesting, Prop Firm Challenge Simulator, Trade Autopsy, and the Grand Archive."
+            "text": "Yes. JarvQuant has a free Starter plan with no credit card required. It includes the bar-by-bar market replay environment, data imports, an unlimited trade journal, and live-candle replay. Paid plans start at €39.99 per month for the Pro (Operator) tier, which unlocks Strategy Builder, backtesting, Prop Firm Challenge Simulator, Trade Autopsy, and the Grand Archive."
           }
         },
         {
@@ -268,9 +269,10 @@
   <link rel="stylesheet" href="site.css?v=3" />
   <link rel="stylesheet" href="intro.css?v=1" />
   <link rel="modulepreload" href="intro.js?v=1" />
-  <!-- 2.0 intro: plays for arrivals from outside only, never with reduced motion, stores nothing.
+  <!-- 2.0 intro: plays until the end of 10 December 2026 (visitor's clock), for arrivals from outside only,
+       never with reduced motion, stores nothing.
        If intro.js has not arrived after 3 seconds the curtain lifts by itself. -->
-  <script>(function(){try{var d=document.documentElement,n=performance.getEntriesByType("navigation")[0],r=document.referrer;if(matchMedia("(prefers-reduced-motion: reduce)").matches||location.hash||document.hidden||innerHeight<460||(n&&n.type==="back_forward"))return;if(r&&new URL(r).hostname.replace(/^www\./,"")===location.hostname.replace(/^www\./,""))return;d.classList.add("intro-on");setTimeout(function(){if(!d.classList.contains("intro-run"))d.classList.remove("intro-on")},3000);}catch(e){}})();</script>
+  <script>(function(){try{var d=document.documentElement,n=performance.getEntriesByType("navigation")[0],r=document.referrer;if(Date.now()>=new Date(2026,11,11).getTime())return;if(matchMedia("(prefers-reduced-motion: reduce)").matches||location.hash||document.hidden||innerHeight<460||(n&&n.type==="back_forward"))return;if(r&&new URL(r).hostname.replace(/^www\./,"")===location.hostname.replace(/^www\./,""))return;d.classList.add("intro-on");setTimeout(function(){if(!d.classList.contains("intro-run"))d.classList.remove("intro-on")},3000);}catch(e){}})();</script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -337,7 +339,7 @@
           </div>
           <ul class="hero-meta fade-in" style="--d:.85s">
             <li><svg><use href="#i-check"/></svg><span data-i18n="hero.meta1">Free plan, no card required</span></li>
-            <li><svg><use href="#i-check"/></svg><a href="https://www.virustotal.com/gui/file/5308f170b821b775c8beafa9b5016dc3c2c030aa20c32b1bb8b64cafd0208225" target="_blank" rel="noopener noreferrer" data-i18n="hero.meta2">Scanned clean on VirusTotal</a></li>
+            <li><svg><use href="#i-check"/></svg><span data-i18n="hero.meta2">Interface in English and German</span></li>
             <li><svg><use href="#i-check"/></svg><span data-i18n="hero.meta3">Your trades are stored on your PC</span></li>
           </ul>
         </div>
@@ -423,7 +425,7 @@
             <article class="step on" data-step="0">
               <div class="num"><span data-i18n="loop.1.k">Replay</span></div>
               <h3 data-i18n="loop.1.t">Hide the future.</h3>
-              <p data-i18n="loop.1.d">Pick a market and a date and move forward one bar at a time. You only see what you would have seen live. 9 years of data included, or bring your own.</p>
+              <p data-i18n="loop.1.d">Pick a market and a date and move forward one bar at a time. You only see what you would have seen live. Bring your own data: CSV, Parquet or straight from MetaTrader 5.</p>
             </article>
             <article class="step" data-step="1">
               <div class="num"><span data-i18n="loop.2.k">Execute</span></div>
@@ -454,31 +456,34 @@
         <div class="showcase">
           <div class="tilt" id="tilt">
             <figure class="shot" style="margin:0">
-              <div class="shot-bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="title" id="shotTitle">JarvQuant · Replay</span></div>
+              <div class="shot-bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="title" id="shotTitle">JarvQuant · Overview</span></div>
               <div class="shot-imgs" id="shotImgs">
-                <img class="on" src="assets/app-replay.webp" width="1600" height="825" alt="Replay chart with EMA and MACD, an open long position with draggable stop and target" data-title="Replay" />
-                <img src="assets/app-pantheon.webp" width="1600" height="825" loading="lazy" alt="PANTHEON crypto market with a live chart, an open position and the liquidity heatmap" data-title="PANTHEON" />
-                <img src="assets/app-session.webp" width="1600" height="825" loading="lazy" alt="Replay session review with results in R, equity curve and trading habits" data-title="Session review" />
-                <img src="assets/app-builder.webp" width="1600" height="825" loading="lazy" alt="Strategy Builder with the strategy in plain words and four rule slots" data-title="Strategy Builder" />
-                <img src="assets/app-archive.webp" width="1600" height="825" loading="lazy" alt="Grand Archive article with an example chart and a Practice in Replay button" data-title="Grand Archive" />
+                <img class="on" src="assets/app-overview.webp?v=2" width="1600" height="825" alt="Overview with total result, win rate, equity curve, the state of a prop account and next steps" data-title="Overview" />
+                <img src="assets/app-replay.webp?v=2" width="1600" height="825" loading="lazy" alt="Replay chart with EMA and MACD, an open long position with stop and target, a trend line, a Fibonacci retracement and a support zone" data-title="Replay" />
+                <img src="assets/app-journal.webp?v=2" width="1600" height="825" loading="lazy" alt="Trading Journal with a prop account: balance, equity curve, rule status and the latest imported trades" data-title="Journal" />
+                <img src="assets/app-autopsy.webp?v=2" width="1600" height="825" loading="lazy" alt="Trade Autopsy with key findings, sessions by damage, revenge trading analysis and an activity calendar" data-title="Trade Autopsy" />
+                <img src="assets/app-pantheon.webp?v=2" width="1600" height="825" loading="lazy" alt="PANTHEON Syndex option chain with Greeks and implied volatility, contract details and the order ticket" data-title="PANTHEON" />
+                <img src="assets/app-builder.webp?v=2" width="1600" height="825" loading="lazy" alt="Strategy Builder with the strategy in plain words, entry and filter slots and a market to backtest on" data-title="Strategy Builder" />
               </div>
             </figure>
           </div>
         </div>
         <div class="tabs" role="tablist" id="tabs">
-          <button class="tab on" role="tab" aria-selected="true" data-i="0"><span data-i18n="show.t1">Replay</span><span class="bar"></span></button>
-          <button class="tab" role="tab" aria-selected="false" data-i="1"><span data-i18n="show.t2">PANTHEON</span><span class="bar"></span></button>
-          <button class="tab" role="tab" aria-selected="false" data-i="2"><span data-i18n="show.t3">Session review</span><span class="bar"></span></button>
-          <button class="tab" role="tab" aria-selected="false" data-i="3"><span data-i18n="show.t4">Strategy Builder</span><span class="bar"></span></button>
-          <button class="tab" role="tab" aria-selected="false" data-i="4"><span data-i18n="show.t5">Grand Archive</span><span class="bar"></span></button>
+          <button class="tab on" role="tab" aria-selected="true" data-i="0"><span data-i18n="show.t1">Overview</span><span class="bar"></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-i="1"><span data-i18n="show.t2">Replay</span><span class="bar"></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-i="2"><span data-i18n="show.t3">Journal</span><span class="bar"></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-i="3"><span data-i18n="show.t4">Trade Autopsy</span><span class="bar"></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-i="4"><span data-i18n="show.t5">PANTHEON</span><span class="bar"></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-i="5"><span data-i18n="show.t6">Strategy Builder</span><span class="bar"></span></button>
         </div>
         <p class="caption" id="caption" aria-live="polite"></p>
         <div hidden>
-          <span data-i18n="show.c1" id="cap0">Replay: your markets bar by bar or second by second, with indicators on the chart and your stop and target as handles you drag.</span>
-          <span data-i18n="show.c2" id="cap1">PANTHEON: six live synthetic markets with an order book, a depth chart and a liquidity heatmap that keeps an hour of history.</span>
-          <span data-i18n="show.c3" id="cap2">Session review: after every Replay session the numbers in plain words, your equity in R and the habits that make or cost you money.</span>
-          <span data-i18n="show.c4" id="cap3">Strategy Builder: four slots, no code. Your rules read back as one sentence, then a backtest with costs included.</span>
-          <span data-i18n="show.c5" id="cap4">Grand Archive: 300+ playbooks with checked example charts and a button that opens the setup in Replay.</span>
+          <span data-i18n="show.c1" id="cap0">Overview: your result, win rate and equity curve at a glance, the state of your account and the next steps from your own numbers.</span>
+          <span data-i18n="show.c2" id="cap1">Replay: your markets bar by bar or second by second, with indicators, 16 drawing tools and your stop and target as handles you drag.</span>
+          <span data-i18n="show.c3" id="cap2">Journal: import your trades, track a prop account against its rules and see balance, equity curve and rule status on one board.</span>
+          <span data-i18n="show.c4" id="cap3">Trade Autopsy: where the money goes. Sessions by damage, revenge trades and how your day changes after the second trade.</span>
+          <span data-i18n="show.c5" id="cap4">PANTHEON: six simulated markets. Here the Syndex option chain with Greeks, implied volatility and the order ticket beside it.</span>
+          <span data-i18n="show.c6" id="cap5">Strategy Builder: four slots, no code. Your rules read back as one sentence, then a backtest with costs included.</span>
         </div>
       </div>
     </section>
@@ -525,7 +530,7 @@
       <div class="wrap">
         <div class="section-head center" data-reveal>
           <h2 data-i18n="pricing.title">Start free, upgrade when you need more.</h2>
-          <p data-i18n="pricing.sub">No card to start. Paid plans and the 7-day Elite trial are in the app.</p>
+          <p data-i18n="pricing.sub">No card to start. New purchases are paused for now, the payment page opens at a later date. The 7-day Elite trial is in the app.</p>
         </div>
 
         <div class="plans">
@@ -537,7 +542,7 @@
             <ul>
               <li><svg><use href="#i-check"/></svg><span data-i18n="plan.free.f1">Bar-by-bar market replay environment</span></li>
               <li><svg><use href="#i-check"/></svg><span data-i18n="plan.free.f2">Data import (CSV, Parquet, MT5)</span></li>
-              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.free.f3">Trade journal: 10 entries rolling</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.free.f3">Trade journal, unlimited (Replay and live)</span></li>
               <li><svg><use href="#i-check"/></svg><span data-i18n="plan.free.f4">Live-candle replay, second by second</span></li>
             </ul>
             <a class="btn btn-secondary btn-block" href="https://github.com/JarvQuant/jarvquant-releases/releases/latest/download/JarvQuant-Setup.exe" data-i18n="plan.free.cta">Download Free</a>
@@ -550,7 +555,7 @@
             <div class="plan-price"><span class="amt">€39.99</span><span class="per" data-i18n="plan.per_month">/ month</span></div>
             <div class="plan-note" data-i18n="plan.pro.period">Billed monthly · cancel anytime</div>
             <ul>
-              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f1">Unlimited journal entries</span></li>
+              <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f1">Practise any archive setup in Replay</span></li>
               <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f2">Strategy Builder with rules and constraints</span></li>
               <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f3">Prop firm challenge simulator with rule presets</span></li>
               <li><svg><use href="#i-check"/></svg><span data-i18n="plan.pro.f4">Backtesting engine</span></li>
@@ -587,7 +592,7 @@
             <div class="plan-tier" data-i18n="lifetime.tag">FOUNDERS · LIMITED 200</div>
             <h3 data-i18n="lifetime.name">Founder</h3>
             <div class="price">€1,499<small data-i18n="lifetime.note">one-time</small></div>
-            <p data-i18n="lifetime.body">Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats.</p>
+            <p data-i18n="lifetime.body">Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats. Not on sale at the moment.</p>
           </div>
         </div>
 
@@ -608,9 +613,9 @@
           <details><summary data-i18n="faq.3.q">Can I practise options trading?</summary><p data-i18n="faq.3.a">Yes. PANTHEON is a synthetic options market with a full chain, live Greeks (delta, gamma, theta, vega), an implied volatility surface and an order book. Practise long calls and puts, covered calls, spreads and straddles without risking capital.</p></details>
           <details><summary data-i18n="faq.4.q">How is this different from paper trading with a broker?</summary><p data-i18n="faq.4.a">Broker paper trading runs in real time, so rehearsing a setup means waiting for it to happen again. JarvQuant replays history at any speed, so you can work through hundreds of setups in an afternoon while future bars stay hidden.</p></details>
           <details><summary data-i18n="faq.5.q">Can I prepare for a prop firm challenge?</summary><p data-i18n="faq.5.a">Yes. The Prop Firm Simulator reproduces evaluation rules: a profit target, a maximum daily loss, a maximum drawdown and an optional consistency rule, so you learn how you behave under those rules before paying an evaluation fee.</p></details>
-          <details><summary data-i18n="faq.6.q">Is it free, and is there a trial?</summary><p data-i18n="faq.6.a">The free plan includes bar-by-bar replay, data import and a journal capped at 10 entries, with no card and no time limit. A 7-day Elite trial can be started inside the app and unlocks everything, including PANTHEON and VANTA.</p></details>
+          <details><summary data-i18n="faq.6.q">Is it free, and is there a trial?</summary><p data-i18n="faq.6.a">The free plan includes bar-by-bar replay, data import and the trade journal without an entry limit, with no card and no time limit. A 7-day Elite trial can be started inside the app and unlocks everything, including PANTHEON and VANTA.</p></details>
           <details><summary data-i18n="faq.7.q">Does it work with MetaTrader 5?</summary><p data-i18n="faq.7.a">Yes. JarvQuant ships no market data: you bring your own. The MT5 bridge pulls price history straight from your terminal into Replay, and CSV, TradingView or Parquet files work too. Your real trades go into the Live journal, where Trade Autopsy reviews them next to your simulated sessions.</p></details>
-          <details><summary data-i18n="faq.8.q">Which platforms are supported?</summary><p data-i18n="faq.8.a">JarvQuant is a native Windows desktop app with a one-click installer. Every release is published on GitHub and scanned on VirusTotal. The interface is available in English and German.</p></details>
+          <details><summary data-i18n="faq.8.q">Which platforms are supported?</summary><p data-i18n="faq.8.a">JarvQuant is a native Windows desktop app with a one-click installer. Every release is published on GitHub. The interface is available in English and German.</p></details>
         </div>
       </div>
     </section>
