@@ -269,10 +269,10 @@
   <link rel="stylesheet" href="site.css?v=3" />
   <link rel="stylesheet" href="intro.css?v=1" />
   <link rel="modulepreload" href="intro.js?v=1" />
-  <!-- 2.0 intro: plays until the end of 10 December 2026 (visitor's clock), for arrivals from outside only,
+  <!-- 2.0 intro: plays until the end of 12 December 2026 (visitor's clock), for arrivals from outside only,
        never with reduced motion, stores nothing.
        If intro.js has not arrived after 3 seconds the curtain lifts by itself. -->
-  <script>(function(){try{var d=document.documentElement,n=performance.getEntriesByType("navigation")[0],r=document.referrer;if(Date.now()>=new Date(2026,11,11).getTime())return;if(matchMedia("(prefers-reduced-motion: reduce)").matches||location.hash||document.hidden||innerHeight<460||(n&&n.type==="back_forward"))return;if(r&&new URL(r).hostname.replace(/^www\./,"")===location.hostname.replace(/^www\./,""))return;d.classList.add("intro-on");setTimeout(function(){if(!d.classList.contains("intro-run"))d.classList.remove("intro-on")},3000);}catch(e){}})();</script>
+  <script>(function(){try{var d=document.documentElement,n=performance.getEntriesByType("navigation")[0],r=document.referrer;if(Date.now()>=new Date(2026,11,13).getTime())return;if(matchMedia("(prefers-reduced-motion: reduce)").matches||location.hash||document.hidden||innerHeight<460||(n&&n.type==="back_forward"))return;if(r&&new URL(r).hostname.replace(/^www\./,"")===location.hostname.replace(/^www\./,""))return;d.classList.add("intro-on");setTimeout(function(){if(!d.classList.contains("intro-run"))d.classList.remove("intro-on")},3000);}catch(e){}})();</script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -530,7 +530,7 @@
       <div class="wrap">
         <div class="section-head center" data-reveal>
           <h2 data-i18n="pricing.title">Start free, upgrade when you need more.</h2>
-          <p data-i18n="pricing.sub">No card to start. New purchases are paused for now, the payment page opens at a later date. The 7-day Elite trial is in the app.</p>
+          <p data-i18n="pricing.sub">No card to start. Paid plans are available to customers resident in Germany and the other EU member states. The 7-day Elite trial is in the app.</p>
         </div>
 
         <div class="plans">
@@ -592,7 +592,7 @@
             <div class="plan-tier" data-i18n="lifetime.tag">FOUNDERS · LIMITED 200</div>
             <h3 data-i18n="lifetime.name">Founder</h3>
             <div class="price">€1,499<small data-i18n="lifetime.note">one-time</small></div>
-            <p data-i18n="lifetime.body">Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats. Not on sale at the moment.</p>
+            <p data-i18n="lifetime.body">Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats.</p>
           </div>
         </div>
 

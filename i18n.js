@@ -48,8 +48,9 @@ export const I18N = {
 
     "lifetime.tag": "FOUNDERS · LIMITED 200",
     "lifetime.name": "Founder",
-    "lifetime.body": "Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats. Not on sale at the moment.",
+    "lifetime.body": "Pay once. Use without end date. Everything in Architect at purchase, PANTHEON with all markets and KAIROS, plus an offline certificate that keeps working without our server. Updates and priority support while JarvQuant is actively maintained. Third-party AI, market data and broker services not included. 200 seats.",
     "lifetime.note": "one-time",
+    "pricing.sub": "No card to start. Paid plans are available to customers resident in Germany and the other EU member states. The 7-day Elite trial is in the app.",
 
     // 2.0 intro (intro.js). Every line is taken from the 2.0.0 release notes.
     // intro.wall: one entry per changelog line, separated by |
@@ -124,8 +125,9 @@ export const I18N = {
 
     "lifetime.tag": "FOUNDERS · LIMITIERT 200",
     "lifetime.name": "Founder",
-    "lifetime.body": "Einmal zahlen. Unbefristet nutzen. Alles aus Architect zum Kaufzeitpunkt, PANTHEON mit allen Märkten und KAIROS, dazu ein Offline-Zertifikat, das ohne unseren Server funktioniert. Updates und bevorzugter Support, solange JarvQuant aktiv gepflegt wird. KI-, Marktdaten- und Brokerdienste Dritter nicht enthalten. 200 Plätze. Derzeit nicht im Verkauf.",
+    "lifetime.body": "Einmal zahlen. Unbefristet nutzen. Alles aus Architect zum Kaufzeitpunkt, PANTHEON mit allen Märkten und KAIROS, dazu ein Offline-Zertifikat, das ohne unseren Server funktioniert. Updates und bevorzugter Support, solange JarvQuant aktiv gepflegt wird. KI-, Marktdaten- und Brokerdienste Dritter nicht enthalten. 200 Plätze.",
     "lifetime.note": "einmalig",
+    "pricing.sub": "Zum Start keine Karte nötig. Bezahlte Tarife gibt es für Kunden mit Wohnsitz in Deutschland und den übrigen EU-Mitgliedstaaten. Der 7-Tage-Elite-Test steckt in der App.",
 
     // 2.0 intro (intro.js)
     // intro.wall: one entry per changelog line, separated by |
